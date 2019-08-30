@@ -1,43 +1,54 @@
 {
-  "name": "react-svg-timeline",
-  "version": "0.1.0",
-  "main": "dist/index.js",
-  "module": "dist/react-svg-timeline.esm.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --env=jsdom",
-    "lint": "tsdx lint"
-  },
-  "peerDependencies": {
-    "react": ">=16"
-  },
-  "devDependencies": {
-    "@types/jest": "^24.0.18",
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0",
-    "husky": "^3.0.4",
-    "pretty-quick": "^1.11.1",
-    "prettier": "^1.18.2",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "tsdx": "^0.9.0",
-    "tslib": "^1.10.0",
-    "typescript": "^3.6.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
+    "name": "react-svg-timeline",
+    "version": "0.2.0",
+    "description": "React Timeline Component",
+    "author": "Rahel Lüthy <rahel.luethy@gmail.com>",
+    "license": "MIT",
+    "repository": "netzwerg/react-svg-timeline",
+    "main": "dist/index.js",
+    "module": "dist/react-svg-timeline.esm.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "start": "tsdx watch",
+        "build": "tsdx build",
+        "test": "tsdx test --env=jsdom",
+        "lint": "tsdx lint"
+    },
+    "peerDependencies": {
+        "react": ">=16",
+        "@material-ui/core": ">=4.3"
+    },
+    "dependencies": {
+        "d3-scale": "^3.0.1",
+        "date-fns": "^2.0.1",
+        "immutable": "^4.0.0-rc.12",
+        "react-svg-tooltip": "^0.0.11",
+        "react-virtualized-auto-sizer": "^1.0.2",
+        "shared": "^0.2.0"
+    },
+    "devDependencies": {
+        "@material-ui/core": "^4.3.3",
+        "@types/jest": "^24.0.18",
+        "@types/react": "^16.9.2",
+        "@types/react-dom": "^16.9.0",
+        "@types/d3-scale": "^2.1.1",
+        "@types/react-virtualized-auto-sizer": "^1.0.0",
+        "husky": "^3.0.4",
+        "pretty-quick": "^1.11.1",
+        "prettier": "^1.18.2",
+        "react": "^16.9.0",
+        "react-dom": "^16.9.0",
+        "tsdx": "^0.9.0",
+        "tslib": "^1.10.0",
+        "typescript": "^3.6.2",
+        "@testing-library/react": "latest"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --staged"
+        }
     }
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  }
 }
