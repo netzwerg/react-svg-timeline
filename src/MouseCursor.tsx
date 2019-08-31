@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { Theme } from '@material-ui/core'
-import { ZoomScale } from 'ZoomScale.tsx'
+import { ZoomScale } from './ZoomScale'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { orange } from '@material-ui/core/colors'
 import { noOp } from './shared'
@@ -47,7 +47,7 @@ type Props = Readonly<{
     onPan: (pixelDelta: number) => void
 }>
 
-const MouseCursor = ({
+export const MouseCursor = ({
     mousePosition,
     cursorLabel,
     zoomRangeStart,
@@ -266,5 +266,3 @@ const RubberBandCursor = ({ start, end }: RubberBandProps) => {
         </g>
     )
 }
-
-export default MouseCursor

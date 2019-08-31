@@ -1,4 +1,4 @@
-import { Event, EventId, Lane, LaneId } from '../..'
+import { Event, EventId, Lane, LaneId } from '../../dist'
 import { List as ImmutableList } from 'immutable'
 
 const laneIdOne = 'lane-id-one' as LaneId

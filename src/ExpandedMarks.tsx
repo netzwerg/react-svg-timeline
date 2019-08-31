@@ -1,10 +1,10 @@
 import * as React from 'react'
-import Marks from './Marks'
+import { Marks } from './Marks'
 import { List as ImmutableList } from 'immutable'
 import { scaleBand, ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { Event, EventId, Lane } from './model'
-import Axis from './Axis'
+import { Axis } from './Axis'
 import { defaultLaneColor } from './shared'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
@@ -28,7 +28,7 @@ type Props = Readonly<{
     onEventClick?: (eventId: EventId) => void
 }>
 
-const ExpandedMarks = ({
+export const ExpandedMarks = ({
     mouseCursor,
     height,
     events,
@@ -96,5 +96,3 @@ const ExpandedMarks = ({
         </g>
     )
 }
-
-export default ExpandedMarks

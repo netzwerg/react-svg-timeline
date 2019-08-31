@@ -50,7 +50,7 @@ export type Props = Readonly<{
  * This (1) assures that short periods or single events lying inside a longer event period are still selectable, and
  * (2) that the selection is always visible.
  */
-const Marks = (props: Props) => {
+export const Marks = (props: Props) => {
     const { events } = props
     const classes = useStyles()
     return (
@@ -258,5 +258,3 @@ const ArrowDown = ({ tipX, baseY, dimension, className }: ArrowDownProps) => {
         </svg>
     )
 }
-
-export default Marks

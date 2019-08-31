@@ -13,5 +13,3 @@ export const Axis = ({ y }: { y: number }) => {
     const classes = useAxisStyles()
     return <line x1={0} y1={y} x2="100%" y2={y} className={classes.axis} />
 }
-
-export default Axis

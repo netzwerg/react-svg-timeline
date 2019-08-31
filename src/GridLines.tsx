@@ -20,7 +20,7 @@ const gridLineStyle = (theme: Theme) => ({
     }
 })
 
-const GridLines = ({ height, domain, timeScale }: Props) => {
+export const GridLines = ({ height, domain, timeScale }: Props) => {
     const scale = nextSmallerZoomScale(domain)
     switch (scale) {
         case '10 years':
@@ -211,5 +211,3 @@ const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
 
     return <g>{lines}</g>
 }
-
-export default GridLines

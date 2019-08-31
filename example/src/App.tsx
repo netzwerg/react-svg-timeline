@@ -1,9 +1,9 @@
-import Timeline from '../..'
 import { events, lanes } from './data'
 import { timeFormat } from 'd3-time-format'
 import 'react-app-polyfill/ie11'
 import * as React from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import { Timeline } from '../../dist'
 
 const useStyles = makeStyles({
     root: {
@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     }
 })
 
-const App = () => {
+export const App = () => {
     const classes = useStyles()
     const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
     return (
@@ -22,5 +22,3 @@ const App = () => {
         </div>
     )
 }
-
-export default App

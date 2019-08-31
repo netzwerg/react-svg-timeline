@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { List as ImmutableList } from 'immutable'
 import { Domain, Event, EventId, Lane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
-import AutoResizingSvg from './AutoResizingSvg'
-import MouseCursor from './MouseCursor'
-import GridLines from './GridLines'
-import ExpandedMarks from './ExpandedMarks'
 import { scaleLinear } from 'd3-scale'
+import { AutoResizingSvg } from './AutoResizingSvg'
+import { MouseCursor } from './MouseCursor'
+import { GridLines } from './GridLines'
+import { ExpandedMarks } from './ExpandedMarks'
 
 type Props = Readonly<{
     events: ImmutableList<Event>
@@ -34,7 +34,7 @@ export const calcMaxDomain = (events: ImmutableList<Event>): Domain => {
 
 const animationDuration = 1000
 
-const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhover, onEventClick }: Props) => {
+export const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhover, onEventClick }: Props) => {
     {
         const maxDomain = calcMaxDomain(events)
         const maxDomainStart = maxDomain[0]
@@ -172,5 +172,3 @@ const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhover, onE
         )
     }
 }
-
-export default Timeline

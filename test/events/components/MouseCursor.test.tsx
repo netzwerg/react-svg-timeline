@@ -4,7 +4,7 @@ import { CssBaseline } from '@material-ui/core'
 import { ThemeProvider } from '@material-ui/styles'
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
 import { noOp } from '../../../src/shared'
-import MouseCursor from '../../../src/MouseCursor'
+import { MouseCursor } from '../../../src/MouseCursor'
 
 const theme = createMuiTheme()
 

@@ -17,7 +17,7 @@ type Props = Readonly<{
 
 export type SvgCoordinates = Readonly<{ x: number; y: number }>
 
-const AutoResizingSvg = ({ children }: Props) => {
+export const AutoResizingSvg = ({ children }: Props) => {
     const classes = useStyles()
     const svgRoot = useRef<SVGSVGElement>(null)
     const [mouseCoordinates, setMouseCoordinates] = useState<SvgCoordinates>({ x: NaN, y: NaN })
@@ -63,5 +63,3 @@ const AutoResizingSvg = ({ children }: Props) => {
         </div>
     )
 }
-
-export default AutoResizingSvg
