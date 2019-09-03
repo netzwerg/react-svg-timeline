@@ -4,12 +4,14 @@ import { List as ImmutableList } from 'immutable'
 import { Domain, TimelineEvent, TimelineEventId, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
-import { AutoResizingSvg } from './AutoResizingSvg'
+import { InteractiveSvg, SvgCoordinates } from './InteractiveSvg'
 import { MouseCursor } from './MouseCursor'
 import { GridLines } from './GridLines'
 import { ExpandedMarks } from './ExpandedMarks'
 
 type Props = Readonly<{
+    width: number
+    height: number
     events: ImmutableList<TimelineEvent>
     lanes: ImmutableList<TimelineLane>
     onEventHover?: (eventId: TimelineEventId) => void
@@ -34,7 +36,16 @@ export const calcMaxDomain = (events: ImmutableList<TimelineEvent>): Domain => {
 
 const animationDuration = 1000
 
-export const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhover, onEventClick }: Props) => {
+export const Timeline = ({
+    width,
+    height,
+    events,
+    lanes,
+    dateFormat,
+    onEventHover,
+    onEventUnhover,
+    onEventClick
+}: Props) => {
     {
         const maxDomain = calcMaxDomain(events)
         const maxDomainStart = maxDomain[0]
@@ -83,14 +94,14 @@ export const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhov
         const isZoomOutPossible = biggerZoomScale !== 'maximum' && currentDomainWidth < maxDomainWidth
 
         return (
-            <AutoResizingSvg>
-                {(w, h, mouseX) => {
+            <InteractiveSvg width={width} height={height}>
+                {(mousePosition: SvgCoordinates) => {
                     const timeScalePadding = 50
                     const timeScale = scaleLinear()
                         .domain(domain)
-                        .range([timeScalePadding, w - timeScalePadding])
+                        .range([timeScalePadding, width - timeScalePadding])
 
-                    const timeAtCursor = timeScale.invert(mouseX)
+                    const timeAtCursor = timeScale.invert(mousePosition.x)
 
                     const setDomainAnimated = (newDomain: Domain) =>
                         setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
@@ -135,7 +146,7 @@ export const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhov
 
                     const mouseCursor = isNoEventSelected ? (
                         <MouseCursor
-                            mousePosition={mouseX}
+                            mousePosition={mousePosition.x}
                             cursorLabel={dateFormat(timeAtCursor)}
                             zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)}
                             zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)}
@@ -154,13 +165,13 @@ export const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhov
 
                     return (
                         <g>
-                            <GridLines height={h} domain={domain} timeScale={timeScale} />
+                            <GridLines height={height} domain={domain} timeScale={timeScale} />
                             <ExpandedMarks
                                 mouseCursor={mouseCursor}
                                 events={events}
                                 lanes={lanes}
                                 timeScale={timeScale}
-                                height={h}
+                                height={height}
                                 onEventHover={onEventHover}
                                 onEventUnhover={onEventUnhover}
                                 onEventClick={onEventClick}
@@ -168,7 +179,7 @@ export const Timeline = ({ events, lanes, dateFormat, onEventHover, onEventUnhov
                         </g>
                     )
                 }}
-            </AutoResizingSvg>
+            </InteractiveSvg>
         )
     }
 }

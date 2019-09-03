@@ -9,13 +9,13 @@ import { TimelineEvent, TimelineEventId, TimelineLane } from '../../src'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
 import { Typography } from '@material-ui/core'
+import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 
 const useStyles = makeStyles({
     root: {
         display: 'grid',
         width: 'calc(100vw - 200px)',
-        height: 'calc(100vh - 200px)',
-        gridTemplateRows: 'auto auto 1fr',
+        gridTemplateRows: 'auto auto 300px',
         gridRowGap: 20,
         margin: 100
     },
@@ -60,14 +60,20 @@ export const App = () => {
         <div className={classes.root}>
             <Typography variant={'h2'}>react-svg-timeline</Typography>
             <KeyboardShortcuts />
-            <Timeline
-                events={events}
-                lanes={lanes}
-                dateFormat={dateFormat}
-                onEventHover={onEventHover}
-                onEventUnhover={onEventUnhover}
-                onEventClick={onEventClick}
-            />
+            <AutoSizer>
+                {({ width, height }: Size) => (
+                    <Timeline
+                        width={width}
+                        height={height}
+                        events={events}
+                        lanes={lanes}
+                        dateFormat={dateFormat}
+                        onEventHover={onEventHover}
+                        onEventUnhover={onEventUnhover}
+                        onEventClick={onEventClick}
+                    />
+                )}
+            </AutoSizer>
         </div>
     )
 }

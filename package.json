@@ -25,9 +25,7 @@
         "d3-scale": "^3.0.1",
         "date-fns": "^2.0.1",
         "immutable": "^4.0.0-rc.12",
-        "react-svg-tooltip": "^0.0.11",
-        "react-virtualized-auto-sizer": "^1.0.2",
-        "shared": "^0.2.0"
+        "react-svg-tooltip": "^0.0.11"
     },
     "devDependencies": {
         "@material-ui/core": "^4.3.3",
@@ -35,7 +33,6 @@
         "@types/react": "^16.9.2",
         "@types/react-dom": "^16.9.0",
         "@types/d3-scale": "^2.1.1",
-        "@types/react-virtualized-auto-sizer": "^1.0.0",
         "husky": "^3.0.4",
         "pretty-quick": "^1.11.1",
         "prettier": "^1.18.2",
