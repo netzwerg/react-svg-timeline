@@ -1,24 +1,24 @@
-enum EventIdBrand {}
+enum TimelineEventIdBrand {}
 
-export type EventId = { __brand: EventIdBrand } & string
+export type TimelineEventId = { __brand: TimelineEventIdBrand } & string
 
-export type Event = Readonly<{
-    eventId: EventId
+export type TimelineEvent = Readonly<{
+    eventId: TimelineEventId
     startTimeMillis: number
     endTimeMillis?: number
-    laneId: LaneId
+    laneId: TimelineLaneId
     color?: string
     tooltip?: string
     isSelected?: boolean
     isPinned?: boolean
 }>
 
-enum LaneIdBrand {}
+enum TimelineLaneIdBrand {}
 
-export type LaneId = { __brand: LaneIdBrand } & string
+export type TimelineLaneId = { __brand: TimelineLaneIdBrand } & string
 
-export type Lane = Readonly<{
-    laneId: LaneId
+export type TimelineLane = Readonly<{
+    laneId: TimelineLaneId
     label: string
     color?: string
 }>

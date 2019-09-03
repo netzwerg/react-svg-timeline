@@ -3,7 +3,7 @@ import { Marks } from './Marks'
 import { List as ImmutableList } from 'immutable'
 import { scaleBand, ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { Event, EventId, Lane } from './model'
+import { TimelineEvent, TimelineEventId, TimelineLane } from './model'
 import { Axis } from './Axis'
 import { defaultLaneColor } from './shared'
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -19,13 +19,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 type Props = Readonly<{
     mouseCursor: React.ReactNode
     height: number
-    events: ImmutableList<Event>
+    events: ImmutableList<TimelineEvent>
     timeScale: ScaleLinear<number, number>
     eventMarkerHeight?: number
-    lanes: ImmutableList<Lane>
-    onEventHover?: (eventId: EventId) => void
-    onEventUnhover?: (eventId: EventId) => void
-    onEventClick?: (eventId: EventId) => void
+    lanes: ImmutableList<TimelineLane>
+    onEventHover?: (eventId: TimelineEventId) => void
+    onEventUnhover?: (eventId: TimelineEventId) => void
+    onEventClick?: (eventId: TimelineEventId) => void
 }>
 
 export const ExpandedMarks = ({
@@ -49,7 +49,7 @@ export const ExpandedMarks = ({
     const fontSize = 0.8 * yScale.bandwidth()
 
     const axes = lanes
-        .map((lane: Lane) => {
+        .map((lane: TimelineLane) => {
             const labelXOffset = 10
             const labelYOffset = -0.1 * yScale.bandwidth()
             const y = yScale(lane.laneId)!
@@ -71,7 +71,7 @@ export const ExpandedMarks = ({
         .valueSeq()
 
     const marks = lanes
-        .map((lane: Lane) => {
+        .map((lane: TimelineLane) => {
             const laneSpecificEvents = events.filter(e => e.laneId === lane.laneId).toList()
             return (
                 <g key={`marks-${lane.laneId}`}>

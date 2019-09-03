@@ -4,7 +4,7 @@ import { defaultDarkGrey, defaultEventColor, noOp, selectionColor, selectionColo
 import { List as ImmutableList } from 'immutable'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { Event, EventId } from './model'
+import { TimelineEvent, TimelineEventId } from './model'
 import { Tooltip } from 'react-svg-tooltip'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
@@ -31,13 +31,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 export type Props = Readonly<{
-    events: ImmutableList<Event>
+    events: ImmutableList<TimelineEvent>
     timeScale: ScaleLinear<number, number>
     y: number
     eventMarkerHeight?: number
-    onEventHover?: (eventId: EventId) => void
-    onEventUnhover?: (eventId: EventId) => void
-    onEventClick?: (eventId: EventId) => void
+    onEventHover?: (eventId: TimelineEventId) => void
+    onEventUnhover?: (eventId: TimelineEventId) => void
+    onEventClick?: (eventId: TimelineEventId) => void
 }>
 
 /**
@@ -56,7 +56,7 @@ export const Marks = (props: Props) => {
     return (
         <g>
             {events.map((
-                e: Event // opaque background to prevent axis-/grid-lines from shining through
+                e: TimelineEvent // opaque background to prevent axis-/grid-lines from shining through
             ) => (
                 <EventMark key={e.eventId} e={e} className={classes.eventBackground} {...props} />
             ))}
@@ -64,17 +64,17 @@ export const Marks = (props: Props) => {
                 .filter(e => e.endTimeMillis !== undefined) // event periods only
                 .sort(e => e.endTimeMillis! - e.startTimeMillis) // shorter periods on top of longer ones
                 .reverse()
-                .map((e: Event) => (
+                .map((e: TimelineEvent) => (
                     <EventMark key={e.eventId} e={e} className={classes.eventRect} {...props} />
                 ))}
             {events
                 .filter(e => e.endTimeMillis === undefined) // single events
-                .map((e: Event) => (
+                .map((e: TimelineEvent) => (
                     <EventMark key={e.eventId} e={e} className={classes.eventCircle} {...props} />
                 ))}
             {events
                 .filter(e => e.isSelected) // selection on top
-                .map((e: Event) => (
+                .map((e: TimelineEvent) => (
                     <EventMark key={e.eventId} e={e} className={classes.selectedEvent} {...props} />
                 ))}
         </g>
@@ -83,7 +83,7 @@ export const Marks = (props: Props) => {
 
 type EventMarkProps = Readonly<{
     key: string
-    e: Event
+    e: TimelineEvent
     className: string
     eventMarkerHeight?: number
 }> &
@@ -117,7 +117,7 @@ const EventMark = ({
                     cy={y}
                     r={eventMarkerHeight / 2}
                     className={className}
-                    fill={e.color}
+                    fill={e.color || defaultEventColor}
                     style={{ stroke: strokeColor }}
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}

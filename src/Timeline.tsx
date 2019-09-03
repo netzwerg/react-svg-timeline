@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { List as ImmutableList } from 'immutable'
-import { Domain, Event, EventId, Lane } from './model'
+import { Domain, TimelineEvent, TimelineEventId, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
 import { AutoResizingSvg } from './AutoResizingSvg'
@@ -10,11 +10,11 @@ import { GridLines } from './GridLines'
 import { ExpandedMarks } from './ExpandedMarks'
 
 type Props = Readonly<{
-    events: ImmutableList<Event>
-    lanes: ImmutableList<Lane>
-    onEventHover?: (eventId: EventId) => void
-    onEventUnhover?: (eventId: EventId) => void
-    onEventClick?: (eventId: EventId) => void
+    events: ImmutableList<TimelineEvent>
+    lanes: ImmutableList<TimelineLane>
+    onEventHover?: (eventId: TimelineEventId) => void
+    onEventUnhover?: (eventId: TimelineEventId) => void
+    onEventClick?: (eventId: TimelineEventId) => void
     dateFormat: (ms: number) => string
 }>
 
@@ -26,7 +26,7 @@ type Animation =
           toDomain: Domain
       }>
 
-export const calcMaxDomain = (events: ImmutableList<Event>): Domain => {
+export const calcMaxDomain = (events: ImmutableList<TimelineEvent>): Domain => {
     const timeMin = events.map(e => e.startTimeMillis).min()
     const timeMax = events.map(e => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)).max()
     return [timeMin || NaN, timeMax || NaN]
