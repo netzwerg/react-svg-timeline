@@ -42,7 +42,7 @@ export const ExpandedMarks = ({
 
     const yScale = scaleBand()
         .domain(lanes.map(l => l.laneId).toArray())
-        .range([0, 0.9 * height])
+        .range([0, height])
         .paddingInner(0.1)
         .paddingOuter(0.8)
 
@@ -51,7 +51,7 @@ export const ExpandedMarks = ({
     const axes = lanes
         .map((lane: TimelineLane) => {
             const labelXOffset = 10
-            const labelYOffset = -0.1 * yScale.bandwidth()
+            const labelYOffset = -0.15 * yScale.bandwidth()
             const y = yScale(lane.laneId)!
             return (
                 <g key={`axis-${lane.laneId}`}>

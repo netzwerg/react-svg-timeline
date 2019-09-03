@@ -8,14 +8,22 @@ import { List as ImmutableList, Set as ImmutableSet } from 'immutable'
 import { TimelineEvent, TimelineEventId, TimelineLane } from '../../src'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
+import { Typography } from '@material-ui/core'
 
 const useStyles = makeStyles({
     root: {
         display: 'grid',
-        width: '100vw',
+        width: 'calc(100vw - 200px)',
         height: 'calc(100vh - 200px)',
-        paddingTop: 100,
-        paddingBottom: 100
+        gridTemplateRows: 'auto auto 1fr',
+        gridRowGap: 20,
+        margin: 100
+    },
+    hci: {
+        lineHeight: 0.8,
+        '& td': {
+            paddingRight: 10
+        }
     }
 })
 
@@ -50,6 +58,8 @@ export const App = () => {
 
     return (
         <div className={classes.root}>
+            <Typography variant={'h2'}>react-svg-timeline</Typography>
+            <KeyboardShortcuts />
             <Timeline
                 events={events}
                 lanes={lanes}
@@ -59,5 +69,37 @@ export const App = () => {
                 onEventClick={onEventClick}
             />
         </div>
+    )
+}
+
+const KeyboardShortcuts = () => {
+    const classes = useStyles()
+    return (
+        <Typography className={classes.hci} component={'div'}>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Zoom In:</td>
+                        <td>Click</td>
+                    </tr>
+                    <tr>
+                        <td>Zoom Out:</td>
+                        <td>Alt + Click</td>
+                    </tr>
+                    <tr>
+                        <td>Zoom Custom:</td>
+                        <td>Shift + Click + Drag</td>
+                    </tr>
+                    <tr>
+                        <td>Pan:</td>
+                        <td>Click + Drag</td>
+                    </tr>
+                    <tr>
+                        <td>Reset:</td>
+                        <td>Esc</td>
+                    </tr>
+                </tbody>
+            </table>
+        </Typography>
     )
 }
