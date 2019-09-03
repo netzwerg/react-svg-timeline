@@ -33,14 +33,20 @@ export const App = () => {
     const rawEvents: ImmutableList<TimelineEvent> = ImmutableList(data.events)
 
     const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
+    const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
     const events = rawEvents.map((e: TimelineEvent) => ({
         ...e,
         tooltip: eventTooltip(e),
-        isSelected: selectedEvents.contains(e.eventId)
+        isSelected: selectedEvents.contains(e.eventId),
+        isPinned: pinnedEvents.contains(e.eventId)
     }))
 
     const onEventHover = (e: TimelineEventId) => setSelectedEvents(prevSelectedEvents => prevSelectedEvents.add(e))
     const onEventUnhover = (e: TimelineEventId) => setSelectedEvents(prevSelectedEvents => prevSelectedEvents.remove(e))
+    const onEventClick = (e: TimelineEventId) =>
+        setPinnedEvents(prevPinnedEvents =>
+            prevPinnedEvents.contains(e) ? prevPinnedEvents.remove(e) : prevPinnedEvents.add(e)
+        )
 
     return (
         <div className={classes.root}>
@@ -50,6 +56,7 @@ export const App = () => {
                 dateFormat={dateFormat}
                 onEventHover={onEventHover}
                 onEventUnhover={onEventUnhover}
+                onEventClick={onEventClick}
             />
         </div>
     )
