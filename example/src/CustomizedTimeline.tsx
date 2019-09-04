@@ -9,14 +9,21 @@ export const CustomizedTimeline = (props: TimelineProps) => {
     // foreground, the eventComponent factory is invoked twice (with the 'role' parameter distinguishing the calls)
 
     const eventComponent = (e, role, timeScale, y) => {
-        const color = role === 'background' ? 'white' : 'rgb(233, 30, 99, 0.5)'
+        const backgroundColor = 'white'
+        const color = role === 'background' ? backgroundColor : 'rgb(233, 30, 99, 0.5)'
         const size = 24
         const startX = timeScale(e.startTimeMillis)
         if (e.endTimeMillis === undefined) {
             const iconTranslate = `translate(${startX - size / 2}, ${y - size / 2})`
             return (
                 <g transform={`${iconTranslate}`}>
-                    <FavoriteIcon width={size} height={size} style={{ color }} />
+                    <FavoriteIcon
+                        width={size}
+                        height={size}
+                        style={{ color }}
+                        strokeWidth={1}
+                        stroke={backgroundColor}
+                    />
                 </g>
             )
         } else {
@@ -24,7 +31,16 @@ export const CustomizedTimeline = (props: TimelineProps) => {
             const width = endX - startX
             return (
                 <g>
-                    <rect x={startX} y={y - size / 2} width={width} height={size} fill={color} rx={5} />
+                    <rect
+                        x={startX}
+                        y={y - size / 2}
+                        width={width}
+                        height={size}
+                        fill={color}
+                        rx={5}
+                        strokeWidth={1}
+                        stroke={backgroundColor}
+                    />
                 </g>
             )
         }
