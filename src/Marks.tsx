@@ -84,20 +84,58 @@ export const Marks = (props: Props) => {
     return (
         <g>
             {events.map((e: TimelineEvent) => (
-                <g key={e.eventId}>{eventComponentFactory(e, 'background', timeScale, y)}</g>
+                <InteractiveGroup eventId={e.eventId} {...props}>
+                    {eventComponentFactory(e, 'background', timeScale, y)}
+                </InteractiveGroup>
             ))}
             {events
                 .filter(e => !e.isSelected)
                 .sort(sortByEventDuration)
                 .map((e: TimelineEvent) => (
-                    <g key={e.eventId}>{eventComponentFactory(e, 'foreground', timeScale, y)}</g>
+                    <InteractiveGroup eventId={e.eventId} {...props}>
+                        {eventComponentFactory(e, 'foreground', timeScale, y)}
+                    </InteractiveGroup>
                 ))}
             {events
                 .filter(e => e.isSelected)
                 .sort(sortByEventDuration)
                 .map((e: TimelineEvent) => (
-                    <g key={e.eventId}>{eventComponentFactory(e, 'foreground', timeScale, y)}</g>
+                    <InteractiveGroup eventId={e.eventId} {...props}>
+                        {eventComponentFactory(e, 'foreground', timeScale, y)}
+                    </InteractiveGroup>
                 ))}
+        </g>
+    )
+}
+
+type InteractiveGroupProps = Readonly<{
+    eventId: TimelineEventId
+    onEventHover?: (eventId: TimelineEventId) => void
+    onEventUnhover?: (eventId: TimelineEventId) => void
+    onEventClick?: (eventId: TimelineEventId) => void
+    children: React.ReactNode
+}>
+
+const InteractiveGroup = ({
+    eventId,
+    onEventClick = noOp,
+    onEventHover = noOp,
+    onEventUnhover = noOp,
+    children
+}: InteractiveGroupProps) => {
+    const onMouseEnter = () => onEventHover(eventId)
+    const onMouseLeave = () => onEventUnhover(eventId)
+    const onMouseClick = () => onEventClick(eventId)
+
+    return (
+        <g
+            key={eventId}
+            pointerEvents={'bounding-box'}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onClick={onMouseClick}
+        >
+            {children}
         </g>
     )
 }
@@ -109,22 +147,10 @@ type EventMarkProps = Readonly<{
 }> &
     Pick<Props, Exclude<keyof Props, 'events'>>
 
-const EventMark = ({
-    e,
-    eventMarkerHeight = 20,
-    className,
-    y,
-    timeScale,
-    onEventHover = noOp,
-    onEventUnhover = noOp,
-    onEventClick = noOp
-}: EventMarkProps) => {
+const EventMark = ({ e, eventMarkerHeight = 20, className, y, timeScale }: EventMarkProps) => {
     const theme: Theme = useTheme()
     const circleRef = useRef<SVGCircleElement>(null)
     const rectRef = useRef<SVGRectElement>(null)
-    const onMouseEnter = () => onEventHover(e.eventId)
-    const onMouseLeave = () => onEventUnhover(e.eventId)
-    const onMouseClick = () => onEventClick(e.eventId)
     const startX = timeScale(e.startTimeMillis)
     const parentWidth = timeScale.range()[1]
     const strokeColor = e.isPinned ? (theme.palette.type === defaultDarkGrey ? 'white' : 'black') : undefined
@@ -139,9 +165,6 @@ const EventMark = ({
                     className={className}
                     fill={e.color || defaultEventColor}
                     style={{ stroke: strokeColor }}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
-                    onClick={onMouseClick}
                 />
                 {e.tooltip ? (
                     <EventTooltip
@@ -170,9 +193,6 @@ const EventMark = ({
                     className={className}
                     fill={e.color || defaultEventColor}
                     style={{ stroke: strokeColor }}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
-                    onClick={onMouseClick}
                 />
                 {e.tooltip ? (
                     <EventTooltip type="period" y={y} parentWidth={parentWidth} triggerRef={rectRef} text={e.tooltip} />
