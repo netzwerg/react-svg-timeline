@@ -10,16 +10,18 @@ import { TimelineEvent, TimelineEventId, TimelineLane } from '../../src'
 import data from './data.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
+import { CustomizedTimeline } from './CustomizedTimeline'
 
 const useStyles = makeStyles({
     root: {
         display: 'grid',
         width: 'calc(100vw - 200px)',
-        gridTemplateRows: 'auto auto 300px',
-        gridRowGap: 20,
+        gridTemplateRows: 'auto auto 300px 300px',
+        gridRowGap: 40,
         margin: 100
     },
     hci: {
+        color: '#9e9e9e',
         lineHeight: 0.8,
         '& td': {
             paddingRight: 10
@@ -60,8 +62,8 @@ export const App = () => {
         <div className={classes.root}>
             <Typography variant={'h2'}>react-svg-timeline</Typography>
             <KeyboardShortcuts />
-            <AutoSizer>
-                {({ width, height }: Size) => (
+            <DemoTimeline title={'Default'}>
+                {(width, height) => (
                     <Timeline
                         width={width}
                         height={height}
@@ -73,10 +75,36 @@ export const App = () => {
                         onEventClick={onEventClick}
                     />
                 )}
-            </AutoSizer>
+            </DemoTimeline>
+            <DemoTimeline title={'Custom Event Marks'}>
+                {(width, height) => (
+                    <CustomizedTimeline
+                        width={width}
+                        height={height}
+                        events={events}
+                        lanes={lanes}
+                        dateFormat={dateFormat}
+                        onEventHover={onEventHover}
+                        onEventUnhover={onEventUnhover}
+                        onEventClick={onEventClick}
+                    />
+                )}
+            </DemoTimeline>
         </div>
     )
 }
+
+type DemoTimelineProps = Readonly<{
+    title: string
+    children: (width: number, height: number) => React.ReactNode
+}>
+
+const DemoTimeline = ({ title, children }: DemoTimelineProps) => (
+    <div>
+        <Typography variant={'caption'}>{title}</Typography>
+        <AutoSizer>{({ width, height }: Size) => children(width, height)}</AutoSizer>
+    </div>
+)
 
 const KeyboardShortcuts = () => {
     const classes = useStyles()

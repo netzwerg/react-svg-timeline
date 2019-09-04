@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { List as ImmutableList } from 'immutable'
-import { Domain, TimelineEvent, TimelineEventId, TimelineLane } from './model'
+import { Domain, EventComponentFactory, TimelineEvent, TimelineEventId, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
 import { InteractiveSvg, SvgCoordinates } from './InteractiveSvg'
@@ -9,15 +9,16 @@ import { MouseCursor } from './MouseCursor'
 import { GridLines } from './GridLines'
 import { ExpandedMarks } from './ExpandedMarks'
 
-type Props = Readonly<{
+export type TimelineProps = Readonly<{
     width: number
     height: number
     events: ImmutableList<TimelineEvent>
     lanes: ImmutableList<TimelineLane>
+    dateFormat: (ms: number) => string
+    eventComponent?: EventComponentFactory
     onEventHover?: (eventId: TimelineEventId) => void
     onEventUnhover?: (eventId: TimelineEventId) => void
     onEventClick?: (eventId: TimelineEventId) => void
-    dateFormat: (ms: number) => string
 }>
 
 type Animation =
@@ -42,10 +43,11 @@ export const Timeline = ({
     events,
     lanes,
     dateFormat,
+    eventComponent,
     onEventHover,
     onEventUnhover,
     onEventClick
-}: Props) => {
+}: TimelineProps) => {
     {
         const maxDomain = calcMaxDomain(events)
         const maxDomainStart = maxDomain[0]
@@ -177,6 +179,7 @@ export const Timeline = ({
                                 lanes={lanes}
                                 timeScale={timeScale}
                                 height={height}
+                                eventComponent={eventComponent}
                                 onEventHover={onEventHover}
                                 onEventUnhover={onEventUnhover}
                                 onEventClick={onEventClick}

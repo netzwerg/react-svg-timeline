@@ -4,7 +4,7 @@ import { defaultDarkGrey, defaultEventColor, noOp, selectionColor, selectionColo
 import { List as ImmutableList } from 'immutable'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { TimelineEvent, TimelineEventId } from './model'
+import { EventComponentFactory, TimelineEvent, TimelineEventId } from './model'
 import { Tooltip } from 'react-svg-tooltip'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
@@ -35,6 +35,7 @@ export type Props = Readonly<{
     timeScale: ScaleLinear<number, number>
     y: number
     eventMarkerHeight?: number
+    eventComponent?: EventComponentFactory
     onEventHover?: (eventId: TimelineEventId) => void
     onEventUnhover?: (eventId: TimelineEventId) => void
     onEventClick?: (eventId: TimelineEventId) => void
@@ -53,32 +54,53 @@ export type Props = Readonly<{
 export const Marks = (props: Props) => {
     const { events } = props
     const classes = useStyles()
-    return (
-        <g>
-            {events.map((
-                e: TimelineEvent // opaque background to prevent axis-/grid-lines from shining through
-            ) => (
-                <EventMark key={e.eventId} e={e} className={classes.eventBackground} {...props} />
-            ))}
-            {events
-                .filter(e => e.endTimeMillis !== undefined) // event periods only
-                .sort(e => e.endTimeMillis! - e.startTimeMillis) // shorter periods on top of longer ones
-                .reverse()
-                .map((e: TimelineEvent) => (
-                    <EventMark key={e.eventId} e={e} className={classes.eventRect} {...props} />
+    const { eventComponent, timeScale, y } = props
+    if (eventComponent) {
+        return (
+            <g>
+                {events.map((e: TimelineEvent) => (
+                    <g key={e.eventId}>{eventComponent(e, 'background', timeScale, y)}</g>
                 ))}
-            {events
-                .filter(e => e.endTimeMillis === undefined) // single events
-                .map((e: TimelineEvent) => (
-                    <EventMark key={e.eventId} e={e} className={classes.eventCircle} {...props} />
+                {events
+                    .filter(e => !e.isSelected)
+                    .map((e: TimelineEvent) => (
+                        <g key={e.eventId}>{eventComponent(e, 'foreground', timeScale, y)}</g>
+                    ))}
+                {events
+                    .filter(e => e.isSelected)
+                    .map((e: TimelineEvent) => (
+                        <g key={e.eventId}>{eventComponent(e, 'foreground', timeScale, y)}</g>
+                    ))}
+            </g>
+        )
+    } else {
+        return (
+            <g>
+                {events.map((
+                    e: TimelineEvent // opaque background to prevent axis-/grid-lines from shining through
+                ) => (
+                    <EventMark key={e.eventId} e={e} className={classes.eventBackground} {...props} />
                 ))}
-            {events
-                .filter(e => e.isSelected) // selection on top
-                .map((e: TimelineEvent) => (
-                    <EventMark key={e.eventId} e={e} className={classes.selectedEvent} {...props} />
-                ))}
-        </g>
-    )
+                {events
+                    .filter(e => e.endTimeMillis !== undefined) // event periods only
+                    .sort(e => e.endTimeMillis! - e.startTimeMillis) // shorter periods on top of longer ones
+                    .reverse()
+                    .map((e: TimelineEvent) => (
+                        <EventMark key={e.eventId} e={e} className={classes.eventRect} {...props} />
+                    ))}
+                {events
+                    .filter(e => e.endTimeMillis === undefined) // single events
+                    .map((e: TimelineEvent) => (
+                        <EventMark key={e.eventId} e={e} className={classes.eventCircle} {...props} />
+                    ))}
+                {events
+                    .filter(e => e.isSelected) // selection on top
+                    .map((e: TimelineEvent) => (
+                        <EventMark key={e.eventId} e={e} className={classes.selectedEvent} {...props} />
+                    ))}
+            </g>
+        )
+    }
 }
 
 type EventMarkProps = Readonly<{

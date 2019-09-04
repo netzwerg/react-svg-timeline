@@ -3,7 +3,7 @@ import { Marks } from './Marks'
 import { List as ImmutableList } from 'immutable'
 import { scaleBand, ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { TimelineEvent, TimelineEventId, TimelineLane } from './model'
+import { EventComponentFactory, TimelineEvent, TimelineEventId, TimelineLane } from './model'
 import { Axis } from './Axis'
 import { defaultLaneColor } from './shared'
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -23,6 +23,7 @@ type Props = Readonly<{
     timeScale: ScaleLinear<number, number>
     eventMarkerHeight?: number
     lanes: ImmutableList<TimelineLane>
+    eventComponent?: EventComponentFactory
     onEventHover?: (eventId: TimelineEventId) => void
     onEventUnhover?: (eventId: TimelineEventId) => void
     onEventClick?: (eventId: TimelineEventId) => void
@@ -34,6 +35,7 @@ export const ExpandedMarks = ({
     events,
     lanes,
     timeScale,
+    eventComponent,
     onEventHover,
     onEventUnhover,
     onEventClick
@@ -79,6 +81,7 @@ export const ExpandedMarks = ({
                         events={laneSpecificEvents}
                         timeScale={timeScale}
                         y={yScale(lane.laneId)!}
+                        eventComponent={eventComponent}
                         onEventHover={onEventHover}
                         onEventUnhover={onEventUnhover}
                         onEventClick={onEventClick}
