@@ -72,10 +72,15 @@ export const Timeline = ({
                         animation.fromDomain[0] + deltaStart,
                         animation.fromDomain[1] + deltaEnd
                     ]
-                    setDomain(animatedDomain)
-                    if (animatedDomain[0] === animation.toDomain[0] && animatedDomain[1] === animation.toDomain[1]) {
-                        setAnimation('none')
-                    }
+                    requestAnimationFrame(() => {
+                        setDomain(animatedDomain)
+                        if (
+                            animatedDomain[0] === animation.toDomain[0] &&
+                            animatedDomain[1] === animation.toDomain[1]
+                        ) {
+                            setAnimation('none')
+                        }
+                    })
                 } else {
                     setDomain(animation.toDomain)
                     setAnimation('none')
