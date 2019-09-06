@@ -84,7 +84,7 @@ export const Marks = (props: Props) => {
     return (
         <g>
             {events.map((e: TimelineEvent) => (
-                <InteractiveGroup eventId={e.eventId} {...props}>
+                <InteractiveGroup key={e.eventId} eventId={e.eventId} {...props}>
                     {eventComponentFactory(e, 'background', timeScale, y)}
                 </InteractiveGroup>
             ))}
@@ -92,7 +92,7 @@ export const Marks = (props: Props) => {
                 .filter(e => !e.isSelected)
                 .sort(sortByEventDuration)
                 .map((e: TimelineEvent) => (
-                    <InteractiveGroup eventId={e.eventId} {...props}>
+                    <InteractiveGroup key={e.eventId} eventId={e.eventId} {...props}>
                         {eventComponentFactory(e, 'foreground', timeScale, y)}
                     </InteractiveGroup>
                 ))}
@@ -100,7 +100,7 @@ export const Marks = (props: Props) => {
                 .filter(e => e.isSelected)
                 .sort(sortByEventDuration)
                 .map((e: TimelineEvent) => (
-                    <InteractiveGroup eventId={e.eventId} {...props}>
+                    <InteractiveGroup key={e.eventId} eventId={e.eventId} {...props}>
                         {eventComponentFactory(e, 'foreground', timeScale, y)}
                     </InteractiveGroup>
                 ))}
@@ -129,7 +129,6 @@ const InteractiveGroup = ({
 
     return (
         <g
-            key={eventId}
             pointerEvents={'bounding-box'}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
