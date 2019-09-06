@@ -1,29 +1,54 @@
 import { Timeline, TimelineProps } from '../../src'
 import * as React from 'react'
 import FavoriteIcon from '@material-ui/icons/Favorite'
+import makeStyles from '@material-ui/core/styles/makeStyles'
+import cn from 'classnames'
+
+const backgroundColor = 'white'
+const foregroundColor = 'rgb(233, 30, 99, 0.5)'
+
+const useStyles = makeStyles({
+    background: {
+        color: backgroundColor,
+        fill: backgroundColor,
+        stroke: backgroundColor,
+        strokeWidth: 2
+    },
+    foreground: {
+        color: foregroundColor,
+        fill: foregroundColor,
+        stroke: foregroundColor,
+        strokeWidth: 2
+    },
+    selected: {
+        stroke: 'grey',
+        strokeDasharray: '4'
+    },
+    pinned: {
+        stroke: 'black'
+    }
+})
 
 export const CustomizedTimeline = (props: TimelineProps) => {
+    const classes = useStyles()
+
     // Often, it is useful to draw events semi-transparently, such that 'event accumulations' become visible
     // This raises the issue of grid-lines shining through
     // To give you the possibility to draw opaque event marks in the background and semi-transparent events in the
     // foreground, the eventComponent factory is invoked twice (with the 'role' parameter distinguishing the calls)
 
     const eventComponent = (e, role, timeScale, y) => {
-        const backgroundColor = 'white'
-        const color = role === 'background' ? backgroundColor : 'rgb(233, 30, 99, 0.5)'
+        const className =
+            role === 'background'
+                ? classes.background
+                : cn(classes.foreground, e.isSelected ? classes.selected : '', e.isPinned ? classes.pinned : '')
         const size = 24
         const startX = timeScale(e.startTimeMillis)
         if (e.endTimeMillis === undefined) {
             const iconTranslate = `translate(${startX - size / 2}, ${y - size / 2})`
             return (
                 <g transform={`${iconTranslate}`}>
-                    <FavoriteIcon
-                        width={size}
-                        height={size}
-                        style={{ color }}
-                        strokeWidth={1}
-                        stroke={backgroundColor}
-                    />
+                    <FavoriteIcon className={className} width={size} height={size} />
                 </g>
             )
         } else {
@@ -31,16 +56,7 @@ export const CustomizedTimeline = (props: TimelineProps) => {
             const width = endX - startX
             return (
                 <g>
-                    <rect
-                        x={startX}
-                        y={y - size / 2}
-                        width={width}
-                        height={size}
-                        fill={color}
-                        rx={5}
-                        strokeWidth={1}
-                        stroke={backgroundColor}
-                    />
+                    <rect className={className} x={startX} y={y - size / 2} width={width} height={size} rx={5} />
                 </g>
             )
         }
