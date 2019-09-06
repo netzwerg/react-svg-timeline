@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     selectedEvent: {
         stroke: selectionColorOpaque,
+        strokeWidth: 2,
         fill: selectionColor
     }
 }))
