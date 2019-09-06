@@ -10,19 +10,16 @@
     "dependencies": {
         "@material-ui/icons": "^4.2.1",
         "classnames": "^2.2.6",
-        "react": "../node_modules/react",
         "react-app-polyfill": "^1.0.0",
-        "react-dom": "../node_modules/react-dom",
         "react-virtualized-auto-sizer": "^1.0.2"
     },
     "alias": {
         "react": "../node_modules/react",
-        "react-dom": "../node_modules/react-dom/profiling",
-        "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
+        "react-dom": "../node_modules/react-dom",
+        "@types/react": "../node_modules/@types/react",
+        "@types/react-dom": "../node_modules/@types/react-dom"
     },
     "devDependencies": {
-        "@types/react": "^16.8.15",
-        "@types/react-dom": "^16.8.4",
         "@types/react-virtualized-auto-sizer": "^1.0.0",
         "@types/classnames": "^2.2.9",
         "parcel": "^1.12.3",
