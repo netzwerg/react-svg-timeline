@@ -5,7 +5,7 @@ import { useState } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { List as ImmutableList, Set as ImmutableSet } from 'immutable'
-import { TimelineEvent, TimelineEventId, TimelineLane } from '../../src'
+import { TimelineEvent, TimelineEventId, TimelineLane, TimelineProps } from '../../src'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
 import { Typography } from '@material-ui/core'
@@ -30,6 +30,8 @@ const useStyles = makeStyles({
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
+const lanes: ImmutableList<TimelineLane> = ImmutableList(data.lanes)
+const rawEvents: ImmutableList<TimelineEvent> = ImmutableList(data.events)
 
 const eventTooltip = (e: TimelineEvent) =>
     e.endTimeMillis
@@ -38,10 +40,25 @@ const eventTooltip = (e: TimelineEvent) =>
 
 export const App = () => {
     const classes = useStyles()
+    const defaultTimeline = (props: TimelineProps) => <Timeline {...props} />
+    const customizedTimeline = (props: TimelineProps) => <CustomizedTimeline {...props} />
+    return (
+        <div className={classes.root}>
+            <Typography variant={'h2'}>react-svg-timeline</Typography>
+            <KeyboardShortcuts />
+            <DemoTimeline timelineComponent={defaultTimeline} title={'Default'} rawEvents={rawEvents} />
+            <DemoTimeline timelineComponent={customizedTimeline} title={'Custom Event Marks'} rawEvents={rawEvents} />
+        </div>
+    )
+}
 
-    const lanes: ImmutableList<TimelineLane> = ImmutableList(data.lanes)
-    const rawEvents: ImmutableList<TimelineEvent> = ImmutableList(data.events)
+type DemoTimelineProps = Readonly<{
+    title: string
+    rawEvents: ImmutableList<TimelineEvent>
+    timelineComponent: (props: TimelineProps) => React.ReactNode
+}>
 
+const DemoTimeline = ({ title, rawEvents, timelineComponent }: DemoTimelineProps) => {
     const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
     const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
     const events = rawEvents.map((e: TimelineEvent) => ({
@@ -59,52 +76,26 @@ export const App = () => {
         )
 
     return (
-        <div className={classes.root}>
-            <Typography variant={'h2'}>react-svg-timeline</Typography>
-            <KeyboardShortcuts />
-            <DemoTimeline title={'Default'}>
-                {(width, height) => (
-                    <Timeline
-                        width={width}
-                        height={height}
-                        events={events}
-                        lanes={lanes}
-                        dateFormat={dateFormat}
-                        onEventHover={onEventHover}
-                        onEventUnhover={onEventUnhover}
-                        onEventClick={onEventClick}
-                    />
-                )}
-            </DemoTimeline>
-            <DemoTimeline title={'Custom Event Marks'}>
-                {(width, height) => (
-                    <CustomizedTimeline
-                        width={width}
-                        height={height}
-                        events={events}
-                        lanes={lanes}
-                        dateFormat={dateFormat}
-                        onEventHover={onEventHover}
-                        onEventUnhover={onEventUnhover}
-                        onEventClick={onEventClick}
-                    />
-                )}
-            </DemoTimeline>
+        <div>
+            <Typography variant={'caption'}>{title}</Typography>
+            <AutoSizer>
+                {({ width, height }: Size) => {
+                    const timelineProps: TimelineProps = {
+                        width,
+                        height,
+                        dateFormat,
+                        lanes,
+                        events,
+                        onEventHover,
+                        onEventUnhover,
+                        onEventClick
+                    }
+                    return timelineComponent(timelineProps)
+                }}
+            </AutoSizer>
         </div>
     )
 }
-
-type DemoTimelineProps = Readonly<{
-    title: string
-    children: (width: number, height: number) => React.ReactNode
-}>
-
-const DemoTimeline = ({ title, children }: DemoTimelineProps) => (
-    <div>
-        <Typography variant={'caption'}>{title}</Typography>
-        <AutoSizer>{({ width, height }: Size) => children(width, height)}</AutoSizer>
-    </div>
-)
 
 const KeyboardShortcuts = () => {
     const classes = useStyles()
