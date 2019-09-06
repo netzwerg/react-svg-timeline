@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { useRef, useState } from 'react'
+import { Cursor } from './model'
 
 type Props = Readonly<{
     width: number
     height: number
-    children: (mousePosition: SvgCoordinates) => React.ReactNode
+    children: (mousePosition: SvgCoordinates, cursor: Cursor, setCursor: (cursor: Cursor) => void) => React.ReactNode
 }>
 
 const mousePositionNone = { x: NaN, y: NaN }
@@ -14,6 +15,7 @@ export type SvgCoordinates = Readonly<{ x: number; y: number }>
 export const InteractiveSvg = ({ width, height, children }: Props) => {
     const svgRoot = useRef<SVGSVGElement>(null)
     const [mousePosition, setMousePosition] = useState<SvgCoordinates>(mousePositionNone)
+    const [cursor, setCursor] = useState<Cursor>('default')
 
     /**
      * Determines the coordinates of the mouse pointer in the coordinate system of the SVG root view port.
@@ -40,11 +42,12 @@ export const InteractiveSvg = ({ width, height, children }: Props) => {
             width={width}
             height={height}
             ref={svgRoot}
+            cursor={cursor}
             onMouseEnter={updateMouse}
             onMouseMove={updateMouse}
             onMouseLeave={resetMouse}
         >
-            {children(mousePosition)}
+            {children(mousePosition, cursor, setCursor)}
         </svg>
     )
 }

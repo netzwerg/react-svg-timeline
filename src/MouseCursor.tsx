@@ -5,6 +5,7 @@ import { ZoomScale } from './ZoomScale'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { orange } from '@material-ui/core/colors'
 import { noOp } from './shared'
+import { Cursor } from './model'
 
 const useStyles = makeStyles((theme: Theme) => ({
     cursor: {
@@ -35,6 +36,8 @@ type Mode = None | Panning | RubberBand
 type Props = Readonly<{
     mousePosition: number
     cursorLabel: string
+    cursor: Cursor
+    setCursor: (cursor: Cursor) => void
     zoomRangeStart: number
     zoomRangeEnd: number
     zoomScale: ZoomScale
@@ -50,6 +53,8 @@ type Props = Readonly<{
 export const MouseCursor = ({
     mousePosition,
     cursorLabel,
+    cursor,
+    setCursor,
     zoomRangeStart,
     zoomRangeEnd,
     zoomScale,
@@ -62,7 +67,6 @@ export const MouseCursor = ({
     onPan
 }: Props) => {
     const [isAltKeyDown, setAltKeyDown] = useState(false)
-    const [zoomCursor, setZoomCursor] = useState()
     const [mode, setMode] = useState<Mode>(none)
 
     // detect alt-key presses (SVGs are not input components, listeners must be added to the DOM window instead)
@@ -85,10 +89,19 @@ export const MouseCursor = ({
     })
 
     useEffect(() => {
-        const getZoomOutCursor = () => (isZoomOutPossible ? 'zoom-out' : 'default')
-        const getZoomInCursor = () => (isZoomInPossible ? 'zoom-in' : 'default')
-        setZoomCursor(isAltKeyDown ? getZoomOutCursor() : getZoomInCursor())
-    }, [isAltKeyDown, isZoomInPossible, isZoomOutPossible])
+        switch (mode.type) {
+            case 'panning':
+                setCursor('grab')
+                return
+            case 'rubber band':
+                setCursor('ew-resize')
+                return
+            default:
+                const getZoomOutCursor = () => (isZoomOutPossible ? 'zoom-out' : 'default')
+                const getZoomInCursor = () => (isZoomInPossible ? 'zoom-in' : 'default')
+                setCursor(isAltKeyDown ? getZoomOutCursor() : getZoomInCursor())
+        }
+    }, [isAltKeyDown, isZoomInPossible, isZoomOutPossible, mode])
 
     if (isNaN(mousePosition)) {
         return <g />
@@ -141,7 +154,7 @@ export const MouseCursor = ({
                     return (
                         <ZoomCursor
                             mousePosition={mousePosition}
-                            cursor={zoomCursor}
+                            cursor={cursor}
                             cursorLabel={cursorLabel}
                             zoomScale={zoomScale}
                             isZoomInPossible={isZoomInPossible}
@@ -168,7 +181,7 @@ export const MouseCursor = ({
 
 type ZoomCursorProps = Readonly<{
     mousePosition: number
-    cursor: string
+    cursor: Cursor
     cursorLabel: string
     zoomScale: ZoomScale
     isZoomInPossible: boolean
@@ -249,17 +262,16 @@ const RubberBandCursor = ({ start, end }: RubberBandProps) => {
     const [y1, y2] = ['0%', '100%']
     return (
         <g>
-            <line className={classes.cursor} x1={start} y1={y1} x2={start} y2={y2} cursor="ew-resize" />
+            <line className={classes.cursor} x1={start} y1={y1} x2={start} y2={y2} />
             {end && (
                 <g>
-                    <line className={classes.cursor} x1={end} y1={y1} x2={end} y2={y2} cursor="ew-resize" />
+                    <line className={classes.cursor} x1={end} y1={y1} x2={end} y2={y2} />
                     <rect
                         className={classes.zoomRange}
                         x={Math.min(start, end)}
                         y={y1}
                         width={Math.abs(end - start)}
                         height={y2}
-                        cursor="ew-resize"
                     />
                 </g>
             )}

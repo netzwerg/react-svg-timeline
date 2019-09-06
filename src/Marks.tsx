@@ -131,6 +131,7 @@ const InteractiveGroup = ({
     return (
         <g
             pointerEvents={'bounding-box'}
+            cursor={'default'}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             onClick={onMouseClick}

@@ -102,7 +102,7 @@ export const Timeline = ({
 
         return (
             <InteractiveSvg width={width} height={height}>
-                {(mousePosition: SvgCoordinates) => {
+                {(mousePosition: SvgCoordinates, cursor, setCursor) => {
                     const timeScalePadding = 50
                     const timeScale = scaleLinear()
                         .domain(domain)
@@ -155,6 +155,8 @@ export const Timeline = ({
                         <MouseCursor
                             mousePosition={mousePosition.x}
                             cursorLabel={dateFormat(timeAtCursor)}
+                            cursor={cursor}
+                            setCursor={setCursor}
                             zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)}
                             zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)}
                             zoomScale={smallerZoomScale}

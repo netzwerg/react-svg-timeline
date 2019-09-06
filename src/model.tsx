@@ -34,3 +34,5 @@ export type EventComponentFactory = (
     timeScale: (ms: number) => number,
     y: number
 ) => React.ReactNode
+
+export type Cursor = 'default' | 'zoom-out' | 'zoom-in' | 'ew-resize' | 'grab'
