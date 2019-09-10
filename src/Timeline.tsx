@@ -4,10 +4,11 @@ import { List as ImmutableList } from 'immutable'
 import { Domain, EventComponentFactory, TimelineEvent, TimelineEventId, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
-import { InteractiveSvg, SvgCoordinates } from './InteractiveSvg'
+import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
 import { GridLines } from './GridLines'
 import { ExpandedMarks } from './ExpandedMarks'
+import { InteractionHandling } from './InteractionHandling'
 
 export type TimelineProps = Readonly<{
     width: number
@@ -99,10 +100,11 @@ export const Timeline = ({
 
         const isZoomInPossible = smallerZoomScale !== 'minimum'
         const isZoomOutPossible = biggerZoomScale !== 'maximum' && currentDomainWidth < maxDomainWidth
+        const isAnimationInProgress = animation !== 'none'
 
         return (
-            <InteractiveSvg width={width} height={height}>
-                {(mousePosition: SvgCoordinates, cursor, setCursor) => {
+            <MouseAwareSvg width={width} height={height}>
+                {(mousePosition: SvgCoordinates) => {
                     const timeScalePadding = 50
                     const timeScale = scaleLinear()
                         .domain(domain)
@@ -114,7 +116,7 @@ export const Timeline = ({
                         setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
 
                     const updateDomain = (zoomScale: ZoomScale) => () => {
-                        if (animation === 'none') {
+                        if (!isAnimationInProgress) {
                             const newZoomWidth = zoomScaleWidth(zoomScale)
                             const newMin = Math.max(maxDomainStart, timeAtCursor - newZoomWidth / 2)
                             const newMax = Math.min(maxDomainEnd, timeAtCursor + newZoomWidth / 2)
@@ -126,7 +128,7 @@ export const Timeline = ({
                     const onZoomOut = updateDomain(biggerZoomScale)
 
                     const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
-                        if (animation === 'none') {
+                        if (!isAnimationInProgress) {
                             const newMin = timeScale.invert(mouseStartX)
                             const newMax = timeScale.invert(mouseEndX)
                             setDomainAnimated([newMin, newMax])
@@ -134,13 +136,13 @@ export const Timeline = ({
                     }
 
                     const onZoomReset = () => {
-                        if (animation === 'none') {
+                        if (!isAnimationInProgress) {
                             setDomainAnimated([maxDomainStart, maxDomainEnd])
                         }
                     }
 
                     const onPan = (pixelDelta: number) => {
-                        if (animation === 'none') {
+                        if (!isAnimationInProgress) {
                             const [domainMin, domainMax] = domain
                             const [rangeMin, rangeMax] = timeScale.range()
                             const domainDelta = (pixelDelta / (rangeMax - rangeMin)) * (domainMax - domainMin)
@@ -151,45 +153,55 @@ export const Timeline = ({
                         }
                     }
 
-                    const mouseCursor = isNoEventSelected ? (
-                        <MouseCursor
-                            mousePosition={mousePosition.x}
-                            cursorLabel={dateFormat(timeAtCursor)}
-                            cursor={cursor}
-                            setCursor={setCursor}
-                            zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)}
-                            zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)}
-                            zoomScale={smallerZoomScale}
+                    return (
+                        <InteractionHandling
+                            mousePosition={mousePosition}
+                            isAnimationInProgress={isAnimationInProgress}
                             isZoomInPossible={isZoomInPossible}
                             isZoomOutPossible={isZoomOutPossible}
                             onZoomIn={onZoomIn}
-                            onZoomInCustom={onZoomInCustom}
                             onZoomOut={onZoomOut}
+                            onZoomInCustom={onZoomInCustom}
                             onZoomReset={onZoomReset}
                             onPan={onPan}
-                        />
-                    ) : (
-                        <g />
-                    )
+                        >
+                            {(cursor, interactionMode) => {
+                                const mouseCursor = isNoEventSelected ? (
+                                    <MouseCursor
+                                        mousePosition={mousePosition.x}
+                                        cursorLabel={dateFormat(timeAtCursor)}
+                                        cursor={cursor}
+                                        interactionMode={interactionMode}
+                                        zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)}
+                                        zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)}
+                                        zoomScale={smallerZoomScale}
+                                        isZoomInPossible={isZoomInPossible}
+                                    />
+                                ) : (
+                                    <g />
+                                )
 
-                    return (
-                        <g>
-                            <GridLines height={height} domain={domain} timeScale={timeScale} />
-                            <ExpandedMarks
-                                mouseCursor={mouseCursor}
-                                events={events}
-                                lanes={lanes}
-                                timeScale={timeScale}
-                                height={height}
-                                eventComponent={eventComponent}
-                                onEventHover={onEventHover}
-                                onEventUnhover={onEventUnhover}
-                                onEventClick={onEventClick}
-                            />
-                        </g>
+                                return (
+                                    <g>
+                                        <GridLines height={height} domain={domain} timeScale={timeScale} />
+                                        <ExpandedMarks
+                                            mouseCursor={mouseCursor}
+                                            events={events}
+                                            lanes={lanes}
+                                            timeScale={timeScale}
+                                            height={height}
+                                            eventComponent={eventComponent}
+                                            onEventHover={onEventHover}
+                                            onEventUnhover={onEventUnhover}
+                                            onEventClick={onEventClick}
+                                        />
+                                    </g>
+                                )
+                            }}
+                        </InteractionHandling>
                     )
                 }}
-            </InteractiveSvg>
+            </MouseAwareSvg>
         )
     }
 }

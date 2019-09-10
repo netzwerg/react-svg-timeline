@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
 import { Theme } from '@material-ui/core'
 import { ZoomScale } from './ZoomScale'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { orange } from '@material-ui/core/colors'
-import { noOp } from './shared'
 import { Cursor } from './model'
+import { InteractionMode } from './InteractionHandling'
 
 const useStyles = makeStyles((theme: Theme) => ({
     cursor: {
@@ -25,129 +24,42 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-type None = Readonly<{ type: 'none' }>
-const none: None = { type: 'none' }
-type Anchored = Readonly<{ variant: 'anchored'; anchorX: number }>
-type InProgress = Readonly<{ variant: 'in progress'; anchorX: number; currentX: number }>
-type Panning = Anchored & Readonly<{ type: 'panning' }>
-type RubberBand = Anchored & Readonly<{ type: 'rubber band' }> | InProgress & Readonly<{ type: 'rubber band' }>
-type Mode = None | Panning | RubberBand
-
 type Props = Readonly<{
     mousePosition: number
     cursorLabel: string
     cursor: Cursor
-    setCursor: (cursor: Cursor) => void
+    interactionMode: InteractionMode
     zoomRangeStart: number
     zoomRangeEnd: number
     zoomScale: ZoomScale
     isZoomInPossible: boolean
-    isZoomOutPossible: boolean
-    onZoomIn: () => void
-    onZoomInCustom: (mouseStartX: number, mouseEndX: number) => void
-    onZoomOut: () => void
-    onZoomReset: () => void
-    onPan: (pixelDelta: number) => void
 }>
 
 export const MouseCursor = ({
     mousePosition,
     cursorLabel,
     cursor,
-    setCursor,
+    interactionMode,
     zoomRangeStart,
     zoomRangeEnd,
     zoomScale,
-    isZoomInPossible,
-    isZoomOutPossible,
-    onZoomIn,
-    onZoomInCustom,
-    onZoomOut,
-    onZoomReset,
-    onPan
+    isZoomInPossible
 }: Props) => {
-    const [isAltKeyDown, setAltKeyDown] = useState(false)
-    const [mode, setMode] = useState<Mode>(none)
-
-    // detect alt-key presses (SVGs are not input components, listeners must be added to the DOM window instead)
-    useEffect(() => {
-        const onKeyChange = (e: KeyboardEvent) => {
-            setAltKeyDown(e.altKey)
-            if (e.key === 'Escape') {
-                onZoomReset()
-            }
-        }
-
-        window.addEventListener('keydown', onKeyChange)
-        window.addEventListener('keyup', onKeyChange)
-
-        // will be called on component unmount
-        return () => {
-            window.removeEventListener('keydown', onKeyChange)
-            window.removeEventListener('keyup', onKeyChange)
-        }
-    })
-
-    useEffect(() => {
-        switch (mode.type) {
-            case 'panning':
-                setCursor('grab')
-                return
-            case 'rubber band':
-                setCursor('ew-resize')
-                return
-            default:
-                const getZoomOutCursor = () => (isZoomOutPossible ? 'zoom-out' : 'default')
-                const getZoomInCursor = () => (isZoomInPossible ? 'zoom-in' : 'default')
-                setCursor(isAltKeyDown ? getZoomOutCursor() : getZoomInCursor())
-        }
-    }, [isAltKeyDown, isZoomInPossible, isZoomOutPossible, mode])
-
     if (isNaN(mousePosition)) {
         return <g />
     } else {
-        const onMouseDown = (e: React.MouseEvent) => {
-            const anchored: Anchored = { variant: 'anchored', anchorX: mousePosition }
-            if (e.shiftKey) {
-                setMode({ type: 'rubber band', ...anchored })
-            } else {
-                setMode({ type: 'panning', ...anchored })
-            }
-        }
-
-        const onMouseMove = (e: React.MouseEvent) => {
-            if (mode.type === 'panning') {
-                onPan(-e.movementX)
-            }
-            if (mode.type === 'rubber band') {
-                const inProgress: Mode = { ...mode, variant: 'in progress', currentX: mousePosition }
-                setMode(inProgress)
-            }
-        }
-
-        const onMouseUp = (e: React.MouseEvent) => {
-            // anything below threshold is considered a click rather than a drag
-            const isPanning = mode.type === 'panning' && Math.abs(mode.anchorX - mousePosition) < 5
-            const isZoom = e.button === 0 && (mode.type === 'none' || isPanning)
-
-            if (mode.type === 'rubber band') {
-                const min = Math.min(mode.anchorX, mousePosition)
-                const max = Math.max(mode.anchorX, mousePosition)
-                onZoomInCustom(min, max)
-            } else if (isZoom) {
-                e.altKey ? onZoomOut() : isZoomInPossible ? onZoomIn() : noOp()
-            }
-
-            setMode(none)
-        }
-
         const cursorComponent = () => {
-            switch (mode.type) {
+            switch (interactionMode.type) {
+                case 'animation in progress': {
+                    return <g />
+                }
                 case 'panning':
                     return <PanningCursor mousePosition={mousePosition} />
                 case 'rubber band': {
                     const [start, end] =
-                        mode.variant === 'anchored' ? [mode.anchorX, undefined] : [mode.anchorX, mode.currentX]
+                        interactionMode.variant === 'anchored'
+                            ? [interactionMode.anchorX, undefined]
+                            : [interactionMode.anchorX, interactionMode.currentX]
                     return <RubberBandCursor start={start} end={end} />
                 }
                 default:
@@ -166,7 +78,7 @@ export const MouseCursor = ({
         }
 
         return (
-            <g onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+            <g>
                 {/* covering complete area prevents flickering cursor and asserts that mouse events are caught */}
                 <rect x={0} y={0} width={'100%'} height={'100%'} fill={'transparent'} />
                 {cursorComponent()}
