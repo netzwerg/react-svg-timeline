@@ -68,14 +68,14 @@ export const Marks = (props: Props) => {
     ) => {
         if (role === 'background') {
             // opaque background to prevent axis-/grid-lines from shining through
-            return <EventMark e={e} className={classes.eventBackground} {...props} />
+            return <DefaultEventMark e={e} className={classes.eventBackground} {...props} />
         } else if (e.isSelected) {
-            return <EventMark e={e} className={classes.selectedEvent} {...props} />
+            return <DefaultEventMark e={e} className={classes.selectedEvent} {...props} />
         } else {
             if (e.endTimeMillis) {
-                return <EventMark e={e} className={classes.eventRect} {...props} />
+                return <DefaultEventMark e={e} className={classes.eventRect} {...props} />
             } else {
-                return <EventMark e={e} className={classes.eventCircle} {...props} />
+                return <DefaultEventMark e={e} className={classes.eventCircle} {...props} />
             }
         }
     }
@@ -85,48 +85,60 @@ export const Marks = (props: Props) => {
     return (
         <g>
             {events.map((e: TimelineEvent) => (
-                <InteractiveGroup key={e.eventId} eventId={e.eventId} {...props}>
+                <InteractiveEventMark key={e.eventId} event={e} {...props}>
                     {eventComponentFactory(e, 'background', timeScale, y)}
-                </InteractiveGroup>
+                </InteractiveEventMark>
             ))}
             {events
                 .filter(e => !e.isSelected)
                 .sort(sortByEventDuration)
                 .map((e: TimelineEvent) => (
-                    <InteractiveGroup key={e.eventId} eventId={e.eventId} {...props}>
+                    <InteractiveEventMark key={e.eventId} event={e} {...props}>
                         {eventComponentFactory(e, 'foreground', timeScale, y)}
-                    </InteractiveGroup>
+                    </InteractiveEventMark>
                 ))}
             {events
                 .filter(e => e.isSelected)
                 .sort(sortByEventDuration)
                 .map((e: TimelineEvent) => (
-                    <InteractiveGroup key={e.eventId} eventId={e.eventId} {...props}>
+                    <InteractiveEventMark key={e.eventId} event={e} {...props}>
                         {eventComponentFactory(e, 'foreground', timeScale, y)}
-                    </InteractiveGroup>
+                    </InteractiveEventMark>
                 ))}
         </g>
     )
 }
 
 type InteractiveGroupProps = Readonly<{
-    eventId: TimelineEventId
+    event: TimelineEvent
+    timeScale: ScaleLinear<number, number>
+    y: number
     onEventHover?: (eventId: TimelineEventId) => void
     onEventUnhover?: (eventId: TimelineEventId) => void
     onEventClick?: (eventId: TimelineEventId) => void
     children: React.ReactNode
 }>
 
-const InteractiveGroup = ({
-    eventId,
+const InteractiveEventMark = ({
+    event,
+    y,
+    timeScale,
     onEventClick = noOp,
     onEventHover = noOp,
     onEventUnhover = noOp,
     children
 }: InteractiveGroupProps) => {
+    const eventId = event.eventId
+
     const onMouseEnter = () => onEventHover(eventId)
     const onMouseLeave = () => onEventUnhover(eventId)
     const onMouseClick = () => onEventClick(eventId)
+
+    const startX = timeScale(event.startTimeMillis)
+    const parentWidth = timeScale.range()[1]
+    const tooltipType = event.endTimeMillis ? 'period' : { singleEventX: startX }
+
+    const triggerRef = useRef<SVGGElement>(null)
 
     return (
         <g
@@ -136,71 +148,57 @@ const InteractiveGroup = ({
             onMouseLeave={onMouseLeave}
             onClick={onMouseClick}
         >
-            {children}
+            <g ref={triggerRef}>{children}</g>
+            {event.tooltip ? (
+                <EventTooltip
+                    type={tooltipType}
+                    y={y}
+                    parentWidth={parentWidth}
+                    triggerRef={triggerRef}
+                    text={event.tooltip}
+                />
+            ) : (
+                <g />
+            )}
         </g>
     )
 }
 
-type EventMarkProps = Readonly<{
+type DefaultEventMarkProps = Readonly<{
     e: TimelineEvent
     className: string
     eventMarkerHeight?: number
 }> &
     Pick<Props, Exclude<keyof Props, 'events'>>
 
-const EventMark = ({ e, eventMarkerHeight = 20, className, y, timeScale }: EventMarkProps) => {
+const DefaultEventMark = ({ e, eventMarkerHeight = 20, className, y, timeScale }: DefaultEventMarkProps) => {
     const theme: Theme = useTheme()
-    const circleRef = useRef<SVGCircleElement>(null)
-    const rectRef = useRef<SVGRectElement>(null)
     const startX = timeScale(e.startTimeMillis)
-    const parentWidth = timeScale.range()[1]
     const strokeColor = e.isPinned ? (theme.palette.type === defaultDarkGrey ? 'white' : 'black') : undefined
     if (e.endTimeMillis === undefined) {
         return (
-            <g>
-                <circle
-                    ref={circleRef}
-                    cx={startX}
-                    cy={y}
-                    r={eventMarkerHeight / 2}
-                    className={className}
-                    fill={e.color || defaultEventColor}
-                    style={{ stroke: strokeColor }}
-                />
-                {e.tooltip ? (
-                    <EventTooltip
-                        type={{ singleEventX: startX }}
-                        y={y}
-                        parentWidth={parentWidth}
-                        triggerRef={circleRef}
-                        text={e.tooltip}
-                    />
-                ) : (
-                    <g />
-                )}
-            </g>
+            <circle
+                cx={startX}
+                cy={y}
+                r={eventMarkerHeight / 2}
+                className={className}
+                fill={e.color || defaultEventColor}
+                style={{ stroke: strokeColor }}
+            />
         )
     } else {
         const endX = timeScale(e.endTimeMillis)
         const width = endX - startX
         return (
-            <g>
-                <rect
-                    ref={rectRef}
-                    x={startX}
-                    y={y - eventMarkerHeight / 2}
-                    width={width}
-                    height={eventMarkerHeight}
-                    className={className}
-                    fill={e.color || defaultEventColor}
-                    style={{ stroke: strokeColor }}
-                />
-                {e.tooltip ? (
-                    <EventTooltip type="period" y={y} parentWidth={parentWidth} triggerRef={rectRef} text={e.tooltip} />
-                ) : (
-                    <g />
-                )}
-            </g>
+            <rect
+                x={startX}
+                y={y - eventMarkerHeight / 2}
+                width={width}
+                height={eventMarkerHeight}
+                className={className}
+                fill={e.color || defaultEventColor}
+                style={{ stroke: strokeColor }}
+            />
         )
     }
 }
