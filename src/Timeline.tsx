@@ -99,7 +99,7 @@ export const Timeline = ({
         const maxDomainWidth = maxDomainEnd - maxDomainStart
 
         const isZoomInPossible = smallerZoomScale !== 'minimum'
-        const isZoomOutPossible = biggerZoomScale !== 'maximum' && currentDomainWidth < maxDomainWidth
+        const isZoomOutPossible = currentDomainWidth < maxDomainWidth
         const isAnimationInProgress = animation !== 'none'
 
         return (
