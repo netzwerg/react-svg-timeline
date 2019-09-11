@@ -3,6 +3,7 @@ import * as React from 'react'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import cn from 'classnames'
+import { TimelineEventId, TimelineLaneId } from './model'
 
 const backgroundColor = 'white'
 const foregroundColor = 'rgb(233, 30, 99, 0.5)'
@@ -29,7 +30,7 @@ const useStyles = makeStyles({
     }
 })
 
-export const CustomizedTimeline = (props: TimelineProps) => {
+export const CustomizedTimeline = (props: TimelineProps<TimelineEventId, TimelineLaneId>) => {
     const classes = useStyles()
 
     // Often, it is useful to draw events semi-transparently, such that 'event accumulations' become visible

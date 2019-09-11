@@ -3,7 +3,7 @@ import { Marks } from './Marks'
 import { List as ImmutableList } from 'immutable'
 import { scaleBand, ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { EventComponentFactory, TimelineEvent, TimelineEventId, TimelineLane } from './model'
+import { EventComponentFactory, TimelineEvent, TimelineLane } from './model'
 import { Axis } from './Axis'
 import { defaultLaneColor } from './shared'
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -16,20 +16,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-type Props = Readonly<{
+type Props<EID, LID> = Readonly<{
     mouseCursor: React.ReactNode
     height: number
-    events: ImmutableList<TimelineEvent>
+    events: ImmutableList<TimelineEvent<EID, LID>>
     timeScale: ScaleLinear<number, number>
     eventMarkerHeight?: number
-    lanes: ImmutableList<TimelineLane>
-    eventComponent?: EventComponentFactory
-    onEventHover?: (eventId: TimelineEventId) => void
-    onEventUnhover?: (eventId: TimelineEventId) => void
-    onEventClick?: (eventId: TimelineEventId) => void
+    lanes: ImmutableList<TimelineLane<LID>>
+    eventComponent?: EventComponentFactory<EID, LID>
+    onEventHover?: (eventId: EID) => void
+    onEventUnhover?: (eventId: EID) => void
+    onEventClick?: (eventId: EID) => void
 }>
 
-export const ExpandedMarks = ({
+export const ExpandedMarks = <EID extends string, LID extends string>({
     mouseCursor,
     height,
     events,
@@ -39,7 +39,7 @@ export const ExpandedMarks = ({
     onEventHover,
     onEventUnhover,
     onEventClick
-}: Props) => {
+}: Props<EID, LID>) => {
     const classes = useStyles()
 
     const yScale = scaleBand()
@@ -51,7 +51,7 @@ export const ExpandedMarks = ({
     const fontSize = 0.8 * yScale.bandwidth()
 
     const axes = lanes
-        .map((lane: TimelineLane) => {
+        .map((lane: TimelineLane<LID>) => {
             const labelXOffset = 10
             const labelYOffset = -0.15 * yScale.bandwidth()
             const y = yScale(lane.laneId)!
@@ -73,7 +73,7 @@ export const ExpandedMarks = ({
         .valueSeq()
 
     const marks = lanes
-        .map((lane: TimelineLane) => {
+        .map((lane: TimelineLane<LID>) => {
             const laneSpecificEvents = events.filter(e => e.laneId === lane.laneId).toList()
             return (
                 <g key={`marks-${lane.laneId}`}>

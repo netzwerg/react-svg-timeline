@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { List as ImmutableList } from 'immutable'
-import { Domain, EventComponentFactory, TimelineEvent, TimelineEventId, TimelineLane } from './model'
+import { Domain, EventComponentFactory, TimelineEvent, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
@@ -11,16 +11,16 @@ import { ExpandedMarks } from './ExpandedMarks'
 import { InteractionHandling } from './InteractionHandling'
 import { noOp } from './shared'
 
-export type TimelineProps = Readonly<{
+export type TimelineProps<EID, LID> = Readonly<{
     width: number
     height: number
-    events: ImmutableList<TimelineEvent>
-    lanes: ImmutableList<TimelineLane>
+    events: ImmutableList<TimelineEvent<EID, LID>>
+    lanes: ImmutableList<TimelineLane<LID>>
     dateFormat: (ms: number) => string
-    eventComponent?: EventComponentFactory
-    onEventHover?: (eventId: TimelineEventId) => void
-    onEventUnhover?: (eventId: TimelineEventId) => void
-    onEventClick?: (eventId: TimelineEventId) => void
+    eventComponent?: EventComponentFactory<EID, LID>
+    onEventHover?: (eventId: EID) => void
+    onEventUnhover?: (eventId: EID) => void
+    onEventClick?: (eventId: EID) => void
 }>
 
 type Animation =
@@ -31,7 +31,7 @@ type Animation =
           toDomain: Domain
       }>
 
-export const calcMaxDomain = (events: ImmutableList<TimelineEvent>): Domain => {
+export const calcMaxDomain = <EID, LID>(events: ImmutableList<TimelineEvent<EID, LID>>): Domain => {
     const timeMin = events.map(e => e.startTimeMillis).min()
     const timeMax = events.map(e => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)).max()
     return [timeMin || NaN, timeMax || NaN]
@@ -39,7 +39,7 @@ export const calcMaxDomain = (events: ImmutableList<TimelineEvent>): Domain => {
 
 const animationDuration = 1000
 
-export const Timeline = ({
+export const Timeline = <EID extends string, LID extends string>({
     width,
     height,
     events,
@@ -49,7 +49,7 @@ export const Timeline = ({
     onEventHover = noOp,
     onEventUnhover = noOp,
     onEventClick
-}: TimelineProps) => {
+}: TimelineProps<EID, LID>) => {
     {
         const maxDomain = calcMaxDomain(events)
         const maxDomainStart = maxDomain[0]
@@ -157,12 +157,12 @@ export const Timeline = ({
                         }
                     }
 
-                    const onEventHoverDecorated = (eventId: TimelineEventId) => {
+                    const onEventHoverDecorated = (eventId: EID) => {
                         setIsMouseOverEvent(true)
                         onEventHover(eventId)
                     }
 
-                    const onEventUnhoverDecorated = (eventId: TimelineEventId) => {
+                    const onEventUnhoverDecorated = (eventId: EID) => {
                         setIsMouseOverEvent(false)
                         onEventUnhover(eventId)
                     }

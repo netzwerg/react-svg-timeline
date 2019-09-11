@@ -5,12 +5,13 @@ import { useState } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { List as ImmutableList, Set as ImmutableSet } from 'immutable'
-import { TimelineEvent, TimelineEventId, TimelineLane, TimelineProps } from '../../src'
+import { TimelineProps } from '../../dist'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { CustomizedTimeline } from './CustomizedTimeline'
+import { ExampleEvent, ExampleLane, TimelineEventId, TimelineLaneId } from './model'
 
 const useStyles = makeStyles({
     root: {
@@ -30,18 +31,18 @@ const useStyles = makeStyles({
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
-const lanes: ImmutableList<TimelineLane> = ImmutableList(data.lanes)
-const rawEvents: ImmutableList<TimelineEvent> = ImmutableList(data.events)
+const lanes: ImmutableList<ExampleLane> = ImmutableList(data.lanes)
+const rawEvents: ImmutableList<ExampleEvent> = ImmutableList(data.events)
 
-const eventTooltip = (e: TimelineEvent) =>
+const eventTooltip = (e: ExampleEvent) =>
     e.endTimeMillis
         ? `${dateFormat(e.startTimeMillis)} - ${dateFormat(e.endTimeMillis)}`
         : dateFormat(e.startTimeMillis)
 
 export const App = () => {
     const classes = useStyles()
-    const defaultTimeline = (props: TimelineProps) => <Timeline {...props} />
-    const customizedTimeline = (props: TimelineProps) => <CustomizedTimeline {...props} />
+    const defaultTimeline = props => <Timeline {...props} />
+    const customizedTimeline = props => <CustomizedTimeline {...props} />
     return (
         <div className={classes.root}>
             <Typography variant={'h2'}>react-svg-timeline</Typography>
@@ -54,14 +55,14 @@ export const App = () => {
 
 type DemoTimelineProps = Readonly<{
     title: string
-    rawEvents: ImmutableList<TimelineEvent>
-    timelineComponent: (props: TimelineProps) => React.ReactNode
+    rawEvents: ImmutableList<ExampleEvent>
+    timelineComponent: (props: TimelineProps<TimelineEventId, TimelineLaneId>) => React.ReactNode
 }>
 
 const DemoTimeline = ({ title, rawEvents, timelineComponent }: DemoTimelineProps) => {
     const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
     const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
-    const events = rawEvents.map((e: TimelineEvent) => ({
+    const events = rawEvents.map((e: ExampleEvent) => ({
         ...e,
         tooltip: eventTooltip(e),
         isSelected: selectedEvents.contains(e.eventId),
@@ -80,7 +81,7 @@ const DemoTimeline = ({ title, rawEvents, timelineComponent }: DemoTimelineProps
             <Typography variant={'caption'}>{title}</Typography>
             <AutoSizer>
                 {({ width, height }: Size) => {
-                    const timelineProps: TimelineProps = {
+                    const timelineProps = {
                         width,
                         height,
                         dateFormat,

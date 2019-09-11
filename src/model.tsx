@@ -1,26 +1,18 @@
 import * as React from 'react'
 
-enum TimelineEventIdBrand {}
-
-export type TimelineEventId = { __brand: TimelineEventIdBrand } & string
-
-export type TimelineEvent = Readonly<{
-    eventId: TimelineEventId
+export type TimelineEvent<EID, LID> = Readonly<{
+    eventId: EID
     startTimeMillis: number
     endTimeMillis?: number
-    laneId: TimelineLaneId
+    laneId: LID
     color?: string
     tooltip?: string
     isSelected?: boolean
     isPinned?: boolean
 }>
 
-enum TimelineLaneIdBrand {}
-
-export type TimelineLaneId = { __brand: TimelineLaneIdBrand } & string
-
-export type TimelineLane = Readonly<{
-    laneId: TimelineLaneId
+export type TimelineLane<LID> = Readonly<{
+    laneId: LID
     label: string
     color?: string
 }>
@@ -28,8 +20,8 @@ export type TimelineLane = Readonly<{
 export type Domain = [number, number]
 
 export type EventComponentRole = 'background' | 'foreground'
-export type EventComponentFactory = (
-    event: TimelineEvent,
+export type EventComponentFactory<EID, LID> = (
+    event: TimelineEvent<EID, LID>,
     role: EventComponentRole,
     timeScale: (ms: number) => number,
     y: number
