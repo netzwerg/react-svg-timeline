@@ -9,6 +9,7 @@ import { MouseCursor } from './MouseCursor'
 import { GridLines } from './GridLines'
 import { ExpandedMarks } from './ExpandedMarks'
 import { InteractionHandling } from './InteractionHandling'
+import { noOp } from './shared'
 
 export type TimelineProps = Readonly<{
     width: number
@@ -45,8 +46,8 @@ export const Timeline = ({
     lanes,
     dateFormat,
     eventComponent,
-    onEventHover,
-    onEventUnhover,
+    onEventHover = noOp,
+    onEventUnhover = noOp,
     onEventClick
 }: TimelineProps) => {
     {
@@ -56,6 +57,8 @@ export const Timeline = ({
 
         const [domain, setDomain] = useState<Domain>(maxDomain)
         const [animation, setAnimation] = useState<Animation>('none')
+        const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
+
         const now = Date.now()
 
         useEffect(() => {
@@ -101,6 +104,7 @@ export const Timeline = ({
         const isZoomInPossible = smallerZoomScale !== 'minimum'
         const isZoomOutPossible = currentDomainWidth < maxDomainWidth
         const isAnimationInProgress = animation !== 'none'
+        const isDomainChangePossible = !isAnimationInProgress && !isMouseOverEvent
 
         return (
             <MouseAwareSvg width={width} height={height}>
@@ -116,7 +120,7 @@ export const Timeline = ({
                         setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
 
                     const updateDomain = (zoomScale: ZoomScale) => () => {
-                        if (!isAnimationInProgress) {
+                        if (isDomainChangePossible) {
                             const newZoomWidth = zoomScaleWidth(zoomScale)
                             const newMin = Math.max(maxDomainStart, timeAtCursor - newZoomWidth / 2)
                             const newMax = Math.min(maxDomainEnd, timeAtCursor + newZoomWidth / 2)
@@ -128,7 +132,7 @@ export const Timeline = ({
                     const onZoomOut = updateDomain(biggerZoomScale)
 
                     const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
-                        if (!isAnimationInProgress) {
+                        if (isDomainChangePossible) {
                             const newMin = timeScale.invert(mouseStartX)
                             const newMax = timeScale.invert(mouseEndX)
                             setDomainAnimated([newMin, newMax])
@@ -136,13 +140,13 @@ export const Timeline = ({
                     }
 
                     const onZoomReset = () => {
-                        if (!isAnimationInProgress) {
+                        if (isDomainChangePossible) {
                             setDomainAnimated([maxDomainStart, maxDomainEnd])
                         }
                     }
 
                     const onPan = (pixelDelta: number) => {
-                        if (!isAnimationInProgress) {
+                        if (isDomainChangePossible) {
                             const [domainMin, domainMax] = domain
                             const [rangeMin, rangeMax] = timeScale.range()
                             const domainDelta = (pixelDelta / (rangeMax - rangeMin)) * (domainMax - domainMin)
@@ -151,6 +155,16 @@ export const Timeline = ({
                                 setDomain([newDomainMin, newDomainMax])
                             }
                         }
+                    }
+
+                    const onEventHoverDecorated = (eventId: TimelineEventId) => {
+                        setIsMouseOverEvent(true)
+                        onEventHover(eventId)
+                    }
+
+                    const onEventUnhoverDecorated = (eventId: TimelineEventId) => {
+                        setIsMouseOverEvent(false)
+                        onEventUnhover(eventId)
                     }
 
                     return (
@@ -191,8 +205,8 @@ export const Timeline = ({
                                             timeScale={timeScale}
                                             height={height}
                                             eventComponent={eventComponent}
-                                            onEventHover={onEventHover}
-                                            onEventUnhover={onEventUnhover}
+                                            onEventHover={onEventHoverDecorated}
+                                            onEventUnhover={onEventUnhoverDecorated}
                                             onEventClick={onEventClick}
                                         />
                                     </g>
