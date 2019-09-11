@@ -1,3 +1,3 @@
 [build]
-  command = "yarn build && cd example && yarn build"
+  command = "yarn && yarn build && cd example && yarn && yarn build"
   publish = "example/dist"
