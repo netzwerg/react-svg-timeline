@@ -2,7 +2,31 @@
 
 A React event timeline component based on SVG.
 
-WORK IN PROGRESS – DON'T USE JUST YET :)
+-   Event Points & Periods
+-   Event Tooltips
+-   Event Lanes
+-   Semantic Zoom (10 Years, 1 Year, 1 Week, 1 Day, etc)
+-   Custom "rubber band" Zoom
+-   Panning
+
+✨ [Interactive Demo](https://react-svg-timeline.netlify.com/) ✨
+
+## Installation
+
+`yarn install react-svg-timeline`
+
+or
+
+`npm install react-svg-timeline`
+
+Note that the following peer dependencies must already be installed:
+
+-   `react` and `react-dom` in version >=16.3
+-   `@material-ui/core` in version >=4.3
+
+## Usage
+
+Please check the [example](example) folder.
 
 ## Acknowledgements
 
