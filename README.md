@@ -30,7 +30,10 @@ Please check the [example](example) folder.
 
 ## Acknowledgements
 
-Based on [TSDX](https://github.com/palmerhq/tsdx).
+Thank you:
+
+-   [TSDX](https://github.com/palmerhq/tsdx) for making TS library development easier
+-   [GitHub Corners](https://github.com/tholman/github-corners) for the callout on the example site
 
 ## License
 
