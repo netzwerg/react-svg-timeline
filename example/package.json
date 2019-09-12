@@ -16,8 +16,10 @@
     "alias": {
         "react": "../node_modules/react",
         "react-dom": "../node_modules/react-dom",
+        "d3-time-format": "../node_modules/d3-time-format",
         "@types/react": "../node_modules/@types/react",
-        "@types/react-dom": "../node_modules/@types/react-dom"
+        "@types/react-dom": "../node_modules/@types/react-dom",
+        "@types/d3-time-format": "../node_modules/@types/d3-time-format"
     },
     "devDependencies": {
         "@types/react-virtualized-auto-sizer": "^1.0.0",
