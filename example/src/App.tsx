@@ -11,7 +11,7 @@ import data from './data.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { CustomizedTimeline } from './CustomizedTimeline'
-import { ExampleEvent, ExampleLane, TimelineEventId, TimelineLaneId } from './model'
+import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
 
 const useStyles = makeStyles({
     root: {
@@ -31,8 +31,8 @@ const useStyles = makeStyles({
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
-const lanes: ImmutableList<ExampleLane> = ImmutableList(data.lanes)
-const rawEvents: ImmutableList<ExampleEvent> = ImmutableList(data.events)
+const lanes: ImmutableList<ExampleLane> = ImmutableList(data.lanes) as ImmutableList<ExampleLane>
+const rawEvents: ImmutableList<ExampleEvent> = ImmutableList(data.events) as ImmutableList<ExampleEvent>
 
 const eventTooltip = (e: ExampleEvent) =>
     e.endTimeMillis
@@ -41,8 +41,8 @@ const eventTooltip = (e: ExampleEvent) =>
 
 export const App = () => {
     const classes = useStyles()
-    const defaultTimeline = props => <Timeline {...props} />
-    const customizedTimeline = props => <CustomizedTimeline {...props} />
+    const defaultTimeline = (props: ExampleProps) => <Timeline {...props} />
+    const customizedTimeline = (props: ExampleProps) => <CustomizedTimeline {...props} />
     return (
         <div className={classes.root}>
             <Typography variant={'h2'}>react-svg-timeline</Typography>
