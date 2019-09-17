@@ -1,17 +1,16 @@
 import { timeFormat } from 'd3-time-format'
 import 'react-app-polyfill/ie11'
 import * as React from 'react'
-import { useState } from 'react'
+import { FunctionComponent, useState } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { List as ImmutableList, Set as ImmutableSet } from 'immutable'
-import { TimelineProps } from '../../dist'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { CustomizedTimeline } from './CustomizedTimeline'
-import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
+import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId } from './types'
 
 const useStyles = makeStyles({
     root: {
@@ -41,14 +40,12 @@ const eventTooltip = (e: ExampleEvent) =>
 
 export const App = () => {
     const classes = useStyles()
-    const defaultTimeline = (props: ExampleProps) => <Timeline {...props} />
-    const customizedTimeline = (props: ExampleProps) => <CustomizedTimeline {...props} />
     return (
         <div className={classes.root}>
             <Typography variant={'h2'}>react-svg-timeline</Typography>
             <KeyboardShortcuts />
-            <DemoTimeline timelineComponent={defaultTimeline} title={'Default'} rawEvents={rawEvents} />
-            <DemoTimeline timelineComponent={customizedTimeline} title={'Custom Event Marks'} rawEvents={rawEvents} />
+            <DemoTimeline timelineComponent={Timeline} title={'Default'} rawEvents={rawEvents} />
+            <DemoTimeline timelineComponent={CustomizedTimeline} title={'Custom Event Marks'} rawEvents={rawEvents} />
         </div>
     )
 }
@@ -56,7 +53,7 @@ export const App = () => {
 type DemoTimelineProps = Readonly<{
     title: string
     rawEvents: ImmutableList<ExampleEvent>
-    timelineComponent: (props: TimelineProps<TimelineEventId, TimelineLaneId>) => React.ReactNode
+    timelineComponent: FunctionComponent<ExampleProps>
 }>
 
 const DemoTimeline = ({ title, rawEvents, timelineComponent }: DemoTimelineProps) => {
@@ -91,7 +88,7 @@ const DemoTimeline = ({ title, rawEvents, timelineComponent }: DemoTimelineProps
                         onEventUnhover,
                         onEventClick
                     }
-                    return timelineComponent(timelineProps)
+                    return React.createElement(timelineComponent, timelineProps)
                 }}
             </AutoSizer>
         </div>
