@@ -61,12 +61,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
     const sortByEventDuration = (e: TimelineEvent<EID, LID>) =>
         -(e.endTimeMillis ? e.endTimeMillis - e.startTimeMillis : 0)
 
-    const defaultEventComponent = (
-        e: TimelineEvent<EID, LID>,
-        role: EventComponentRole,
-        _timeScale: (ms: number) => number,
-        _y: number
-    ) => {
+    const defaultEventComponent = (e: TimelineEvent<EID, LID>, role: EventComponentRole) => {
         if (role === 'background') {
             // opaque background to prevent axis-/grid-lines from shining through
             return <DefaultEventMark e={e} className={classes.eventBackground} {...props} />
