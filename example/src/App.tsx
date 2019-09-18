@@ -4,7 +4,7 @@ import * as React from 'react'
 import { FunctionComponent, useState } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
-import { List as ImmutableList, Set as ImmutableSet } from 'immutable'
+import { Set as ImmutableSet } from 'immutable'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
 import { Typography } from '@material-ui/core'
@@ -30,8 +30,8 @@ const useStyles = makeStyles({
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
-const lanes: ImmutableList<ExampleLane> = ImmutableList(data.lanes) as ImmutableList<ExampleLane>
-const rawEvents: ImmutableList<ExampleEvent> = ImmutableList(data.events) as ImmutableList<ExampleEvent>
+const lanes: ReadonlyArray<ExampleLane> = data.lanes
+const rawEvents: ReadonlyArray<ExampleEvent> = data.events
 
 const eventTooltip = (e: ExampleEvent) =>
     e.endTimeMillis
@@ -52,7 +52,7 @@ export const App = () => {
 
 type DemoTimelineProps = Readonly<{
     title: string
-    rawEvents: ImmutableList<ExampleEvent>
+    rawEvents: ReadonlyArray<ExampleEvent>
     timelineComponent: FunctionComponent<ExampleProps>
 }>
 

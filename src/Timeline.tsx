@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { List as ImmutableList } from 'immutable'
 import { Domain, EventComponentFactory, TimelineEvent, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
@@ -14,8 +13,8 @@ import { noOp } from './shared'
 export type TimelineProps<EID, LID> = Readonly<{
     width: number
     height: number
-    events: ImmutableList<TimelineEvent<EID, LID>>
-    lanes: ImmutableList<TimelineLane<LID>>
+    events: ReadonlyArray<TimelineEvent<EID, LID>>
+    lanes: ReadonlyArray<TimelineLane<LID>>
     dateFormat: (ms: number) => string
     eventComponent?: EventComponentFactory<EID, LID>
     onEventHover?: (eventId: EID) => void
@@ -31,9 +30,9 @@ type Animation =
           toDomain: Domain
       }>
 
-export const calcMaxDomain = <EID, LID>(events: ImmutableList<TimelineEvent<EID, LID>>): Domain => {
-    const timeMin = events.map(e => e.startTimeMillis).min()
-    const timeMax = events.map(e => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)).max()
+export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID, LID>>): Domain => {
+    const timeMin = Math.min(...events.map(e => e.startTimeMillis))
+    const timeMax = Math.max(...events.map(e => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
     return [timeMin || NaN, timeMax || NaN]
 }
 
@@ -94,7 +93,7 @@ export const Timeline = <EID extends string, LID extends string>({
             }
         }, [animation, now])
 
-        const isNoEventSelected = events.filter(e => e.isSelected).isEmpty()
+        const isNoEventSelected = events.filter(e => e.isSelected).length === 0
         const smallerZoomScale = nextSmallerZoomScale(domain)
         const biggerZoomScale = nextBiggerZoomScale(domain)
         const zoomWidth = zoomScaleWidth(smallerZoomScale)

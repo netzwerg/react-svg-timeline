@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useRef } from 'react'
 import { defaultDarkGrey, defaultEventColor, noOp, selectionColor, selectionColorOpaque } from './shared'
-import { List as ImmutableList } from 'immutable'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { EventComponentFactory, EventComponentRole, TimelineEvent } from './model'
@@ -32,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 export type Props<EID, LID> = Readonly<{
-    events: ImmutableList<TimelineEvent<EID, LID>>
+    events: ReadonlyArray<TimelineEvent<EID, LID>>
     timeScale: ScaleLinear<number, number>
     y: number
     eventMarkerHeight?: number

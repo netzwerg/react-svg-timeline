@@ -1,5 +1,5 @@
-import { Domain } from '../../../src'
-import { nextBiggerZoomScale, nextSmallerZoomScale, zoomScaleWidth } from '../../../src/ZoomScale'
+import { Domain } from '../src'
+import { nextBiggerZoomScale, nextSmallerZoomScale, zoomScaleWidth } from '../src/ZoomScale'
 
 describe('ZoomScale', () => {
     const threeDays: Domain = [0, 3 * zoomScaleWidth('1 day')]
