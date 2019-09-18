@@ -1,4 +1,3 @@
-import { List as ImmutableList } from 'immutable'
 import { Domain } from './model'
 
 export const dayDuration = 86400000
@@ -8,7 +7,7 @@ export const yearDuration = 365 * dayDuration
 
 export type ZoomScale = 'maximum' | '10 years' | '1 year' | '1 month' | '1 week' | '1 day' | 'minimum'
 
-const orderedScales: ImmutableList<ZoomScale> = ImmutableList.of('10 years', '1 year', '1 month', '1 week', '1 day')
+const orderedScales: ReadonlyArray<ZoomScale> = ['10 years', '1 year', '1 month', '1 week', '1 day']
 
 export const zoomScaleWidth = (scale: ZoomScale): number => {
     switch (scale) {
@@ -38,5 +37,5 @@ export const nextSmallerZoomScale = (currentDomain: Domain): ZoomScale => {
 
 export const nextBiggerZoomScale = (currentDomain: Domain): ZoomScale => {
     const range = (currentDomain[1] - currentDomain[0]) * 2
-    return orderedScales.reverse().find(s => zoomScaleWidth(s) > range) || 'maximum'
+    return [...orderedScales].reverse().find(s => zoomScaleWidth(s) > range) || 'maximum'
 }

@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { ScaleLinear } from 'd3-scale'
-import { Range } from 'immutable'
 import { Theme } from '@material-ui/core'
 import { monthDuration, nextSmallerZoomScale, weekDuration, yearDuration } from './ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
 import { Domain } from './model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
+import { range } from './shared'
 
 interface Props {
     height: number
@@ -64,7 +64,7 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
     const endYear = new Date(domain[1]).getFullYear()
 
     // -1/+1 to get starting/ending lines, additional +1 because range end is exclusive
-    const lines = Range(startYear - 1, endYear + 2).map(year => {
+    const lines = range(startYear - 1, endYear + 2).map(year => {
         const yearTimestamp = new Date(year, 0, 1).valueOf()
         const x = timeScale(yearTimestamp)
         const xMidYear = timeScale(yearTimestamp + yearWidth / 2)
@@ -130,7 +130,7 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
 
     // handle year boundary: iterate further than month 11 (and correct with % 12 again later)
     const rangeEndMonth = startYear === endYear ? endMonth : endMonth + 12
-    const monthNumbers = Range(startMonth, rangeEndMonth + 1).toList()
+    const monthNumbers = range(startMonth, rangeEndMonth + 1)
 
     const lines = monthNumbers.map((rawMonth, index) => {
         const year = rawMonth < 12 ? startYear : endYear
@@ -141,7 +141,7 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
         const x = timeScale(monthTimestamp)
         const xMidMonth = timeScale(monthTimestamp + monthWidth / 2)
         const xLast = timeScale(addMonths(monthTimestamp, 1))
-        const isLast = index === monthNumbers.size - 1
+        const isLast = index === monthNumbers.length - 1
         return (
             <g key={rawMonth}>
                 {showWeekStripes && <WeekStripes monthStart={monthTimestamp} timeScale={timeScale} />}
@@ -191,7 +191,7 @@ interface WeekStripesProps {
 const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
     const theme: Theme = useTheme()
     const monthEnd = endOfMonth(monthStart)
-    const lines = Range(1, 6).map(weekNumber => {
+    const lines = range(1, 6).map(weekNumber => {
         const weekStart = startOfWeek(addWeeks(monthStart, weekNumber))
         const key = weekNumber
         if (isEqual(weekStart, monthEnd) || isBefore(weekStart, monthEnd)) {
