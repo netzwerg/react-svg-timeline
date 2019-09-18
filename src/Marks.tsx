@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export type Props<EID, LID> = Readonly<{
+export interface Props<EID, LID> {
     events: ReadonlyArray<TimelineEvent<EID, LID>>
     timeScale: ScaleLinear<number, number>
     y: number
@@ -39,7 +39,7 @@ export type Props<EID, LID> = Readonly<{
     onEventHover?: (eventId: EID) => void
     onEventUnhover?: (eventId: EID) => void
     onEventClick?: (eventId: EID) => void
-}>
+}
 
 /**
  * Events are drawn semi-transparently, such that 'event accumulations' become visible.
@@ -104,7 +104,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
     )
 }
 
-type InteractiveGroupProps<EID, LID> = Readonly<{
+interface InteractiveGroupProps<EID, LID> {
     event: TimelineEvent<EID, LID>
     timeScale: ScaleLinear<number, number>
     y: number
@@ -112,7 +112,7 @@ type InteractiveGroupProps<EID, LID> = Readonly<{
     onEventUnhover?: (eventId: EID) => void
     onEventClick?: (eventId: EID) => void
     children: React.ReactNode
-}>
+}
 
 const InteractiveEventMark = <EID, LID>({
     event,
@@ -159,12 +159,11 @@ const InteractiveEventMark = <EID, LID>({
     )
 }
 
-type DefaultEventMarkProps<EID, LID> = Readonly<{
+interface DefaultEventMarkProps<EID, LID> extends Omit<Props<EID, LID>, 'events'> {
     e: TimelineEvent<EID, LID>
     className: string
     eventMarkerHeight?: number
-}> &
-    Pick<Props<EID, LID>, Exclude<keyof Props<EID, LID>, 'events'>>
+}
 
 const DefaultEventMark = <EID, LID>({
     e,
@@ -218,13 +217,13 @@ const useTooltipStyle = makeStyles((theme: Theme) => ({
     }
 }))
 
-type EventTooltipProps = Readonly<{
+interface EventTooltipProps {
     type: { singleEventX: number } | 'period'
     y: number
     parentWidth: number
     text: string
     triggerRef: React.RefObject<SVGElement>
-}>
+}
 
 const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipProps) => {
     const classes = useTooltipStyle()
@@ -278,12 +277,12 @@ const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipPr
     )
 }
 
-type ArrowDownProps = Readonly<{
+interface ArrowDownProps {
     tipX: number
     baseY: number
     dimension: number
     className: string
-}>
+}
 
 const ArrowDown = ({ tipX, baseY, dimension, className }: ArrowDownProps) => {
     return (

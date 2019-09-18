@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-type Props<EID, LID> = Readonly<{
+interface Props<EID, LID> {
     mouseCursor: React.ReactNode
     height: number
     events: ReadonlyArray<TimelineEvent<EID, LID>>
@@ -26,7 +26,7 @@ type Props<EID, LID> = Readonly<{
     onEventHover?: (eventId: EID) => void
     onEventUnhover?: (eventId: EID) => void
     onEventClick?: (eventId: EID) => void
-}>
+}
 
 export const ExpandedMarks = <EID extends string, LID extends string>({
     mouseCursor,

@@ -50,11 +50,11 @@ export const App = () => {
     )
 }
 
-type DemoTimelineProps = Readonly<{
+interface DemoTimelineProps {
     title: string
     rawEvents: ReadonlyArray<ExampleEvent>
     timelineComponent: FunctionComponent<ExampleProps>
-}>
+}
 
 const DemoTimeline = ({ title, rawEvents, timelineComponent }: DemoTimelineProps) => {
     const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())

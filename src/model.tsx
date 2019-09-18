@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export type TimelineEvent<EID, LID> = Readonly<{
+export interface TimelineEvent<EID, LID> {
     eventId: EID
     startTimeMillis: number
     endTimeMillis?: number
@@ -9,17 +9,18 @@ export type TimelineEvent<EID, LID> = Readonly<{
     tooltip?: string
     isSelected?: boolean
     isPinned?: boolean
-}>
+}
 
-export type TimelineLane<LID> = Readonly<{
+export interface TimelineLane<LID> {
     laneId: LID
     label: string
     color?: string
-}>
+}
 
 export type Domain = [number, number]
 
 export type EventComponentRole = 'background' | 'foreground'
+
 export type EventComponentFactory<EID, LID> = (
     event: TimelineEvent<EID, LID>,
     role: EventComponentRole,

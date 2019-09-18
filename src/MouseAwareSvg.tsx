@@ -1,15 +1,18 @@
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
-type Props = Readonly<{
+interface Props {
     width: number
     height: number
     children: (mousePosition: SvgCoordinates) => React.ReactNode
-}>
+}
 
 const mousePositionNone = { x: NaN, y: NaN }
 
-export type SvgCoordinates = Readonly<{ x: number; y: number }>
+export interface SvgCoordinates {
+    x: number
+    y: number
+}
 
 export const MouseAwareSvg = ({ width, height, children }: Props) => {
     const svgRoot = useRef<SVGSVGElement>(null)

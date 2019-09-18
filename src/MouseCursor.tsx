@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-type Props = Readonly<{
+interface Props {
     mousePosition: number
     cursorLabel: string
     cursor: Cursor
@@ -33,7 +33,7 @@ type Props = Readonly<{
     zoomRangeEnd: number
     zoomScale: ZoomScale
     isZoomInPossible: boolean
-}>
+}
 
 export const MouseCursor = ({
     mousePosition,
@@ -91,7 +91,7 @@ export const MouseCursor = ({
 /*  Zoom
 /* ·················································································································· */
 
-type ZoomCursorProps = Readonly<{
+interface ZoomCursorProps {
     mousePosition: number
     cursor: Cursor
     cursorLabel: string
@@ -99,7 +99,7 @@ type ZoomCursorProps = Readonly<{
     isZoomInPossible: boolean
     zoomRangeStart: number
     zoomRangeEnd: number
-}>
+}
 
 const ZoomCursor = ({
     mousePosition,
@@ -140,9 +140,9 @@ const ZoomCursor = ({
 /*  Panning
 /* ·················································································································· */
 
-type PanningProps = Readonly<{
+interface PanningProps {
     mousePosition: number
-}>
+}
 
 const PanningCursor = ({ mousePosition }: PanningProps) => {
     const classes = useStyles()
@@ -164,10 +164,10 @@ const PanningCursor = ({ mousePosition }: PanningProps) => {
 /*  RubberBand
 /* ·················································································································· */
 
-type RubberBandProps = Readonly<{
+interface RubberBandProps {
     start: number
     end?: number
-}>
+}
 
 const RubberBandCursor = ({ start, end }: RubberBandProps) => {
     const classes = useStyles()

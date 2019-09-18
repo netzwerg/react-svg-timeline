@@ -8,11 +8,11 @@ import { Domain } from './model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
 
-type Props = Readonly<{
+interface Props {
     height: number
     domain: Domain
     timeScale: ScaleLinear<number, number>
-}>
+}
 
 const gridLineStyle = (theme: Theme) => ({
     line: {
@@ -50,10 +50,9 @@ const useYearViewStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-type YearViewProps = Props &
-    Readonly<{
-        showDecadesOnly?: boolean
-    }>
+interface YearViewProps extends Props {
+    showDecadesOnly?: boolean
+}
 
 const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearViewProps) => {
     const classes = useYearViewStyles()
@@ -111,10 +110,9 @@ const useMonthViewStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-type MonthViewProps = Props &
-    Readonly<{
-        showWeekStripes?: boolean
-    }>
+interface MonthViewProps extends Props {
+    showWeekStripes?: boolean
+}
 
 const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: MonthViewProps) => {
     const classes = useMonthViewStyles()
@@ -162,10 +160,10 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
     return <g>{lines}</g>
 }
 
-type MonthLineProps = Readonly<{
+interface MonthLineProps {
     x: number
     month: number
-}>
+}
 
 const MonthLine = ({ x, month }: MonthLineProps) => {
     const classes = useMonthViewStyles()
@@ -185,10 +183,10 @@ const MonthLine = ({ x, month }: MonthLineProps) => {
 /*  Week
 /* ·················································································································· */
 
-type WeekStripesProps = Readonly<{
+interface WeekStripesProps {
     monthStart: number
     timeScale: ScaleLinear<number, number>
-}>
+}
 
 const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
     const theme: Theme = useTheme()

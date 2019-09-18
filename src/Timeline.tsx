@@ -10,7 +10,7 @@ import { ExpandedMarks } from './ExpandedMarks'
 import { InteractionHandling } from './InteractionHandling'
 import { noOp } from './shared'
 
-export type TimelineProps<EID, LID> = Readonly<{
+export interface TimelineProps<EID, LID> {
     width: number
     height: number
     events: ReadonlyArray<TimelineEvent<EID, LID>>
@@ -20,7 +20,7 @@ export type TimelineProps<EID, LID> = Readonly<{
     onEventHover?: (eventId: EID) => void
     onEventUnhover?: (eventId: EID) => void
     onEventClick?: (eventId: EID) => void
-}>
+}
 
 type Animation =
     | 'none'

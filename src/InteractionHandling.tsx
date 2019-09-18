@@ -17,15 +17,28 @@ export interface Props {
     children: (cursor: Cursor, interactionMode: InteractionMode) => React.ReactNode
 }
 
-type InteractionModeNone = Readonly<{ type: 'none' }>
+interface InteractionModeNone {
+    type: 'none'
+}
 const interactionModeNone: InteractionModeNone = { type: 'none' }
-type Anchored = Readonly<{ variant: 'anchored'; anchorX: number }>
-type InProgress = Readonly<{ variant: 'in progress'; anchorX: number; currentX: number }>
-type InteractionModePanning = Anchored & Readonly<{ type: 'panning' }>
+interface Anchored {
+    variant: 'anchored'
+    anchorX: number
+}
+interface InProgress {
+    variant: 'in progress'
+    anchorX: number
+    currentX: number
+}
+interface InteractionModePanning extends Anchored {
+    type: 'panning'
+}
 type InteractionModeRubberBand =
     | Anchored & Readonly<{ type: 'rubber band' }>
     | InProgress & Readonly<{ type: 'rubber band' }>
-type InteractionModeAnimationInProgress = Readonly<{ type: 'animation in progress' }>
+interface InteractionModeAnimationInProgress {
+    type: 'animation in progress'
+}
 const interactionModeAnimationInProgress: InteractionModeAnimationInProgress = { type: 'animation in progress' }
 export type InteractionMode =
     | InteractionModeNone
