@@ -8,89 +8,89 @@ import { defaultLaneColor } from './shared'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
 const useStyles = makeStyles((theme: Theme) => ({
-    conceptLabel: {
-        fontFamily: theme.typography.fontFamily,
-        fontWeight: 600,
-        opacity: 0.4
-    }
+  conceptLabel: {
+    fontFamily: theme.typography.fontFamily,
+    fontWeight: 600,
+    opacity: 0.4
+  }
 }))
 
 interface Props<EID, LID> {
-    mouseCursor: React.ReactNode
-    height: number
-    events: ReadonlyArray<TimelineEvent<EID, LID>>
-    timeScale: ScaleLinear<number, number>
-    eventMarkerHeight?: number
-    lanes: ReadonlyArray<TimelineLane<LID>>
-    eventComponent?: EventComponentFactory<EID, LID>
-    onEventHover?: (eventId: EID) => void
-    onEventUnhover?: (eventId: EID) => void
-    onEventClick?: (eventId: EID) => void
+  mouseCursor: React.ReactNode
+  height: number
+  events: ReadonlyArray<TimelineEvent<EID, LID>>
+  timeScale: ScaleLinear<number, number>
+  eventMarkerHeight?: number
+  lanes: ReadonlyArray<TimelineLane<LID>>
+  eventComponent?: EventComponentFactory<EID, LID>
+  onEventHover?: (eventId: EID) => void
+  onEventUnhover?: (eventId: EID) => void
+  onEventClick?: (eventId: EID) => void
 }
 
 export const ExpandedMarks = <EID extends string, LID extends string>({
-    mouseCursor,
-    height,
-    events,
-    lanes,
-    timeScale,
-    eventComponent,
-    onEventHover,
-    onEventUnhover,
-    onEventClick
+  mouseCursor,
+  height,
+  events,
+  lanes,
+  timeScale,
+  eventComponent,
+  onEventHover,
+  onEventUnhover,
+  onEventClick
 }: Props<EID, LID>) => {
-    const classes = useStyles()
+  const classes = useStyles()
 
-    const yScale = scaleBand()
-        .domain(lanes.map(l => l.laneId))
-        .range([0, height])
-        .paddingInner(0.1)
-        .paddingOuter(0.8)
+  const yScale = scaleBand()
+    .domain(lanes.map(l => l.laneId))
+    .range([0, height])
+    .paddingInner(0.1)
+    .paddingOuter(0.8)
 
-    const fontSize = 0.8 * yScale.bandwidth()
+  const fontSize = 0.8 * yScale.bandwidth()
 
-    const axes = lanes.map((lane: TimelineLane<LID>) => {
-        const labelXOffset = 10
-        const labelYOffset = -0.15 * yScale.bandwidth()
-        const y = yScale(lane.laneId)!
-        return (
-            <g key={`axis-${lane.laneId}`}>
-                <Axis y={y} />
-                <text
-                    className={classes.conceptLabel}
-                    fontSize={fontSize}
-                    x={labelXOffset}
-                    y={y + labelYOffset}
-                    fill={lane.color || defaultLaneColor}
-                >
-                    {lane.label}
-                </text>
-            </g>
-        )
-    })
-
-    const marks = lanes.map((lane: TimelineLane<LID>) => {
-        const laneSpecificEvents = events.filter(e => e.laneId === lane.laneId)
-        return (
-            <g key={`marks-${lane.laneId}`}>
-                <Marks
-                    events={laneSpecificEvents}
-                    timeScale={timeScale}
-                    y={yScale(lane.laneId)!}
-                    eventComponent={eventComponent}
-                    onEventHover={onEventHover}
-                    onEventUnhover={onEventUnhover}
-                    onEventClick={onEventClick}
-                />
-            </g>
-        )
-    })
-
+  const axes = lanes.map((lane: TimelineLane<LID>) => {
+    const labelXOffset = 10
+    const labelYOffset = -0.15 * yScale.bandwidth()
+    const y = yScale(lane.laneId)!
     return (
-        <g>
-            {axes}
-            {mouseCursor}
-            {marks}
-        </g>
+      <g key={`axis-${lane.laneId}`}>
+        <Axis y={y} />
+        <text
+          className={classes.conceptLabel}
+          fontSize={fontSize}
+          x={labelXOffset}
+          y={y + labelYOffset}
+          fill={lane.color || defaultLaneColor}
+        >
+          {lane.label}
+        </text>
+      </g>
     )
+  })
+
+  const marks = lanes.map((lane: TimelineLane<LID>) => {
+    const laneSpecificEvents = events.filter(e => e.laneId === lane.laneId)
+    return (
+      <g key={`marks-${lane.laneId}`}>
+        <Marks
+          events={laneSpecificEvents}
+          timeScale={timeScale}
+          y={yScale(lane.laneId)!}
+          eventComponent={eventComponent}
+          onEventHover={onEventHover}
+          onEventUnhover={onEventUnhover}
+          onEventClick={onEventClick}
+        />
+      </g>
+    )
+  })
+
+  return (
+    <g>
+      {axes}
+      {mouseCursor}
+      {marks}
+    </g>
+  )
 }

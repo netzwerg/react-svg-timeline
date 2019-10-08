@@ -1,7 +1,7 @@
 import { grey, indigo, yellow } from '@material-ui/core/colors'
 
 export const noOp = () => {
-    /* ignorance is bliss */
+  /* ignorance is bliss */
 }
 export const defaultEventColor = indigo['500']
 export const defaultLaneColor = indigo['500']
@@ -14,4 +14,4 @@ export const selectionColorOpaque = yellow.A100
  * Returns an array of numbers from start (inclusive) to end (exclusive)
  */
 export const range = (start: number, end: number) =>
-    new Array(end - start).fill(undefined).map((_v_, index) => index + start)
+  new Array(end - start).fill(undefined).map((_v_, index) => index + start)
