@@ -29,3 +29,4 @@ export type EventComponentFactory<EID, LID> = (
 ) => React.ReactNode
 
 export type Cursor = 'default' | 'zoom-out' | 'zoom-in' | 'ew-resize' | 'grab'
+export type LaneDisplayMode = 'expanded' | 'collapsed'

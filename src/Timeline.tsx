@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { Domain, EventComponentFactory, TimelineEvent, TimelineLane } from './model'
+import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
@@ -9,6 +9,7 @@ import { GridLines } from './GridLines'
 import { ExpandedMarks } from './ExpandedMarks'
 import { InteractionHandling } from './InteractionHandling'
 import { noOp } from './shared'
+import { CollapsedMarks } from './CollapsedMarks'
 
 export interface TimelineProps<EID, LID> {
   width: number
@@ -17,6 +18,7 @@ export interface TimelineProps<EID, LID> {
   lanes: ReadonlyArray<TimelineLane<LID>>
   dateFormat: (ms: number) => string
   eventComponent?: EventComponentFactory<EID, LID>
+  laneDisplayMode?: LaneDisplayMode
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -45,6 +47,7 @@ export const Timeline = <EID extends string, LID extends string>({
   lanes,
   dateFormat,
   eventComponent,
+  laneDisplayMode = 'expanded',
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick
@@ -191,17 +194,30 @@ export const Timeline = <EID extends string, LID extends string>({
                 return (
                   <g>
                     <GridLines height={height} domain={domain} timeScale={timeScale} />
-                    <ExpandedMarks
-                      mouseCursor={mouseCursor}
-                      events={events}
-                      lanes={lanes}
-                      timeScale={timeScale}
-                      height={height}
-                      eventComponent={eventComponent}
-                      onEventHover={onEventHoverDecorated}
-                      onEventUnhover={onEventUnhoverDecorated}
-                      onEventClick={onEventClick}
-                    />
+                    {laneDisplayMode === 'expanded' ? (
+                      <ExpandedMarks
+                        mouseCursor={mouseCursor}
+                        events={events}
+                        lanes={lanes}
+                        timeScale={timeScale}
+                        height={height}
+                        eventComponent={eventComponent}
+                        onEventHover={onEventHoverDecorated}
+                        onEventUnhover={onEventUnhoverDecorated}
+                        onEventClick={onEventClick}
+                      />
+                    ) : (
+                      <CollapsedMarks
+                        mouseCursor={mouseCursor}
+                        events={events}
+                        timeScale={timeScale}
+                        height={height}
+                        eventComponent={eventComponent}
+                        onEventHover={onEventHoverDecorated}
+                        onEventUnhover={onEventUnhoverDecorated}
+                        onEventClick={onEventClick}
+                      />
+                    )}
                   </g>
                 )
               }}
