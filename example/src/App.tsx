@@ -9,8 +9,9 @@ import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
 import Switch from '@material-ui/core/Switch'
-import { LaneDisplayMode } from '../../src'
+import { LaneDisplayMode, TimelineProps } from '../../src'
 import Card from '@material-ui/core/Card'
+import { CustomizedTimeline } from './CustomizedTimeline'
 
 const useStyles = makeStyles({
   root: {
@@ -68,6 +69,14 @@ export const App = () => {
         title={'Default'}
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
+        suppressMarkAnimation={true}
+      />
+      <DemoTimeline
+        timelineComponent={CustomizedTimeline}
+        title={'Custom Event Marks'}
+        rawEvents={rawEvents}
+        laneDisplayMode={laneDisplayMode}
+        suppressMarkAnimation={true}
       />
     </div>
   )
@@ -78,16 +87,17 @@ interface DemoTimelineProps {
   rawEvents: ReadonlyArray<ExampleEvent>
   timelineComponent: FunctionComponent<ExampleProps>
   laneDisplayMode: LaneDisplayMode
+  suppressMarkAnimation?: boolean
 }
 
-const DemoTimeline = ({ title, rawEvents, timelineComponent, laneDisplayMode }: DemoTimelineProps) => {
-  // noinspection JSUnusedLocalSymbols
+const DemoTimeline = (props: DemoTimelineProps) => {
+  const { title, timelineComponent } = props
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const events = rawEvents.map((e: ExampleEvent) => ({
     ...e,
     tooltip: eventTooltip(e),
-    isSelected: false, // selectedEvents.contains(e.eventId),
+    isSelected: selectedEvents.contains(e.eventId),
     isPinned: pinnedEvents.contains(e.eventId)
   }))
 
@@ -103,13 +113,13 @@ const DemoTimeline = ({ title, rawEvents, timelineComponent, laneDisplayMode }: 
       <Typography variant={'caption'}>{title}</Typography>
       <AutoSizer>
         {({ width, height }: Size) => {
-          const timelineProps = {
+          const timelineProps: TimelineProps<TimelineEventId, TimelineLaneId> = {
+            ...props,
             width,
             height,
-            dateFormat,
-            lanes,
             events,
-            laneDisplayMode,
+            lanes,
+            dateFormat,
             onEventHover,
             onEventUnhover,
             onEventClick

@@ -19,6 +19,7 @@ export interface TimelineProps<EID, LID> {
   dateFormat: (ms: number) => string
   eventComponent?: EventComponentFactory<EID, LID>
   laneDisplayMode?: LaneDisplayMode
+  suppressMarkAnimation?: boolean
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -48,6 +49,7 @@ export const Timeline = <EID extends string, LID extends string>({
   dateFormat,
   eventComponent,
   laneDisplayMode = 'expanded',
+  suppressMarkAnimation = false,
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick
@@ -101,6 +103,8 @@ export const Timeline = <EID extends string, LID extends string>({
     const isZoomOutPossible = currentDomainWidth < maxDomainWidth
     const isAnimationInProgress = animation !== 'none'
     const isDomainChangePossible = !isAnimationInProgress && !isMouseOverEvent
+
+    const showMarks = suppressMarkAnimation ? !isAnimationInProgress : true
 
     return (
       <MouseAwareSvg width={width} height={height}>
@@ -194,7 +198,7 @@ export const Timeline = <EID extends string, LID extends string>({
                 return (
                   <g>
                     <GridLines height={height} domain={domain} timeScale={timeScale} />
-                    {!isAnimationInProgress &&
+                    {showMarks &&
                       (laneDisplayMode === 'expanded' ? (
                         <ExpandedMarks
                           mouseCursor={mouseCursor}

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { defaultEventColor, noOp, selectionColor, selectionColorOpaque } from './shared'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
@@ -77,29 +77,57 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
 
   const eventComponentFactory = eventComponent || defaultEventComponent
 
-  return (
-    <g>
-      {events.map((e: TimelineEvent<EID, LID>) => (
+  // string-based deep-comparisons to determine whether marks should be re-rendered
+  const comparableEvents = JSON.stringify(events)
+  const comparableTimeScale = JSON.stringify({ domain: timeScale.domain(), range: timeScale.range() })
+
+  // ignoring `isSelected` for background/foreground marks (selectionMarks are rendered specifically)
+  const comparableEventsIgnoringSelection = JSON.stringify(events, (key, value) => {
+    if (key == 'isSelected') return undefined
+    return value
+  })
+
+  const backgroundMarks = useMemo(
+    () =>
+      events.map((e: TimelineEvent<EID, LID>) => (
         <InteractiveEventMark key={e.eventId} event={e} {...props}>
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
-      ))}
-      {events
-        .filter(e => !e.isSelected)
+      )),
+    [comparableEventsIgnoringSelection, comparableTimeScale]
+  )
+
+  const foregroundMarks = useMemo(
+    () =>
+      events
+        .filter(_ => true)
         .sort(sortByEventDuration)
         .map((e: TimelineEvent<EID, LID>) => (
           <InteractiveEventMark key={e.eventId} event={e} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
-        ))}
-      {events
+        )),
+    [comparableEventsIgnoringSelection, comparableTimeScale]
+  )
+
+  const selectionMarks = useMemo(
+    () =>
+      events
         .filter(e => e.isSelected)
         .sort(sortByEventDuration)
         .map((e: TimelineEvent<EID, LID>) => (
           <InteractiveEventMark key={e.eventId} event={e} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
-        ))}
+        )),
+    [comparableEvents, comparableTimeScale]
+  )
+
+  return (
+    <g>
+      {backgroundMarks}
+      {foregroundMarks}
+      {selectionMarks}
     </g>
   )
 }
