@@ -92,7 +92,14 @@ export const Timeline = <EID extends string, LID extends string>({
       }
     }, [animation, now])
 
-    const isNoEventSelected = events.filter(e => e.isSelected).length === 0
+    const eventsInsideDomain = events.filter(e => {
+      const isStartInView = e.startTimeMillis >= domain[0] && e.startTimeMillis <= domain[1]
+      const isEndInView = e.endTimeMillis && e.endTimeMillis >= domain[0] && e.endTimeMillis <= domain[1]
+      const isSpanningAcrossView = e.endTimeMillis && e.startTimeMillis < domain[0] && e.endTimeMillis > domain[1]
+      return isStartInView || isEndInView || isSpanningAcrossView
+    })
+
+    const isNoEventSelected = eventsInsideDomain.filter(e => e.isSelected).length === 0
     const smallerZoomScale = nextSmallerZoomScale(domain)
     const biggerZoomScale = nextBiggerZoomScale(domain)
     const zoomWidth = zoomScaleWidth(smallerZoomScale)
@@ -202,7 +209,7 @@ export const Timeline = <EID extends string, LID extends string>({
                       (laneDisplayMode === 'expanded' ? (
                         <ExpandedMarks
                           mouseCursor={mouseCursor}
-                          events={events}
+                          events={eventsInsideDomain}
                           lanes={lanes}
                           timeScale={timeScale}
                           height={height}
@@ -214,7 +221,7 @@ export const Timeline = <EID extends string, LID extends string>({
                       ) : (
                         <CollapsedMarks
                           mouseCursor={mouseCursor}
-                          events={events}
+                          events={eventsInsideDomain}
                           timeScale={timeScale}
                           height={height}
                           eventComponent={eventComponent}
