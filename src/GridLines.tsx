@@ -66,8 +66,8 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
   // -1/+1 to get starting/ending lines, additional +1 because range end is exclusive
   const lines = range(startYear - 1, endYear + 2).map(year => {
     const yearTimestamp = new Date(year, 0, 1).valueOf()
-    const x = timeScale(yearTimestamp)
-    const xMidYear = timeScale(yearTimestamp + yearWidth / 2)
+    const x = timeScale(yearTimestamp)!
+    const xMidYear = timeScale(yearTimestamp + yearWidth / 2)!
     const width = 2 * (xMidYear - x)
     const fontSize = Math.max(width * 0.1, 14)
     const isDecade = year % 10 === 0
@@ -138,9 +138,9 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
     const monthDate = new Date(year, month, 1)
     const monthTimestamp = monthDate.valueOf()
     const monthName = monthNames[month]
-    const x = timeScale(monthTimestamp)
+    const x = timeScale(monthTimestamp)!
     const xMidMonth = timeScale(monthTimestamp + monthWidth / 2)
-    const xLast = timeScale(addMonths(monthTimestamp, 1))
+    const xLast = timeScale(addMonths(monthTimestamp, 1))!
     const isLast = index === monthNumbers.length - 1
     return (
       <g key={rawMonth}>
@@ -195,9 +195,9 @@ const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
     const weekStart = startOfWeek(addWeeks(monthStart, weekNumber))
     const key = weekNumber
     if (isEqual(weekStart, monthEnd) || isBefore(weekStart, monthEnd)) {
-      const x = timeScale(weekStart.valueOf())
+      const x = timeScale(weekStart.valueOf())!
       const atEndOfWeek = endOfWeek(addWeeks(monthStart, weekNumber))
-      const width = timeScale(atEndOfWeek.valueOf()) - x
+      const width = timeScale(atEndOfWeek.valueOf())! - x
       const weekSinceEpoch = Math.floor(weekStart.valueOf() / weekDuration)
       const fill = weekSinceEpoch % 2 === 0 ? theme.palette.grey['200'] : 'transparent'
       const opacity = theme.palette.type === 'light' ? 1 : 0.1

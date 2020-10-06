@@ -5,12 +5,9 @@ import { FunctionComponent, useState } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { Set as ImmutableSet } from 'immutable'
-// @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
-import data from './data.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
-import { CustomizedTimeline } from './CustomizedTimeline'
-import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId } from './types'
+import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
 import Switch from '@material-ui/core/Switch'
 import { LaneDisplayMode } from '../../src'
 import Card from '@material-ui/core/Card'
@@ -47,15 +44,21 @@ const useStyles = makeStyles({
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
-const lanes: ReadonlyArray<ExampleLane> = data.lanes
-const rawEvents: ReadonlyArray<ExampleEvent> = data.events
+
+const laneId = 'example-lane-id' as TimelineLaneId
+const lanes: ReadonlyArray<ExampleLane> = [{ laneId, label: 'Example' }]
+const rawEvents: ReadonlyArray<ExampleEvent> = Array.from(Array(1000).keys()).map<ExampleEvent>(i => ({
+  eventId: `event-${i}` as TimelineEventId,
+  laneId,
+  startTimeMillis: Math.random() * Date.now()
+}))
 
 const eventTooltip = (e: ExampleEvent) =>
   e.endTimeMillis ? `${dateFormat(e.startTimeMillis)} - ${dateFormat(e.endTimeMillis)}` : dateFormat(e.startTimeMillis)
 
 export const App = () => {
   const classes = useStyles()
-  const [laneDisplayMode, setLaneDisplayMode] = useState<LaneDisplayMode>('expanded')
+  const [laneDisplayMode, setLaneDisplayMode] = useState<LaneDisplayMode>('collapsed')
   return (
     <div className={classes.root}>
       <Typography variant={'h2'}>react-svg-timeline</Typography>
@@ -63,12 +66,6 @@ export const App = () => {
       <DemoTimeline
         timelineComponent={Timeline}
         title={'Default'}
-        rawEvents={rawEvents}
-        laneDisplayMode={laneDisplayMode}
-      />
-      <DemoTimeline
-        timelineComponent={CustomizedTimeline}
-        title={'Custom Event Marks'}
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
       />
@@ -84,12 +81,13 @@ interface DemoTimelineProps {
 }
 
 const DemoTimeline = ({ title, rawEvents, timelineComponent, laneDisplayMode }: DemoTimelineProps) => {
+  // noinspection JSUnusedLocalSymbols
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const events = rawEvents.map((e: ExampleEvent) => ({
     ...e,
     tooltip: eventTooltip(e),
-    isSelected: selectedEvents.contains(e.eventId),
+    isSelected: false, // selectedEvents.contains(e.eventId),
     isPinned: pinnedEvents.contains(e.eventId)
   }))
 

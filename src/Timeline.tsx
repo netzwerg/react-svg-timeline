@@ -182,8 +182,8 @@ export const Timeline = <EID extends string, LID extends string>({
                     cursorLabel={dateFormat(timeAtCursor)}
                     cursor={cursor}
                     interactionMode={interactionMode}
-                    zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)}
-                    zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)}
+                    zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
+                    zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
                     zoomScale={smallerZoomScale}
                     isZoomInPossible={isZoomInPossible}
                   />
@@ -194,30 +194,31 @@ export const Timeline = <EID extends string, LID extends string>({
                 return (
                   <g>
                     <GridLines height={height} domain={domain} timeScale={timeScale} />
-                    {laneDisplayMode === 'expanded' ? (
-                      <ExpandedMarks
-                        mouseCursor={mouseCursor}
-                        events={events}
-                        lanes={lanes}
-                        timeScale={timeScale}
-                        height={height}
-                        eventComponent={eventComponent}
-                        onEventHover={onEventHoverDecorated}
-                        onEventUnhover={onEventUnhoverDecorated}
-                        onEventClick={onEventClick}
-                      />
-                    ) : (
-                      <CollapsedMarks
-                        mouseCursor={mouseCursor}
-                        events={events}
-                        timeScale={timeScale}
-                        height={height}
-                        eventComponent={eventComponent}
-                        onEventHover={onEventHoverDecorated}
-                        onEventUnhover={onEventUnhoverDecorated}
-                        onEventClick={onEventClick}
-                      />
-                    )}
+                    {!isAnimationInProgress &&
+                      (laneDisplayMode === 'expanded' ? (
+                        <ExpandedMarks
+                          mouseCursor={mouseCursor}
+                          events={events}
+                          lanes={lanes}
+                          timeScale={timeScale}
+                          height={height}
+                          eventComponent={eventComponent}
+                          onEventHover={onEventHoverDecorated}
+                          onEventUnhover={onEventUnhoverDecorated}
+                          onEventClick={onEventClick}
+                        />
+                      ) : (
+                        <CollapsedMarks
+                          mouseCursor={mouseCursor}
+                          events={events}
+                          timeScale={timeScale}
+                          height={height}
+                          eventComponent={eventComponent}
+                          onEventHover={onEventHoverDecorated}
+                          onEventUnhover={onEventUnhoverDecorated}
+                          onEventClick={onEventClick}
+                        />
+                      ))}
                   </g>
                 )
               }}

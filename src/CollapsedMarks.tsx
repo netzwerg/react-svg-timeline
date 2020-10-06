@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useMemo } from 'react'
 import { Marks } from './Marks'
 import { ScaleLinear } from 'd3-scale'
 import { EventComponentFactory, TimelineEvent } from './model'
@@ -16,21 +17,17 @@ interface Props<EID, LID> {
   onEventClick?: (eventId: EID) => void
 }
 
-export const CollapsedMarks = <EID extends string, LID extends string>({
-  mouseCursor,
-  height,
-  events,
-  timeScale,
-  eventComponent,
-  onEventHover,
-  onEventUnhover,
-  onEventClick
-}: Props<EID, LID>) => {
+export const CollapsedMarks = <EID extends string, LID extends string>(props: Props<EID, LID>) => {
+  const { mouseCursor, height, events, timeScale, eventComponent, onEventHover, onEventUnhover, onEventClick } = props
   const y = height / 2
 
-  const marks = events.map(e => {
-    return (
-      <g key={`marks-${e.eventId}`}>
+  // string-based deep-comparison to determine whether marks should be re-rendered
+  const comparableEvents = JSON.stringify(events)
+  const comparableTimeScale = JSON.stringify({ domain: timeScale.domain(), range: timeScale.range() })
+
+  const marks = useMemo(
+    () => (
+      <g key={`collapsed-lane`}>
         <Marks
           events={events}
           timeScale={timeScale}
@@ -41,8 +38,9 @@ export const CollapsedMarks = <EID extends string, LID extends string>({
           onEventClick={onEventClick}
         />
       </g>
-    )
-  })
+    ),
+    [y, comparableEvents, comparableTimeScale]
+  )
 
   return (
     <g>

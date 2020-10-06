@@ -24,7 +24,7 @@ export type EventComponentRole = 'background' | 'foreground'
 export type EventComponentFactory<EID, LID> = (
   event: TimelineEvent<EID, LID>,
   role: EventComponentRole,
-  timeScale: (ms: number) => number,
+  timeScale: (ms: number) => number | undefined,
   y: number
 ) => React.ReactNode
 

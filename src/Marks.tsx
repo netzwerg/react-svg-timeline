@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useRef } from 'react'
-import { defaultDarkGrey, defaultEventColor, noOp, selectionColor, selectionColorOpaque } from './shared'
+import { defaultEventColor, noOp, selectionColor, selectionColorOpaque } from './shared'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { EventComponentFactory, EventComponentRole, TimelineEvent } from './model'
@@ -129,7 +129,7 @@ const InteractiveEventMark = <EID, LID>({
   const onMouseLeave = () => onEventUnhover(eventId)
   const onMouseClick = () => onEventClick(eventId)
 
-  const startX = timeScale(event.startTimeMillis)
+  const startX = timeScale(event.startTimeMillis)!
   const parentWidth = timeScale.range()[1]
   const tooltipType = event.endTimeMillis ? 'period' : { singleEventX: startX }
 
@@ -167,8 +167,8 @@ const DefaultEventMark = <EID, LID>({
   timeScale
 }: DefaultEventMarkProps<EID, LID>) => {
   const theme: Theme = useTheme()
-  const startX = timeScale(e.startTimeMillis)
-  const strokeColor = e.isPinned ? (theme.palette.type === defaultDarkGrey ? 'white' : 'black') : undefined
+  const startX = timeScale(e.startTimeMillis)!
+  const strokeColor = e.isPinned ? (theme.palette.type === 'dark' ? 'white' : 'black') : undefined
   if (e.endTimeMillis === undefined) {
     return (
       <circle
@@ -181,7 +181,7 @@ const DefaultEventMark = <EID, LID>({
       />
     )
   } else {
-    const endX = timeScale(e.endTimeMillis)
+    const endX = timeScale(e.endTimeMillis)!
     const width = endX - startX
     return (
       <rect
@@ -246,7 +246,7 @@ const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipPr
 
         return (
           <g>
-            <svg x={tooltipX - tooltipOffset(xOffset)} y={tooltipY - arrowDimension / 2} width={width} height={height}>
+            <svg x={tooltipX - tooltipOffset(xOffset)!} y={tooltipY - arrowDimension / 2} width={width} height={height}>
               <rect width="100%" height="100%" rx={3} ry={3} className={classes.background} />
               <text x="50%" y="50%" className={classes.text}>
                 {text}
