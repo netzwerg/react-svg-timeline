@@ -23,9 +23,9 @@
     "@types/d3-time-format": "../node_modules/@types/d3-time-format"
   },
   "devDependencies": {
-    "@types/classnames": "^2.2.9",
+    "@types/classnames": "^2.2.10",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
-    "parcel": "^1.12.3",
+    "parcel": "^1.12.4",
     "typescript": "^4.0.3"
   }
 }
