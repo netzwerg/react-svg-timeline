@@ -5,13 +5,15 @@ import { FunctionComponent, useState } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { Set as ImmutableSet } from 'immutable'
+// @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
+import data from './data.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
+import { CustomizedTimeline } from './CustomizedTimeline'
 import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
 import Switch from '@material-ui/core/Switch'
 import { LaneDisplayMode, TimelineProps } from '../../src'
 import Card from '@material-ui/core/Card'
-import { CustomizedTimeline } from './CustomizedTimeline'
 
 const useStyles = makeStyles({
   root: {
@@ -37,7 +39,7 @@ const useStyles = makeStyles({
       paddingRight: 10
     }
   },
-  toggleSwitch: {
+  configToggles: {
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     alignItems: 'center'
@@ -45,38 +47,38 @@ const useStyles = makeStyles({
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
-
-const laneId = 'example-lane-id' as TimelineLaneId
-const lanes: ReadonlyArray<ExampleLane> = [{ laneId, label: 'Example' }]
-const rawEvents: ReadonlyArray<ExampleEvent> = Array.from(Array(1000).keys()).map<ExampleEvent>(i => ({
-  eventId: `event-${i}` as TimelineEventId,
-  laneId,
-  startTimeMillis: Math.random() * Date.now()
-}))
+const lanes: ReadonlyArray<ExampleLane> = data.lanes
+const rawEvents: ReadonlyArray<ExampleEvent> = data.events
 
 const eventTooltip = (e: ExampleEvent) =>
   e.endTimeMillis ? `${dateFormat(e.startTimeMillis)} - ${dateFormat(e.endTimeMillis)}` : dateFormat(e.startTimeMillis)
 
 export const App = () => {
   const classes = useStyles()
-  const [laneDisplayMode, setLaneDisplayMode] = useState<LaneDisplayMode>('collapsed')
+  const [laneDisplayMode, setLaneDisplayMode] = useState<LaneDisplayMode>('expanded')
+  const [suppressMarkAnimation, setSuppressMarkAnimation] = useState<boolean>(false)
   return (
     <div className={classes.root}>
       <Typography variant={'h2'}>react-svg-timeline</Typography>
-      <ControlPanel laneDisplayMode={laneDisplayMode} setLaneDisplayMode={setLaneDisplayMode} />
+      <ConfigPanel
+        laneDisplayMode={laneDisplayMode}
+        setLaneDisplayMode={setLaneDisplayMode}
+        suppressMarkAnimation={suppressMarkAnimation}
+        setSuppressMarkAnimation={setSuppressMarkAnimation}
+      />
       <DemoTimeline
         timelineComponent={Timeline}
         title={'Default'}
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
-        suppressMarkAnimation={true}
+        suppressMarkAnimation={suppressMarkAnimation}
       />
       <DemoTimeline
         timelineComponent={CustomizedTimeline}
         title={'Custom Event Marks'}
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
-        suppressMarkAnimation={true}
+        suppressMarkAnimation={suppressMarkAnimation}
       />
     </div>
   )
@@ -87,11 +89,16 @@ interface DemoTimelineProps {
   rawEvents: ReadonlyArray<ExampleEvent>
   timelineComponent: FunctionComponent<ExampleProps>
   laneDisplayMode: LaneDisplayMode
-  suppressMarkAnimation?: boolean
+  suppressMarkAnimation: boolean
 }
 
-const DemoTimeline = (props: DemoTimelineProps) => {
-  const { title, timelineComponent } = props
+const DemoTimeline = ({
+  title,
+  rawEvents,
+  timelineComponent,
+  laneDisplayMode,
+  suppressMarkAnimation
+}: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const events = rawEvents.map((e: ExampleEvent) => ({
@@ -114,12 +121,13 @@ const DemoTimeline = (props: DemoTimelineProps) => {
       <AutoSizer>
         {({ width, height }: Size) => {
           const timelineProps: TimelineProps<TimelineEventId, TimelineLaneId> = {
-            ...props,
             width,
             height,
-            events,
-            lanes,
             dateFormat,
+            lanes,
+            events,
+            laneDisplayMode,
+            suppressMarkAnimation,
             onEventHover,
             onEventUnhover,
             onEventClick
@@ -131,12 +139,14 @@ const DemoTimeline = (props: DemoTimelineProps) => {
   )
 }
 
-interface LaneDisplayModeProps {
+interface ConfigProps {
   laneDisplayMode: LaneDisplayMode
   setLaneDisplayMode: (laneDisplayMode: LaneDisplayMode) => void
+  suppressMarkAnimation: boolean
+  setSuppressMarkAnimation: (suppressMarkAnimation: boolean) => void
 }
 
-const ControlPanel = ({ laneDisplayMode, setLaneDisplayMode }: LaneDisplayModeProps) => {
+const ConfigPanel = (props: ConfigProps) => {
   const classes = useStyles()
   return (
     <div className={classes.controlPanel}>
@@ -144,7 +154,7 @@ const ControlPanel = ({ laneDisplayMode, setLaneDisplayMode }: LaneDisplayModePr
         <KeyboardShortcuts />
       </Card>
       <Card className={classes.card}>
-        <ConfigOptions laneDisplayMode={laneDisplayMode} setLaneDisplayMode={setLaneDisplayMode} />
+        <ConfigOptions {...props} />
       </Card>
     </div>
   )
@@ -182,15 +192,25 @@ const KeyboardShortcuts = () => {
   )
 }
 
-const ConfigOptions = ({ laneDisplayMode, setLaneDisplayMode }: LaneDisplayModeProps) => {
+const ConfigOptions = ({
+  laneDisplayMode,
+  setLaneDisplayMode,
+  suppressMarkAnimation,
+  setSuppressMarkAnimation
+}: ConfigProps) => {
   const classes = useStyles()
-  const checked = laneDisplayMode === 'collapsed'
-  const onChange = () => setLaneDisplayMode(checked ? 'expanded' : 'collapsed')
+
+  const laneDisplayModeChecked = laneDisplayMode === 'collapsed'
+  const onLaneDisplayModeChange = () => setLaneDisplayMode(laneDisplayModeChecked ? 'expanded' : 'collapsed')
+
+  const onSuppressMarkAnimationChange = () => setSuppressMarkAnimation(!suppressMarkAnimation)
 
   return (
-    <div className={classes.toggleSwitch}>
+    <div className={classes.configToggles}>
       <Typography>Collapse Lanes</Typography>
-      <Switch checked={checked} onChange={onChange} />
+      <Switch checked={laneDisplayModeChecked} onChange={onLaneDisplayModeChange} />
+      <Typography>Animate Marks</Typography>
+      <Switch checked={!suppressMarkAnimation} onChange={onSuppressMarkAnimationChange} />
     </div>
   )
 }
