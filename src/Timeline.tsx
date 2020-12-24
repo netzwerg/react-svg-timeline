@@ -23,6 +23,8 @@ export interface TimelineProps<EID, LID> {
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
+  onZoomRangeChange?: (startMillis: number, endMillis: number) => void
+  onZoomRangeMove?: (startMillis: number, endMillis: number) => void
 }
 
 type Animation =
@@ -34,8 +36,8 @@ type Animation =
     }>
 
 export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID, LID>>): Domain => {
-  const timeMin = Math.min(...events.map(e => e.startTimeMillis))
-  const timeMax = Math.max(...events.map(e => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
+  const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
+  const timeMax = Math.max(...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
   return [timeMin || NaN, timeMax || NaN]
 }
 
@@ -52,14 +54,16 @@ export const Timeline = <EID extends string, LID extends string>({
   suppressMarkAnimation = false,
   onEventHover = noOp,
   onEventUnhover = noOp,
-  onEventClick
+  onEventClick,
+  onZoomRangeChange,
+  onZoomRangeMove,
 }: TimelineProps<EID, LID>) => {
   {
     const maxDomain = calcMaxDomain(events)
     const maxDomainStart = maxDomain[0]
     const maxDomainEnd = maxDomain[1]
 
-    const [domain, setDomain] = useState<Domain>(maxDomain)
+    const [domain, setDomain] = useState<Domain>(maxDomain) // TODO --> onRangeChange-Event when domain changes?
     const [animation, setAnimation] = useState<Animation>('none')
     const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
 
@@ -69,6 +73,12 @@ export const Timeline = <EID extends string, LID extends string>({
       setAnimation('none')
       setDomain([maxDomainStart, maxDomainEnd])
     }, [maxDomainStart, maxDomainEnd])
+
+    useEffect(() => {
+      if (onZoomRangeChange) {
+        onZoomRangeChange(domain[0], domain[1])
+      }
+    }, [domain, onZoomRangeChange])
 
     useEffect(() => {
       if (animation !== 'none') {
@@ -92,14 +102,14 @@ export const Timeline = <EID extends string, LID extends string>({
       }
     }, [animation, now])
 
-    const eventsInsideDomain = events.filter(e => {
+    const eventsInsideDomain = events.filter((e) => {
       const isStartInView = e.startTimeMillis >= domain[0] && e.startTimeMillis <= domain[1]
       const isEndInView = e.endTimeMillis && e.endTimeMillis >= domain[0] && e.endTimeMillis <= domain[1]
       const isSpanningAcrossView = e.endTimeMillis && e.startTimeMillis < domain[0] && e.endTimeMillis > domain[1]
       return isStartInView || isEndInView || isSpanningAcrossView
     })
 
-    const isNoEventSelected = eventsInsideDomain.filter(e => e.isSelected).length === 0
+    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
     const smallerZoomScale = nextSmallerZoomScale(domain)
     const biggerZoomScale = nextBiggerZoomScale(domain)
     const zoomWidth = zoomScaleWidth(smallerZoomScale)
@@ -122,6 +132,12 @@ export const Timeline = <EID extends string, LID extends string>({
             .range([timeScalePadding, width - timeScalePadding])
 
           const timeAtCursor = timeScale.invert(mousePosition.x)
+
+          useEffect(() => {
+            if (onZoomRangeMove) {
+              onZoomRangeMove(timeAtCursor - zoomWidth / 2, timeAtCursor + zoomWidth / 2)
+            }
+          }, [timeAtCursor, onZoomRangeMove])
 
           const setDomainAnimated = (newDomain: Domain) =>
             setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
