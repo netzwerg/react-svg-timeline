@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
@@ -165,6 +164,14 @@ export const Timeline = <EID extends string, LID extends string>({
             }
           }
 
+          const onZoomInCustomInProgress = (mouseStartX: number, mouseEndX: number) => {
+            if (isDomainChangePossible && onCursorMove) {
+              const newMin = timeScale.invert(mouseStartX)
+              const newMax = timeScale.invert(mouseEndX)
+              onCursorMove(newMax, newMin, newMax)
+            }
+          }
+
           const onZoomReset = () => {
             if (isDomainChangePossible) {
               setDomainAnimated([maxDomainStart, maxDomainEnd])
@@ -202,6 +209,7 @@ export const Timeline = <EID extends string, LID extends string>({
               onZoomIn={onZoomIn}
               onZoomOut={onZoomOut}
               onZoomInCustom={onZoomInCustom}
+              onZoomInCustomInProgress={onZoomInCustomInProgress}
               onZoomReset={onZoomReset}
               onPan={onPan}
             >
