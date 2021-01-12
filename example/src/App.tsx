@@ -102,7 +102,7 @@ const DemoTimeline = ({
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [zoomRange, setZoomRange] = useState<[number, number]>()
-  const [cursorZoomRange, setCursorZoomRange] = useState<[number, number]>()
+  const [cursorZoomRange, setCursorZoomRange] = useState<[number, number] | undefined>()
   const events = rawEvents.map((e: ExampleEvent) => ({
     ...e,
     tooltip: eventTooltip(e),
@@ -120,8 +120,14 @@ const DemoTimeline = ({
     (startMillis: number, endMillis: number) => setZoomRange([startMillis, endMillis]),
     [setZoomRange]
   )
-  const onZoomRangeMove = useCallback(
-    (startMillis: number, endMillis: number) => setCursorZoomRange([startMillis, endMillis]),
+  const onCursorMove = useCallback(
+    (cursorMillis?: number, startMillis?: number, endMillis?: number) => {
+      if (startMillis && endMillis) {
+        setCursorZoomRange([startMillis, endMillis])
+      } else {
+        setCursorZoomRange(undefined)
+      }
+    },
     [setCursorZoomRange]
   )
 
@@ -134,12 +140,12 @@ const DemoTimeline = ({
           {new Date(zoomRange[1]).toLocaleString()}
         </Typography>
       )}
-      {cursorZoomRange && (
-        <Typography variant="caption">
-          <strong>Zoom Range at Cursor:</strong> {new Date(cursorZoomRange[0]).toLocaleString()} -{' '}
-          {new Date(cursorZoomRange[1]).toLocaleString()}
-        </Typography>
-      )}
+      <Typography variant="caption">
+        <strong>Zoom Range at Cursor:</strong>{' '}
+        {cursorZoomRange
+          ? `${new Date(cursorZoomRange[0]).toLocaleString()} - ${new Date(cursorZoomRange[1]).toLocaleString()}`
+          : 'None'}
+      </Typography>
       <AutoSizer>
         {({ width, height }: Size) => {
           const timelineProps: TimelineProps<TimelineEventId, TimelineLaneId> = {
@@ -154,7 +160,7 @@ const DemoTimeline = ({
             onEventUnhover,
             onEventClick,
             onZoomRangeChange,
-            onZoomRangeMove,
+            onCursorMove,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}

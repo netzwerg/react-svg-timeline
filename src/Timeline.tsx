@@ -24,7 +24,7 @@ export interface TimelineProps<EID, LID> {
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
-  onZoomRangeMove?: (startMillis: number, endMillis: number) => void
+  onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
 }
 
 type Animation =
@@ -56,7 +56,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onEventUnhover = noOp,
   onEventClick,
   onZoomRangeChange,
-  onZoomRangeMove,
+  onCursorMove,
 }: TimelineProps<EID, LID>) => {
   {
     const maxDomain = calcMaxDomain(events)
@@ -76,7 +76,7 @@ export const Timeline = <EID extends string, LID extends string>({
 
     useEffect(() => {
       if (onZoomRangeChange) {
-        onZoomRangeChange(domain[0], domain[1])
+        onZoomRangeChange(...domain)
       }
     }, [domain, onZoomRangeChange])
 
@@ -133,11 +133,16 @@ export const Timeline = <EID extends string, LID extends string>({
 
           const timeAtCursor = timeScale.invert(mousePosition.x)
 
+          const getDomainRange = (time: number, width: number): Domain => [
+            Math.max(maxDomainStart, time - width / 2),
+            Math.min(maxDomainEnd, time + width / 2),
+          ]
+
           useEffect(() => {
-            if (onZoomRangeMove) {
-              onZoomRangeMove(timeAtCursor - zoomWidth / 2, timeAtCursor + zoomWidth / 2)
+            if (onCursorMove) {
+              onCursorMove(timeAtCursor, ...getDomainRange(timeAtCursor, zoomWidth))
             }
-          }, [timeAtCursor, onZoomRangeMove])
+          }, [timeAtCursor, onCursorMove])
 
           const setDomainAnimated = (newDomain: Domain) =>
             setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
@@ -145,9 +150,7 @@ export const Timeline = <EID extends string, LID extends string>({
           const updateDomain = (zoomScale: ZoomScale) => () => {
             if (isDomainChangePossible) {
               const newZoomWidth = zoomScaleWidth(zoomScale)
-              const newMin = Math.max(maxDomainStart, timeAtCursor - newZoomWidth / 2)
-              const newMax = Math.min(maxDomainEnd, timeAtCursor + newZoomWidth / 2)
-              setDomainAnimated([newMin, newMax])
+              setDomainAnimated(getDomainRange(timeAtCursor, newZoomWidth))
             }
           }
 
