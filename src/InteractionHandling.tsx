@@ -1,6 +1,6 @@
-import * as React from 'react'
+import React from 'react'
 import { useEffect, useState } from 'react'
-import { Cursor } from './model'
+import { Cursor, Domain } from './model'
 import { noOp } from './shared'
 import { SvgCoordinates } from './MouseAwareSvg'
 
@@ -11,6 +11,7 @@ export interface Props {
   isZoomOutPossible: boolean
   onZoomIn: () => void
   onZoomInCustom: (mouseStartX: number, mouseEndX: number) => void
+  onZoomInCustomInProgress: (mouseStartX: number, mouseEndX: number) => void
   onZoomOut: () => void
   onZoomReset: () => void
   onPan: (pixelDelta: number) => void
@@ -34,8 +35,8 @@ interface InteractionModePanning extends Anchored {
   type: 'panning'
 }
 type InteractionModeRubberBand =
-  | Anchored & Readonly<{ type: 'rubber band' }>
-  | InProgress & Readonly<{ type: 'rubber band' }>
+  | (Anchored & Readonly<{ type: 'rubber band' }>)
+  | (InProgress & Readonly<{ type: 'rubber band' }>)
 interface InteractionModeAnimationInProgress {
   type: 'animation in progress'
 }
@@ -54,9 +55,10 @@ export const InteractionHandling = ({
   onZoomIn,
   onZoomOut,
   onZoomInCustom,
+  onZoomInCustomInProgress,
   onZoomReset,
   onPan,
-  children
+  children,
 }: Props) => {
   const [cursor, setCursor] = useState<Cursor>('default')
   const [isAltKeyDown, setAltKeyDown] = useState(false)
@@ -105,6 +107,11 @@ export const InteractionHandling = ({
     }
   }, [isAltKeyDown, isShiftKeyDown, isZoomInPossible, isZoomOutPossible, interactionMode])
 
+  const getRubberRange = (anchor: number, position: number): Domain => [
+    Math.min(anchor, position),
+    Math.max(anchor, position),
+  ]
+
   const onMouseDown = (e: React.MouseEvent) => {
     const anchored: Anchored = { variant: 'anchored', anchorX: mousePosition.x }
     if (e.shiftKey) {
@@ -122,9 +129,10 @@ export const InteractionHandling = ({
       const inProgress: InteractionMode = {
         ...interactionMode,
         variant: 'in progress',
-        currentX: mousePosition.x
+        currentX: mousePosition.x,
       }
       setInteractionMode(inProgress)
+      onZoomInCustomInProgress(...getRubberRange(inProgress.anchorX, inProgress.currentX))
     }
   }
 
@@ -134,9 +142,7 @@ export const InteractionHandling = ({
     const isZoom = e.button === 0 && (interactionMode.type === 'none' || isPanning)
 
     if (interactionMode.type === 'rubber band') {
-      const min = Math.min(interactionMode.anchorX, mousePosition.x)
-      const max = Math.max(interactionMode.anchorX, mousePosition.x)
-      onZoomInCustom(min, max)
+      onZoomInCustom(...getRubberRange(interactionMode.anchorX, mousePosition.x))
     } else if (isZoom) {
       e.altKey ? onZoomOut() : isZoomInPossible ? onZoomIn() : noOp()
     }

@@ -1,7 +1,7 @@
 import { timeFormat } from 'd3-time-format'
 import 'react-app-polyfill/ie11'
 import * as React from 'react'
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, useState, useCallback } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { Set as ImmutableSet } from 'immutable'
@@ -20,30 +20,30 @@ const useStyles = makeStyles({
     display: 'grid',
     width: 'calc(100vw - 200px)',
     gridTemplateRows: 'auto auto 300px 300px',
-    gridRowGap: 40,
-    margin: 100
+    gridRowGap: 100,
+    margin: 100,
   },
   controlPanel: {
     display: 'grid',
     width: '100%',
     gridTemplateColumns: '50% 50%',
-    gridGap: 5
+    gridGap: 5,
   },
   card: {
-    padding: 15
+    padding: 15,
   },
   hci: {
     color: '#9e9e9e',
     lineHeight: 0.8,
     '& td': {
-      paddingRight: 10
-    }
+      paddingRight: 10,
+    },
   },
   configToggles: {
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 })
 
 const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
@@ -97,27 +97,55 @@ const DemoTimeline = ({
   rawEvents,
   timelineComponent,
   laneDisplayMode,
-  suppressMarkAnimation
+  suppressMarkAnimation,
 }: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
+  const [zoomRange, setZoomRange] = useState<[number, number]>()
+  const [cursorZoomRange, setCursorZoomRange] = useState<[number, number] | undefined>()
   const events = rawEvents.map((e: ExampleEvent) => ({
     ...e,
     tooltip: eventTooltip(e),
     isSelected: selectedEvents.contains(e.eventId),
-    isPinned: pinnedEvents.contains(e.eventId)
+    isPinned: pinnedEvents.contains(e.eventId),
   }))
 
-  const onEventHover = (e: TimelineEventId) => setSelectedEvents(prevSelectedEvents => prevSelectedEvents.add(e))
-  const onEventUnhover = (e: TimelineEventId) => setSelectedEvents(prevSelectedEvents => prevSelectedEvents.remove(e))
+  const onEventHover = (e: TimelineEventId) => setSelectedEvents((prevSelectedEvents) => prevSelectedEvents.add(e))
+  const onEventUnhover = (e: TimelineEventId) => setSelectedEvents((prevSelectedEvents) => prevSelectedEvents.remove(e))
   const onEventClick = (e: TimelineEventId) =>
-    setPinnedEvents(prevPinnedEvents =>
+    setPinnedEvents((prevPinnedEvents) =>
       prevPinnedEvents.contains(e) ? prevPinnedEvents.remove(e) : prevPinnedEvents.add(e)
     )
+  const onZoomRangeChange = useCallback(
+    (startMillis: number, endMillis: number) => setZoomRange([startMillis, endMillis]),
+    [setZoomRange]
+  )
+  const onCursorMove = useCallback(
+    (cursorMillis?: number, startMillis?: number, endMillis?: number) => {
+      if (startMillis && endMillis) {
+        setCursorZoomRange([startMillis, endMillis])
+      } else {
+        setCursorZoomRange(undefined)
+      }
+    },
+    [setCursorZoomRange]
+  )
 
   return (
     <div>
-      <Typography variant={'caption'}>{title}</Typography>
+      <Typography variant="h6">{title}</Typography>
+      {zoomRange && (
+        <Typography variant="caption" display="block">
+          <strong>Zoom Range:</strong> {new Date(zoomRange[0]).toLocaleString()} -{' '}
+          {new Date(zoomRange[1]).toLocaleString()}
+        </Typography>
+      )}
+      <Typography variant="caption">
+        <strong>Zoom Range at Cursor:</strong>{' '}
+        {cursorZoomRange
+          ? `${new Date(cursorZoomRange[0]).toLocaleString()} - ${new Date(cursorZoomRange[1]).toLocaleString()}`
+          : 'None'}
+      </Typography>
       <AutoSizer>
         {({ width, height }: Size) => {
           const timelineProps: TimelineProps<TimelineEventId, TimelineLaneId> = {
@@ -130,7 +158,9 @@ const DemoTimeline = ({
             suppressMarkAnimation,
             onEventHover,
             onEventUnhover,
-            onEventClick
+            onEventClick,
+            onZoomRangeChange,
+            onCursorMove,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}
@@ -196,7 +226,7 @@ const ConfigOptions = ({
   laneDisplayMode,
   setLaneDisplayMode,
   suppressMarkAnimation,
-  setSuppressMarkAnimation
+  setSuppressMarkAnimation,
 }: ConfigProps) => {
   const classes = useStyles()
 
