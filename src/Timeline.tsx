@@ -132,14 +132,14 @@ export const Timeline = <EID extends string, LID extends string>({
 
           const timeAtCursor = timeScale.invert(mousePosition.x)
 
-          const getDomainRange = (time: number, width: number): Domain => [
+          const getDomainSpan = (time: number, width: number): Domain => [
             Math.max(maxDomainStart, time - width / 2),
             Math.min(maxDomainEnd, time + width / 2),
           ]
 
           useEffect(() => {
             if (onCursorMove) {
-              onCursorMove(timeAtCursor, ...getDomainRange(timeAtCursor, zoomWidth))
+              onCursorMove(timeAtCursor, ...getDomainSpan(timeAtCursor, zoomWidth))
             }
           }, [timeAtCursor, onCursorMove])
 
@@ -149,7 +149,7 @@ export const Timeline = <EID extends string, LID extends string>({
           const updateDomain = (zoomScale: ZoomScale) => () => {
             if (isDomainChangePossible) {
               const newZoomWidth = zoomScaleWidth(zoomScale)
-              setDomainAnimated(getDomainRange(timeAtCursor, newZoomWidth))
+              setDomainAnimated(getDomainSpan(timeAtCursor, newZoomWidth))
             }
           }
 
