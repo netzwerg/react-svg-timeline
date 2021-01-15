@@ -116,6 +116,7 @@ export const InteractionHandling = ({
     const anchored: Anchored = { variant: 'anchored', anchorX: mousePosition.x }
     if (e.shiftKey) {
       setInteractionMode({ type: 'rubber band', ...anchored })
+      onZoomInCustomInProgress(...getRubberRange(anchored.anchorX, anchored.anchorX))
     } else {
       setInteractionMode({ type: 'panning', ...anchored })
     }
