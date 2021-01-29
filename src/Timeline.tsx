@@ -9,6 +9,7 @@ import { ExpandedMarks } from './ExpandedMarks'
 import { InteractionHandling } from './InteractionHandling'
 import { noOp } from './shared'
 import { CollapsedMarks } from './CollapsedMarks'
+import Trimmer from './Trimmer'
 
 export interface TimelineProps<EID, LID> {
   width: number
@@ -24,6 +25,8 @@ export interface TimelineProps<EID, LID> {
   onEventClick?: (eventId: EID) => void
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
+  trimRange?: Domain
+  onTrimRangeChange?: (startMillis: number, endMillis: number) => void
 }
 
 type Animation =
@@ -56,6 +59,8 @@ export const Timeline = <EID extends string, LID extends string>({
   onEventClick,
   onZoomRangeChange,
   onCursorMove,
+  trimRange,
+  onTrimRangeChange,
 }: TimelineProps<EID, LID>) => {
   {
     const maxDomain = calcMaxDomain(events)
@@ -178,6 +183,18 @@ export const Timeline = <EID extends string, LID extends string>({
             }
           }
 
+          const onTrimStart = (mousePosX: number) => {
+            if (onTrimRangeChange) {
+              onTrimRangeChange(timeScale.invert(mousePosX), trimRange ? trimRange[1] : domain[1])
+            }
+          }
+
+          const onTrimEnd = (mousePosX: number) => {
+            if (onTrimRangeChange) {
+              onTrimRangeChange(trimRange ? trimRange[0] : domain[0], timeScale.invert(mousePosX))
+            }
+          }
+
           const onPan = (pixelDelta: number) => {
             if (isDomainChangePossible) {
               const [domainMin, domainMax] = domain
@@ -212,25 +229,37 @@ export const Timeline = <EID extends string, LID extends string>({
               onZoomInCustomInProgress={onZoomInCustomInProgress}
               onZoomReset={onZoomReset}
               onPan={onPan}
+              onTrimStart={onTrimStart}
+              onTrimEnd={onTrimEnd}
             >
-              {(cursor, interactionMode) => {
-                const mouseCursor = isNoEventSelected ? (
-                  <MouseCursor
-                    mousePosition={mousePosition.x}
-                    cursorLabel={dateFormat(timeAtCursor)}
-                    cursor={cursor}
-                    interactionMode={interactionMode}
-                    zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
-                    zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
-                    zoomScale={smallerZoomScale}
-                    isZoomInPossible={isZoomInPossible}
-                  />
-                ) : (
-                  <g />
-                )
+              {(cursor, interactionMode, setTrimHoverMode) => {
+                const mouseCursor =
+                  isNoEventSelected && interactionMode.type !== 'trim' ? (
+                    <MouseCursor
+                      mousePosition={mousePosition.x}
+                      cursorLabel={dateFormat(timeAtCursor)}
+                      cursor={cursor}
+                      interactionMode={interactionMode}
+                      zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
+                      zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
+                      zoomScale={smallerZoomScale}
+                      isZoomInPossible={isZoomInPossible}
+                    />
+                  ) : (
+                    <g />
+                  )
 
                 return (
                   <g>
+                    {interactionMode.type === 'trim' && timeScale && (
+                      <Trimmer
+                        startX={trimRange ? trimRange[0] : domain[0]}
+                        endX={trimRange ? trimRange[1] : domain[1]}
+                        height={height}
+                        timeScale={timeScale}
+                        setTrimMode={setTrimHoverMode}
+                      />
+                    )}
                     <GridLines height={height} domain={domain} timeScale={timeScale} />
                     {showMarks &&
                       (laneDisplayMode === 'expanded' ? (

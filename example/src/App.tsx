@@ -103,6 +103,7 @@ const DemoTimeline = ({
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [zoomRange, setZoomRange] = useState<[number, number]>()
   const [cursorZoomRange, setCursorZoomRange] = useState<[number, number] | undefined>()
+  const [trimRange, setTrimRange] = useState<[number, number] | undefined>()
   const events = rawEvents.map((e: ExampleEvent) => ({
     ...e,
     tooltip: eventTooltip(e),
@@ -129,6 +130,11 @@ const DemoTimeline = ({
       }
     },
     [setCursorZoomRange]
+  )
+
+  const onTrimRangeChange = useCallback(
+    (startMillis: number, endMillis: number) => setTrimRange([startMillis, endMillis]),
+    [setTrimRange]
   )
 
   return (
@@ -161,6 +167,8 @@ const DemoTimeline = ({
             onEventClick,
             onZoomRangeChange,
             onCursorMove,
+            trimRange,
+            onTrimRangeChange,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}
