@@ -153,7 +153,7 @@ const DemoTimeline = ({
           : 'None'}
       </Typography>
       <Typography variant="caption">
-        <strong>Trimming:</strong>{' '}
+        <strong>Trim Range:</strong>{' '}
         {trimRange ? `${new Date(trimRange[0]).toLocaleString()} - ${new Date(trimRange[1]).toLocaleString()}` : 'None'}
       </Typography>
       <AutoSizer>
@@ -223,6 +223,10 @@ const KeyboardShortcuts = () => {
           <tr>
             <td>Pan:</td>
             <td>Click + Drag</td>
+          </tr>
+          <tr>
+            <td>Trim (toggle):</td>
+            <td>t</td>
           </tr>
           <tr>
             <td>Reset:</td>
