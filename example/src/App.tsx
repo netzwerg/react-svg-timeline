@@ -146,11 +146,15 @@ const DemoTimeline = ({
           {new Date(zoomRange[1]).toLocaleString()}
         </Typography>
       )}
-      <Typography variant="caption">
+      <Typography variant="caption" display="block">
         <strong>Zoom Range at Cursor:</strong>{' '}
         {cursorZoomRange
           ? `${new Date(cursorZoomRange[0]).toLocaleString()} - ${new Date(cursorZoomRange[1]).toLocaleString()}`
           : 'None'}
+      </Typography>
+      <Typography variant="caption">
+        <strong>Trimming:</strong>{' '}
+        {trimRange ? `${new Date(trimRange[0]).toLocaleString()} - ${new Date(trimRange[1]).toLocaleString()}` : 'None'}
       </Typography>
       <AutoSizer>
         {({ width, height }: Size) => {

@@ -1,22 +1,12 @@
 import React from 'react'
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { orange } from '@material-ui/core/colors'
 import { ScaleLinear } from 'd3-scale'
-import { TrimHover, TrimNone } from './InteractionHandling'
+import { TrimHover, TrimNone } from '../InteractionHandling'
+import TrimHandle from './TrimHandle'
 
-const useStyles = makeStyles((theme: Theme) => ({
-  cursor: {
-    stroke: orange.A200,
-    strokeWidth: 6,
-  },
-  label: {
-    fill: orange.A200,
-    textAnchor: 'middle',
-    dominantBaseline: 'middle',
-    fontFamily: theme.typography.caption.fontFamily,
-    cursor: 'default',
-  },
-  zoomRange: {
+const useStyles = makeStyles(() => ({
+  trimmerArea: {
     fill: orange.A200,
     opacity: 0.1,
   },
@@ -28,9 +18,10 @@ interface Props {
   height: number
   timeScale: ScaleLinear<number, number>
   setTrimMode: (trimHoverMode: TrimHover | TrimNone) => void
+  dateFormat: (ms: number) => string
 }
 
-function Trimmer({ startX, endX, timeScale, height, setTrimMode }: Props) {
+export function Trimmer({ startX, endX, timeScale, height, setTrimMode, dateFormat }: Props) {
   const classes = useStyles()
 
   const [y1, y2] = [0, height]
@@ -38,26 +29,24 @@ function Trimmer({ startX, endX, timeScale, height, setTrimMode }: Props) {
 
   return (
     <g>
-      <line
-        className={classes.cursor}
-        x1={scaledStartX}
-        y1={y1}
-        x2={scaledStartX}
-        y2={y2}
+      <TrimHandle
+        x={scaledStartX}
+        dateString={dateFormat(startX)}
+        label="Date from"
+        height={height}
         onMouseEnter={() => setTrimMode({ variant: 'trim hover start', otherX: endX })}
         onMouseLeave={() => setTrimMode({ variant: 'none' })}
       />
-      <line
-        className={classes.cursor}
-        x1={scaledEndX}
-        y1={y1}
-        x2={scaledEndX}
-        y2={y2}
+      <TrimHandle
+        x={scaledEndX}
+        dateString={dateFormat(endX)}
+        label="Date to"
+        height={height}
         onMouseEnter={() => setTrimMode({ variant: 'trim hover end', otherX: startX })}
         onMouseLeave={() => setTrimMode({ variant: 'none' })}
       />
       <rect
-        className={classes.zoomRange}
+        className={classes.trimmerArea}
         x={Math.min(scaledStartX, scaledEndX)}
         y={y1}
         width={Math.abs(scaledEndX - scaledStartX)}
@@ -66,5 +55,3 @@ function Trimmer({ startX, endX, timeScale, height, setTrimMode }: Props) {
     </g>
   )
 }
-
-export default Trimmer

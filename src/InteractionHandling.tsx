@@ -9,6 +9,7 @@ export interface Props {
   isAnimationInProgress: boolean
   isZoomInPossible: boolean
   isZoomOutPossible: boolean
+  onZoomScrub: (mousePositionX: number) => void
   onZoomIn: () => void
   onZoomInCustom: (mouseStartX: number, mouseEndX: number) => void
   onZoomInCustomInProgress: (mouseStartX: number, mouseEndX: number) => void
@@ -88,6 +89,7 @@ export const InteractionHandling = ({
   isAnimationInProgress,
   isZoomInPossible,
   isZoomOutPossible,
+  onZoomScrub,
   onZoomIn,
   onZoomOut,
   onZoomInCustom,
@@ -101,7 +103,7 @@ export const InteractionHandling = ({
   const [cursor, setCursor] = useState<Cursor>('default')
   const [isAltKeyDown, setAltKeyDown] = useState(false)
   const [isShiftKeyDown, setShiftKeyDown] = useState(false)
-  const [isCtrlKeyDown, setCtrlKeyDown] = useState(false)
+  const [isTrimming, setIsTrimming] = useState(false)
   const [interactionMode, setInteractionMode] = useState<InteractionMode>(interactionModeNone)
 
   useEffect(() => {
@@ -117,7 +119,8 @@ export const InteractionHandling = ({
     const onKeyChange = (e: KeyboardEvent) => {
       setAltKeyDown(e.altKey)
       setShiftKeyDown(e.shiftKey)
-      setCtrlKeyDown(e.ctrlKey)
+      // toggle trimming using "t" key
+      setIsTrimming((isTrimming) => (e.key === 't' && e.type === 'keydown' ? !isTrimming : isTrimming))
       if (e.key === 'Escape') {
         onZoomReset()
       }
@@ -131,10 +134,10 @@ export const InteractionHandling = ({
       window.removeEventListener('keydown', onKeyChange)
       window.removeEventListener('keyup', onKeyChange)
     }
-  }, [setAltKeyDown, setShiftKeyDown, setCtrlKeyDown, onZoomReset])
+  }, [setAltKeyDown, setShiftKeyDown, setIsTrimming, onZoomReset])
 
   useEffect(() => {
-    if (isCtrlKeyDown) {
+    if (isTrimming) {
       setInteractionMode({ type: 'trim', variant: 'none' })
 
       return () => {
@@ -142,7 +145,7 @@ export const InteractionHandling = ({
       }
     }
     return
-  }, [isCtrlKeyDown, setInteractionMode])
+  }, [isTrimming, setInteractionMode])
 
   useEffect(() => {
     if (interactionMode.type === 'animation in progress') {
@@ -169,7 +172,7 @@ export const InteractionHandling = ({
     Math.max(anchor, position),
   ]
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const onMouseDown = () => {
     const anchored: Anchored = { variant: 'anchored', anchorX: mousePosition.x }
 
     if (interactionMode.type === 'trim') {
@@ -178,7 +181,7 @@ export const InteractionHandling = ({
       } else if (interactionMode.variant === 'trim hover end') {
         setInteractionMode({ type: 'trim', variant: 'trim end', otherX: interactionMode.otherX })
       }
-    } else if (e.shiftKey) {
+    } else if (isShiftKeyDown) {
       setInteractionMode({ type: 'rubber band', ...anchored })
       onZoomInCustomInProgress(...getRubberRange(anchored.anchorX, anchored.anchorX))
     } else {
@@ -205,6 +208,9 @@ export const InteractionHandling = ({
       } else if (interactionMode.variant === 'trim end') {
         onTrimEnd(mousePosition.x)
       }
+    }
+    if (interactionMode.type === 'none') {
+      onZoomScrub(mousePosition.x)
     }
   }
 
