@@ -29,6 +29,13 @@ export function Trimmer({ startX, endX, timeScale, height, setTrimMode, dateForm
 
   return (
     <g>
+      <rect
+        className={classes.trimmerArea}
+        x={Math.min(scaledStartX, scaledEndX)}
+        y={y1}
+        width={Math.abs(scaledEndX - scaledStartX)}
+        height={y2}
+      />
       <TrimHandle
         x={scaledStartX}
         dateString={dateFormat(startX)}
@@ -44,13 +51,6 @@ export function Trimmer({ startX, endX, timeScale, height, setTrimMode, dateForm
         height={height}
         onMouseEnter={() => setTrimMode({ variant: 'trim hover end', otherX: startX })}
         onMouseLeave={() => setTrimMode({ variant: 'none' })}
-      />
-      <rect
-        className={classes.trimmerArea}
-        x={Math.min(scaledStartX, scaledEndX)}
-        y={y1}
-        width={Math.abs(scaledEndX - scaledStartX)}
-        height={y2}
       />
     </g>
   )
