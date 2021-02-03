@@ -132,6 +132,10 @@ const DemoTimeline = ({
     [setCursorZoomRange]
   )
 
+  const onInteractionEnd = useCallback(() => {
+    setCursorZoomRange(undefined)
+  }, [setCursorZoomRange])
+
   const onTrimRangeChange = useCallback(
     (startMillis: number, endMillis: number) => setTrimRange([startMillis, endMillis]),
     [setTrimRange]
@@ -173,6 +177,7 @@ const DemoTimeline = ({
             onCursorMove,
             trimRange,
             onTrimRangeChange,
+            onInteractionEnd,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}

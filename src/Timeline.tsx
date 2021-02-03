@@ -27,6 +27,7 @@ export interface TimelineProps<EID, LID> {
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
   trimRange?: Domain
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void
+  onInteractionEnd?: () => void
 }
 
 type Animation =
@@ -61,6 +62,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onCursorMove,
   trimRange,
   onTrimRangeChange,
+  onInteractionEnd,
 }: TimelineProps<EID, LID>) => {
   {
     const maxDomain = calcMaxDomain(events)
@@ -213,7 +215,7 @@ export const Timeline = <EID extends string, LID extends string>({
               isAnimationInProgress={isAnimationInProgress}
               isZoomInPossible={isZoomInPossible}
               isZoomOutPossible={isZoomOutPossible}
-              onZoomScrub={onZoomScrub}
+              onHover={onZoomScrub}
               onZoomIn={onZoomIn}
               onZoomOut={onZoomOut}
               onZoomInCustom={onZoomInCustom}
@@ -222,6 +224,7 @@ export const Timeline = <EID extends string, LID extends string>({
               onPan={onPan}
               onTrimStart={onTrimStart}
               onTrimEnd={onTrimEnd}
+              onInteractionEnd={onInteractionEnd}
             >
               {(cursor, interactionMode, setTrimHoverMode) => {
                 const mouseCursor =

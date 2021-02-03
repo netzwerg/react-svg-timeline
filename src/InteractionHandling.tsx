@@ -9,7 +9,7 @@ export interface Props {
   isAnimationInProgress: boolean
   isZoomInPossible: boolean
   isZoomOutPossible: boolean
-  onZoomScrub: (mousePositionX: number) => void
+  onHover: (mousePositionX: number) => void
   onZoomIn: () => void
   onZoomInCustom: (mouseStartX: number, mouseEndX: number) => void
   onZoomInCustomInProgress: (mouseStartX: number, mouseEndX: number) => void
@@ -18,6 +18,7 @@ export interface Props {
   onTrimStart: (mousePosX: number) => void
   onTrimEnd: (mousePosX: number) => void
   onPan: (pixelDelta: number) => void
+  onInteractionEnd?: () => void
   children: (
     cursor: Cursor,
     interactionMode: InteractionMode,
@@ -30,6 +31,12 @@ interface InteractionModeNone {
 }
 
 const interactionModeNone: InteractionModeNone = { type: 'none' }
+
+interface InteractionModeHover {
+  type: 'hover'
+}
+
+const interactionModeHover: InteractionModeHover = { type: 'hover' }
 
 interface Anchored {
   variant: 'anchored'
@@ -79,6 +86,7 @@ type InteractionModeTrim =
 
 export type InteractionMode =
   | InteractionModeNone
+  | InteractionModeHover
   | InteractionModeAnimationInProgress
   | InteractionModePanning
   | InteractionModeRubberBand
@@ -89,7 +97,7 @@ export const InteractionHandling = ({
   isAnimationInProgress,
   isZoomInPossible,
   isZoomOutPossible,
-  onZoomScrub,
+  onHover,
   onZoomIn,
   onZoomOut,
   onZoomInCustom,
@@ -98,6 +106,7 @@ export const InteractionHandling = ({
   onTrimStart,
   onTrimEnd,
   onPan,
+  onInteractionEnd,
   children,
 }: Props) => {
   const [cursor, setCursor] = useState<Cursor>('default')
@@ -110,7 +119,7 @@ export const InteractionHandling = ({
     if (isAnimationInProgress) {
       setInteractionMode(interactionModeAnimationInProgress)
     } else {
-      setInteractionMode(interactionModeNone)
+      setInteractionMode(interactionModeHover)
     }
   }, [isAnimationInProgress])
 
@@ -141,7 +150,7 @@ export const InteractionHandling = ({
       setInteractionMode({ type: 'trim', variant: 'none' })
 
       return () => {
-        setInteractionMode({ type: 'none' })
+        setInteractionMode({ type: 'hover' })
       }
     }
     return
@@ -166,6 +175,12 @@ export const InteractionHandling = ({
       setCursor(isAltKeyDown ? getZoomOutCursor() : getZoomInCursor())
     }
   }, [isAltKeyDown, isShiftKeyDown, isZoomInPossible, isZoomOutPossible, interactionMode])
+
+  useEffect(() => {
+    if (interactionMode.type === 'none' && onInteractionEnd) {
+      onInteractionEnd()
+    }
+  }, [onInteractionEnd, interactionMode])
 
   const getRubberRange = (anchor: number, position: number): Domain => [
     Math.min(anchor, position),
@@ -209,15 +224,27 @@ export const InteractionHandling = ({
         onTrimEnd(mousePosition.x)
       }
     }
+    if (interactionMode.type === 'hover') {
+      onHover(mousePosition.x)
+    }
+  }
+
+  const onMouseEnter = () => {
     if (interactionMode.type === 'none') {
-      onZoomScrub(mousePosition.x)
+      setInteractionMode(interactionModeHover)
+    }
+  }
+
+  const onMouseLeave = () => {
+    if (interactionMode.type === 'hover') {
+      setInteractionMode(interactionModeNone)
     }
   }
 
   const onMouseUp = (e: React.MouseEvent) => {
     // anything below threshold is considered a click rather than a drag
     const isPanning = interactionMode.type === 'panning' && Math.abs(interactionMode.anchorX - mousePosition.x) < 5
-    const isZoom = e.button === 0 && (interactionMode.type === 'none' || isPanning)
+    const isZoom = e.button === 0 && (interactionMode.type === 'hover' || isPanning)
 
     if (interactionMode.type === 'rubber band') {
       onZoomInCustom(...getRubberRange(interactionMode.anchorX, mousePosition.x))
@@ -228,7 +255,7 @@ export const InteractionHandling = ({
     if (interactionMode.type === 'trim') {
       setInteractionMode({ type: 'trim', variant: 'none' })
     } else {
-      setInteractionMode(interactionModeNone)
+      setInteractionMode(interactionModeHover)
     }
   }
 
@@ -248,6 +275,8 @@ export const InteractionHandling = ({
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children(cursor, interactionMode, setTrimHoverMode)}
     </g>
