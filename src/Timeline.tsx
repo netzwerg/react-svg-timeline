@@ -9,6 +9,7 @@ import { ExpandedMarks } from './ExpandedMarks'
 import { InteractionHandling } from './InteractionHandling'
 import { noOp } from './shared'
 import { CollapsedMarks } from './CollapsedMarks'
+import { Trimmer, TrimRange, useTrimming } from './trimmer'
 
 export interface TimelineProps<EID, LID> {
   width: number
@@ -24,6 +25,9 @@ export interface TimelineProps<EID, LID> {
   onEventClick?: (eventId: EID) => void
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
+  trimRange?: Domain
+  onTrimRangeChange?: (startMillis: number, endMillis: number) => void
+  onInteractionEnd?: () => void
 }
 
 type Animation =
@@ -56,6 +60,9 @@ export const Timeline = <EID extends string, LID extends string>({
   onEventClick,
   onZoomRangeChange,
   onCursorMove,
+  trimRange,
+  onTrimRangeChange,
+  onInteractionEnd,
 }: TimelineProps<EID, LID>) => {
   {
     const maxDomain = calcMaxDomain(events)
@@ -137,12 +144,6 @@ export const Timeline = <EID extends string, LID extends string>({
             Math.min(maxDomainEnd, time + width / 2),
           ]
 
-          useEffect(() => {
-            if (onCursorMove) {
-              onCursorMove(timeAtCursor, ...getDomainSpan(timeAtCursor, zoomWidth))
-            }
-          }, [timeAtCursor, onCursorMove])
-
           const setDomainAnimated = (newDomain: Domain) =>
             setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
 
@@ -150,6 +151,12 @@ export const Timeline = <EID extends string, LID extends string>({
             if (isDomainChangePossible) {
               const newZoomWidth = zoomScaleWidth(zoomScale)
               setDomainAnimated(getDomainSpan(timeAtCursor, newZoomWidth))
+            }
+          }
+
+          const onZoomScrub = () => {
+            if (onCursorMove) {
+              onCursorMove(timeAtCursor, ...getDomainSpan(timeAtCursor, zoomWidth))
             }
           }
 
@@ -200,34 +207,41 @@ export const Timeline = <EID extends string, LID extends string>({
             onEventUnhover(eventId)
           }
 
+          const [onTrimStart, onTrimEnd] = useTrimming(domain, timeScale, onTrimRangeChange, trimRange)
+
           return (
             <InteractionHandling
               mousePosition={mousePosition}
               isAnimationInProgress={isAnimationInProgress}
               isZoomInPossible={isZoomInPossible}
               isZoomOutPossible={isZoomOutPossible}
+              onHover={onZoomScrub}
               onZoomIn={onZoomIn}
               onZoomOut={onZoomOut}
               onZoomInCustom={onZoomInCustom}
               onZoomInCustomInProgress={onZoomInCustomInProgress}
               onZoomReset={onZoomReset}
               onPan={onPan}
+              onTrimStart={onTrimStart}
+              onTrimEnd={onTrimEnd}
+              onInteractionEnd={onInteractionEnd}
             >
-              {(cursor, interactionMode) => {
-                const mouseCursor = isNoEventSelected ? (
-                  <MouseCursor
-                    mousePosition={mousePosition.x}
-                    cursorLabel={dateFormat(timeAtCursor)}
-                    cursor={cursor}
-                    interactionMode={interactionMode}
-                    zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
-                    zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
-                    zoomScale={smallerZoomScale}
-                    isZoomInPossible={isZoomInPossible}
-                  />
-                ) : (
-                  <g />
-                )
+              {(cursor, interactionMode, setTrimHoverMode) => {
+                const mouseCursor =
+                  isNoEventSelected && interactionMode.type !== 'trim' ? (
+                    <MouseCursor
+                      mousePosition={mousePosition.x}
+                      cursorLabel={dateFormat(timeAtCursor)}
+                      cursor={cursor}
+                      interactionMode={interactionMode}
+                      zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
+                      zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
+                      zoomScale={smallerZoomScale}
+                      isZoomInPossible={isZoomInPossible}
+                    />
+                  ) : (
+                    <g />
+                  )
 
                 return (
                   <g>
@@ -257,6 +271,24 @@ export const Timeline = <EID extends string, LID extends string>({
                           onEventClick={onEventClick}
                         />
                       ))}
+                    {trimRange && (
+                      <TrimRange
+                        startX={timeScale(trimRange[0])!}
+                        endX={timeScale(trimRange[1])!}
+                        height={height}
+                        width={width}
+                      />
+                    )}
+                    {interactionMode.type === 'trim' && timeScale && (
+                      <Trimmer
+                        startX={trimRange ? trimRange[0] : domain[0]}
+                        endX={trimRange ? trimRange[1] : domain[1]}
+                        height={height}
+                        timeScale={timeScale}
+                        setTrimMode={setTrimHoverMode}
+                        dateFormat={dateFormat}
+                      />
+                    )}
                   </g>
                 )
               }}

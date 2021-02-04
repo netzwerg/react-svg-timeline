@@ -103,6 +103,7 @@ const DemoTimeline = ({
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [zoomRange, setZoomRange] = useState<[number, number]>()
   const [cursorZoomRange, setCursorZoomRange] = useState<[number, number] | undefined>()
+  const [trimRange, setTrimRange] = useState<[number, number] | undefined>()
   const events = rawEvents.map((e: ExampleEvent) => ({
     ...e,
     tooltip: eventTooltip(e),
@@ -131,6 +132,15 @@ const DemoTimeline = ({
     [setCursorZoomRange]
   )
 
+  const onInteractionEnd = useCallback(() => {
+    setCursorZoomRange(undefined)
+  }, [setCursorZoomRange])
+
+  const onTrimRangeChange = useCallback(
+    (startMillis: number, endMillis: number) => setTrimRange([startMillis, endMillis]),
+    [setTrimRange]
+  )
+
   return (
     <div>
       <Typography variant="h6">{title}</Typography>
@@ -140,11 +150,15 @@ const DemoTimeline = ({
           {new Date(zoomRange[1]).toLocaleString()}
         </Typography>
       )}
-      <Typography variant="caption">
+      <Typography variant="caption" display="block">
         <strong>Zoom Range at Cursor:</strong>{' '}
         {cursorZoomRange
           ? `${new Date(cursorZoomRange[0]).toLocaleString()} - ${new Date(cursorZoomRange[1]).toLocaleString()}`
           : 'None'}
+      </Typography>
+      <Typography variant="caption">
+        <strong>Trim Range:</strong>{' '}
+        {trimRange ? `${new Date(trimRange[0]).toLocaleString()} - ${new Date(trimRange[1]).toLocaleString()}` : 'None'}
       </Typography>
       <AutoSizer>
         {({ width, height }: Size) => {
@@ -161,6 +175,9 @@ const DemoTimeline = ({
             onEventClick,
             onZoomRangeChange,
             onCursorMove,
+            trimRange,
+            onTrimRangeChange,
+            onInteractionEnd,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}
@@ -211,6 +228,10 @@ const KeyboardShortcuts = () => {
           <tr>
             <td>Pan:</td>
             <td>Click + Drag</td>
+          </tr>
+          <tr>
+            <td>Trim (toggle):</td>
+            <td>t</td>
           </tr>
           <tr>
             <td>Reset:</td>

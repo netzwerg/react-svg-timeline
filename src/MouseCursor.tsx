@@ -1,27 +1,20 @@
 import * as React from 'react'
-import { Theme } from '@material-ui/core'
 import { ZoomScale } from './ZoomScale'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { orange } from '@material-ui/core/colors'
 import { Cursor } from './model'
 import { InteractionMode } from './InteractionHandling'
+import CursorLabel from './CursorLabel'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   cursor: {
     stroke: orange.A200,
-    strokeWidth: 2
-  },
-  label: {
-    fill: orange.A200,
-    textAnchor: 'middle',
-    dominantBaseline: 'middle',
-    fontFamily: theme.typography.caption.fontFamily,
-    cursor: 'default'
+    strokeWidth: 2,
   },
   zoomRange: {
     fill: orange.A200,
-    opacity: 0.1
-  }
+    opacity: 0.1,
+  },
 }))
 
 interface Props {
@@ -43,7 +36,7 @@ export const MouseCursor = ({
   zoomRangeStart,
   zoomRangeEnd,
   zoomScale,
-  isZoomInPossible
+  isZoomInPossible,
 }: Props) => {
   if (isNaN(mousePosition)) {
     return <g />
@@ -108,7 +101,7 @@ const ZoomCursor = ({
   zoomScale,
   isZoomInPossible,
   zoomRangeStart,
-  zoomRangeEnd
+  zoomRangeEnd,
 }: ZoomCursorProps) => {
   const classes = useStyles()
   return (
@@ -123,14 +116,13 @@ const ZoomCursor = ({
         cursor={cursor}
       />
       <line className={classes.cursor} x1={mousePosition} y1="0%" x2={mousePosition} y2="5%" cursor={cursor} />
-      <text className={classes.label} x={mousePosition} y={isZoomInPossible ? '11%' : '15%'} cursor={cursor}>
-        <tspan x={mousePosition} cursor={cursor}>
-          {cursorLabel}
-        </tspan>
-        <tspan x={mousePosition} dy={18} cursor={cursor}>
-          {isZoomInPossible ? zoomScale : ''}
-        </tspan>
-      </text>
+      <CursorLabel
+        x={mousePosition}
+        y={isZoomInPossible ? '11%' : '15%'}
+        cursor={cursor}
+        overline={cursorLabel}
+        label={isZoomInPossible ? zoomScale : ''}
+      />
       <line className={classes.cursor} x1={mousePosition} y1="23%" x2={mousePosition} y2="100%" cursor={cursor} />
     </g>
   )
