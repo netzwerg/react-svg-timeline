@@ -35,6 +35,7 @@ function TrimHandle({ x, label, dateString, height, onMouseEnter, onMouseLeave }
   return (
     <>
       <line
+        pointerEvents={'visibleStroke'}
         className={classes.cursor}
         x1={x}
         y1={0}
@@ -52,6 +53,7 @@ function TrimHandle({ x, label, dateString, height, onMouseEnter, onMouseLeave }
         y2={height}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        pointerEvents={'visibleStroke'}
       />
     </>
   )
