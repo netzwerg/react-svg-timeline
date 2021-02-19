@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
-import { nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
+import { currentZoomScale, nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleLinear } from 'd3-scale'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
@@ -10,6 +10,8 @@ import { InteractionHandling } from './InteractionHandling'
 import { noOp } from './shared'
 import { CollapsedMarks } from './CollapsedMarks'
 import { Trimmer, TrimRange, useTrimming } from './trimmer'
+import { useEvents } from './hooks'
+import { EventClusters } from './EventClusters'
 
 export interface TimelineProps<EID, LID> {
   width: number
@@ -20,6 +22,7 @@ export interface TimelineProps<EID, LID> {
   eventComponent?: EventComponentFactory<EID, LID>
   laneDisplayMode?: LaneDisplayMode
   suppressMarkAnimation?: boolean
+  enableEventClustering?: boolean
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -55,6 +58,7 @@ export const Timeline = <EID extends string, LID extends string>({
   eventComponent,
   laneDisplayMode = 'expanded',
   suppressMarkAnimation = false,
+  enableEventClustering = false,
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick,
@@ -108,19 +112,22 @@ export const Timeline = <EID extends string, LID extends string>({
       }
     }, [animation, now])
 
-    const eventsInsideDomain = events.filter((e) => {
-      const isStartInView = e.startTimeMillis >= domain[0] && e.startTimeMillis <= domain[1]
-      const isEndInView = e.endTimeMillis && e.endTimeMillis >= domain[0] && e.endTimeMillis <= domain[1]
-      const isSpanningAcrossView = e.endTimeMillis && e.startTimeMillis < domain[0] && e.endTimeMillis > domain[1]
-      return isStartInView || isEndInView || isSpanningAcrossView
-    })
-
-    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
+    const zoomScale = currentZoomScale(domain)
     const smallerZoomScale = nextSmallerZoomScale(domain)
     const biggerZoomScale = nextBiggerZoomScale(domain)
     const zoomWidth = zoomScaleWidth(smallerZoomScale)
     const currentDomainWidth = domain[1] - domain[0]
     const maxDomainWidth = maxDomainEnd - maxDomainStart
+
+    const [eventsInsideDomain, eventClustersInsideDomain] = useEvents(
+      events,
+      domain,
+      zoomScale,
+      laneDisplayMode === 'expanded',
+      enableEventClustering
+    )
+
+    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
 
     const isZoomInPossible = smallerZoomScale !== 'minimum'
     const isZoomOutPossible = currentDomainWidth < maxDomainWidth
@@ -246,31 +253,41 @@ export const Timeline = <EID extends string, LID extends string>({
                 return (
                   <g>
                     <GridLines height={height} domain={domain} timeScale={timeScale} />
-                    {showMarks &&
-                      (laneDisplayMode === 'expanded' ? (
-                        <ExpandedMarks
-                          mouseCursor={mouseCursor}
-                          events={eventsInsideDomain}
+                    {showMarks && (
+                      <>
+                        <EventClusters
+                          eventClusters={eventClustersInsideDomain}
+                          height={height}
                           lanes={lanes}
                           timeScale={timeScale}
-                          height={height}
-                          eventComponent={eventComponent}
-                          onEventHover={onEventHoverDecorated}
-                          onEventUnhover={onEventUnhoverDecorated}
-                          onEventClick={onEventClick}
+                          expanded={laneDisplayMode === 'expanded'}
                         />
-                      ) : (
-                        <CollapsedMarks
-                          mouseCursor={mouseCursor}
-                          events={eventsInsideDomain}
-                          timeScale={timeScale}
-                          height={height}
-                          eventComponent={eventComponent}
-                          onEventHover={onEventHoverDecorated}
-                          onEventUnhover={onEventUnhoverDecorated}
-                          onEventClick={onEventClick}
-                        />
-                      ))}
+                        {laneDisplayMode === 'expanded' ? (
+                          <ExpandedMarks
+                            mouseCursor={mouseCursor}
+                            events={eventsInsideDomain}
+                            lanes={lanes}
+                            timeScale={timeScale}
+                            height={height}
+                            eventComponent={eventComponent}
+                            onEventHover={onEventHoverDecorated}
+                            onEventUnhover={onEventUnhoverDecorated}
+                            onEventClick={onEventClick}
+                          />
+                        ) : (
+                          <CollapsedMarks
+                            mouseCursor={mouseCursor}
+                            events={eventsInsideDomain}
+                            timeScale={timeScale}
+                            height={height}
+                            eventComponent={eventComponent}
+                            onEventHover={onEventHoverDecorated}
+                            onEventUnhover={onEventUnhoverDecorated}
+                            onEventClick={onEventClick}
+                          />
+                        )}
+                      </>
+                    )}
                     {trimRange && (
                       <TrimRange
                         startX={timeScale(trimRange[0])!}

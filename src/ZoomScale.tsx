@@ -30,12 +30,17 @@ export const zoomScaleWidth = (scale: ZoomScale): number => {
   }
 }
 
+export const currentZoomScale = (currentDomain: Domain): ZoomScale => {
+  const range = currentDomain[1] - currentDomain[0]
+  return orderedScales.find((s) => zoomScaleWidth(s) <= range) || 'minimum'
+}
+
 export const nextSmallerZoomScale = (currentDomain: Domain): ZoomScale => {
   const range = (currentDomain[1] - currentDomain[0]) / 2
-  return orderedScales.find(s => zoomScaleWidth(s) <= range) || 'minimum'
+  return orderedScales.find((s) => zoomScaleWidth(s) <= range) || 'minimum'
 }
 
 export const nextBiggerZoomScale = (currentDomain: Domain): ZoomScale => {
   const range = (currentDomain[1] - currentDomain[0]) * 2
-  return [...orderedScales].reverse().find(s => zoomScaleWidth(s) > range) || 'maximum'
+  return [...orderedScales].reverse().find((s) => zoomScaleWidth(s) > range) || 'maximum'
 }
