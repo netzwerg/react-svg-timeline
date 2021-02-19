@@ -1,6 +1,6 @@
 import { timeFormat } from 'd3-time-format'
 import 'react-app-polyfill/ie11'
-import React, { useMemo } from 'react'
+import * as React from 'react'
 import { FunctionComponent, useState, useCallback } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
@@ -14,6 +14,7 @@ import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneI
 import Switch from '@material-ui/core/Switch'
 import { LaneDisplayMode, TimelineProps } from '../../src'
 import Card from '@material-ui/core/Card'
+import { useMemo } from 'react'
 
 const useStyles = makeStyles({
   root: {
