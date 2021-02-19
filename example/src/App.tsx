@@ -1,6 +1,6 @@
 import { timeFormat } from 'd3-time-format'
 import 'react-app-polyfill/ie11'
-import * as React from 'react'
+import React, { useMemo } from 'react'
 import { FunctionComponent, useState, useCallback } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
@@ -56,6 +56,7 @@ const eventTooltip = (e: ExampleEvent) =>
 export const App = () => {
   const classes = useStyles()
   const [laneDisplayMode, setLaneDisplayMode] = useState<LaneDisplayMode>('expanded')
+  const [enableClustering, setEnableClustering] = useState<boolean>(false)
   const [suppressMarkAnimation, setSuppressMarkAnimation] = useState<boolean>(false)
   return (
     <div className={classes.root}>
@@ -65,6 +66,8 @@ export const App = () => {
         setLaneDisplayMode={setLaneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
         setSuppressMarkAnimation={setSuppressMarkAnimation}
+        enableClustering={enableClustering}
+        setEnableClustering={setEnableClustering}
       />
       <DemoTimeline
         timelineComponent={Timeline}
@@ -72,6 +75,7 @@ export const App = () => {
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
+        enableClustering={enableClustering}
       />
       <DemoTimeline
         timelineComponent={CustomizedTimeline}
@@ -79,6 +83,7 @@ export const App = () => {
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
+        enableClustering={enableClustering}
       />
     </div>
   )
@@ -90,6 +95,7 @@ interface DemoTimelineProps {
   timelineComponent: FunctionComponent<ExampleProps>
   laneDisplayMode: LaneDisplayMode
   suppressMarkAnimation: boolean
+  enableClustering: boolean
 }
 
 const DemoTimeline = ({
@@ -98,18 +104,23 @@ const DemoTimeline = ({
   timelineComponent,
   laneDisplayMode,
   suppressMarkAnimation,
+  enableClustering,
 }: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [zoomRange, setZoomRange] = useState<[number, number]>()
   const [cursorZoomRange, setCursorZoomRange] = useState<[number, number] | undefined>()
   const [trimRange, setTrimRange] = useState<[number, number] | undefined>()
-  const events = rawEvents.map((e: ExampleEvent) => ({
-    ...e,
-    tooltip: eventTooltip(e),
-    isSelected: selectedEvents.contains(e.eventId),
-    isPinned: pinnedEvents.contains(e.eventId),
-  }))
+  const events = useMemo(
+    () =>
+      rawEvents.map((e: ExampleEvent) => ({
+        ...e,
+        tooltip: eventTooltip(e),
+        isSelected: selectedEvents.contains(e.eventId),
+        isPinned: pinnedEvents.contains(e.eventId),
+      })),
+    [rawEvents]
+  )
 
   const onEventHover = (e: TimelineEventId) => setSelectedEvents((prevSelectedEvents) => prevSelectedEvents.add(e))
   const onEventUnhover = (e: TimelineEventId) => setSelectedEvents((prevSelectedEvents) => prevSelectedEvents.remove(e))
@@ -178,6 +189,7 @@ const DemoTimeline = ({
             trimRange,
             onTrimRangeChange,
             onInteractionEnd,
+            enableEventClustering: enableClustering,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}
@@ -191,6 +203,8 @@ interface ConfigProps {
   setLaneDisplayMode: (laneDisplayMode: LaneDisplayMode) => void
   suppressMarkAnimation: boolean
   setSuppressMarkAnimation: (suppressMarkAnimation: boolean) => void
+  enableClustering: boolean
+  setEnableClustering: (enableClustering: boolean) => void
 }
 
 const ConfigPanel = (props: ConfigProps) => {
@@ -248,6 +262,8 @@ const ConfigOptions = ({
   setLaneDisplayMode,
   suppressMarkAnimation,
   setSuppressMarkAnimation,
+  enableClustering,
+  setEnableClustering,
 }: ConfigProps) => {
   const classes = useStyles()
 
@@ -256,10 +272,14 @@ const ConfigOptions = ({
 
   const onSuppressMarkAnimationChange = () => setSuppressMarkAnimation(!suppressMarkAnimation)
 
+  const onEnableClusteringChange = () => setEnableClustering(!enableClustering)
+
   return (
     <div className={classes.configToggles}>
       <Typography>Collapse Lanes</Typography>
       <Switch checked={laneDisplayModeChecked} onChange={onLaneDisplayModeChange} />
+      <Typography>Cluster Events</Typography>
+      <Switch checked={enableClustering} onChange={onEnableClusteringChange} />
       <Typography>Animate Marks</Typography>
       <Switch checked={!suppressMarkAnimation} onChange={onSuppressMarkAnimationChange} />
     </div>

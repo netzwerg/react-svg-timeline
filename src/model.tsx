@@ -17,6 +17,13 @@ export interface TimelineLane<LID> {
   color?: string
 }
 
+export interface TimelineEventCluster<LID> {
+  timeMillis: number
+  laneId: LID
+  size: number
+  color?: string
+}
+
 export type Domain = [number, number]
 
 export type EventComponentRole = 'background' | 'foreground'
