@@ -2,12 +2,12 @@
 
 A React event timeline component based on SVG.
 
--   Event Points & Periods
--   Event Tooltips
--   Event Lanes
--   Semantic Zoom (10 Years, 1 Year, 1 Week, 1 Day, etc)
--   Custom "rubber band" Zoom
--   Panning
+- Event Points & Periods
+- Event Tooltips
+- Event Lanes
+- Semantic Zoom (10 Years, 1 Year, 1 Week, 1 Day, etc)
+- Custom "rubber band" Zoom
+- Panning
 
 ✨ [Interactive Demo](https://react-svg-timeline.netlify.com/) ✨
 
@@ -21,22 +21,54 @@ or
 
 Note that the following peer dependencies must already be installed:
 
--   `react` and `react-dom` in version >=16.3
--   `@material-ui/core` in version >=4.3
+- `react` and `react-dom` in version >=16.3
+- `@material-ui/core` in version >=4.3
 
 ## Usage
 
-Please check the [example](example) folder.
+This is the simplest possible way to get started:
+
+```tsx
+import * as React from 'react'
+import { Timeline } from 'react-svg-timeline'
+
+export const App = () => {
+  const laneId = 'demo-lane'
+  const lanes = [
+    {
+      laneId,
+      label: 'Demo Lane',
+    },
+  ]
+  const events = [
+    {
+      eventId: 'event-1',
+      laneId: laneId,
+      startTimeMillis: 1399845600000,
+    },
+    {
+      eventId: 'event-2',
+      laneId,
+      startTimeMillis: 1167606000000,
+      endTimeMillis: 1230698892000,
+    },
+  ]
+  const dateFormat = (ms: number) => new Date(ms).toLocaleString()
+  return <Timeline width={600} height={300} events={events} lanes={lanes} dateFormat={dateFormat} />
+}
+```
+
+Please check the [example](example) folder for a full-fledged feature demonstration.
 
 ## Acknowledgements
 
 Thank you:
 
--   [TSDX](https://github.com/palmerhq/tsdx) for making TS library development easier
--   [GitHub Corners](https://github.com/tholman/github-corners) for the callout on the example site
+- [TSDX](https://github.com/palmerhq/tsdx) for making TS library development easier
+- [GitHub Corners](https://github.com/tholman/github-corners) for the callout on the example site
 
 ## License
 
 Licensed under [MIT License](LICENSE).
 
-&copy; Rahel Lüthy 2019
+&copy; Rahel Lüthy 2021
