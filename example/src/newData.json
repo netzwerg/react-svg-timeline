@@ -1,0 +1,544 @@
+{
+  "lanes": [
+    {
+      "laneId": "lane-1",
+      "label": "lane-label-1"
+    },
+    {
+      "laneId": "lane-3",
+      "label": "lane-label-3"
+    },
+    {
+      "laneId": "lane-5",
+      "label": "lane-label-5"
+    },
+    {
+      "laneId": "lane-7",
+      "label": "lane-label-7"
+    },
+    {
+      "laneId": "lane-9",
+      "label": "lane-label-9"
+    },
+    {
+      "laneId": "lane-11",
+      "label": "lane-label-11"
+    },
+    {
+      "laneId": "lane-13",
+      "label": "lane-label-13"
+    },
+    {
+      "laneId": "lane-15",
+      "label": "lane-label-15"
+    },
+    {
+      "laneId": "lane-17",
+      "label": "lane-label-17"
+    },
+    {
+      "laneId": "lane-19",
+      "label": "lane-label-19"
+    },
+    {
+      "laneId": "lane-21",
+      "label": "lane-label-21"
+    },
+    {
+      "laneId": "lane-23",
+      "label": "lane-label-23"
+    },
+    {
+      "laneId": "lane-25",
+      "label": "lane-label-25"
+    },
+    {
+      "laneId": "lane-27",
+      "label": "lane-label-27"
+    },
+    {
+      "laneId": "lane-29",
+      "label": "lane-label-29"
+    },
+    {
+      "laneId": "lane-31",
+      "label": "lane-label-31"
+    },
+    {
+      "laneId": "lane-33",
+      "label": "lane-label-33"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "event-0",
+      "startTimeMillis": 1614137384000,
+      "laneId": "lane-1",
+      "endTimeMillis": 1614141026000
+    },
+    {
+      "eventId": "event-1",
+      "startTimeMillis": 1614137386000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-2",
+      "startTimeMillis": 1614137386000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-3",
+      "startTimeMillis": 1614137386000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-4",
+      "startTimeMillis": 1614137462000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-5",
+      "startTimeMillis": 1614137611000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-6",
+      "startTimeMillis": 1614138574000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-7",
+      "startTimeMillis": 1614139027000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-8",
+      "startTimeMillis": 1614140003000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-9",
+      "startTimeMillis": 1614140099000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-10",
+      "startTimeMillis": 1614140135000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-11",
+      "startTimeMillis": 1614140216000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-12",
+      "startTimeMillis": 1614140756000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-13",
+      "startTimeMillis": 1614140827000,
+      "laneId": "lane-1"
+    },
+    {
+      "eventId": "event-14",
+      "startTimeMillis": 1614137434000,
+      "laneId": "lane-3",
+      "endTimeMillis": 1614141026000
+    },
+    {
+      "eventId": "event-15",
+      "startTimeMillis": 1614137434000,
+      "laneId": "lane-3"
+    },
+    {
+      "eventId": "event-16",
+      "startTimeMillis": 1614137435000,
+      "laneId": "lane-3"
+    },
+    {
+      "eventId": "event-17",
+      "startTimeMillis": 1614137435000,
+      "laneId": "lane-3"
+    },
+    {
+      "eventId": "event-18",
+      "startTimeMillis": 1614137459000,
+      "laneId": "lane-5",
+      "endTimeMillis": 1614138112000
+    },
+    {
+      "eventId": "event-19",
+      "startTimeMillis": 1614137461000,
+      "laneId": "lane-5"
+    },
+    {
+      "eventId": "event-20",
+      "startTimeMillis": 1614137461000,
+      "laneId": "lane-5"
+    },
+    {
+      "eventId": "event-21",
+      "startTimeMillis": 1614137461000,
+      "laneId": "lane-5"
+    },
+    {
+      "eventId": "event-22",
+      "startTimeMillis": 1614137465000,
+      "laneId": "lane-7",
+      "endTimeMillis": 1614141327000
+    },
+    {
+      "eventId": "event-23",
+      "startTimeMillis": 1614137465000,
+      "laneId": "lane-7"
+    },
+    {
+      "eventId": "event-24",
+      "startTimeMillis": 1614137470000,
+      "laneId": "lane-7"
+    },
+    {
+      "eventId": "event-25",
+      "startTimeMillis": 1614137470000,
+      "laneId": "lane-7"
+    },
+    {
+      "eventId": "event-26",
+      "startTimeMillis": 1614137594000,
+      "laneId": "lane-9",
+      "endTimeMillis": 1614141326000
+    },
+    {
+      "eventId": "event-27",
+      "startTimeMillis": 1614137594000,
+      "laneId": "lane-9"
+    },
+    {
+      "eventId": "event-28",
+      "startTimeMillis": 1614137594000,
+      "laneId": "lane-9"
+    },
+    {
+      "eventId": "event-29",
+      "startTimeMillis": 1614137594000,
+      "laneId": "lane-9"
+    },
+    {
+      "eventId": "event-30",
+      "startTimeMillis": 1614137630000,
+      "laneId": "lane-11",
+      "endTimeMillis": 1614140610000
+    },
+    {
+      "eventId": "event-31",
+      "startTimeMillis": 1614137630000,
+      "laneId": "lane-11"
+    },
+    {
+      "eventId": "event-32",
+      "startTimeMillis": 1614137633000,
+      "laneId": "lane-11"
+    },
+    {
+      "eventId": "event-33",
+      "startTimeMillis": 1614137633000,
+      "laneId": "lane-11"
+    },
+    {
+      "eventId": "event-34",
+      "startTimeMillis": 1614137641000,
+      "laneId": "lane-13",
+      "endTimeMillis": 1614141326000
+    },
+    {
+      "eventId": "event-35",
+      "startTimeMillis": 1614137641000,
+      "laneId": "lane-13"
+    },
+    {
+      "eventId": "event-36",
+      "startTimeMillis": 1614137642000,
+      "laneId": "lane-13"
+    },
+    {
+      "eventId": "event-37",
+      "startTimeMillis": 1614137642000,
+      "laneId": "lane-13"
+    },
+    {
+      "eventId": "event-38",
+      "startTimeMillis": 1614137773000,
+      "laneId": "lane-15",
+      "endTimeMillis": 1614141326000
+    },
+    {
+      "eventId": "event-39",
+      "startTimeMillis": 1614137774000,
+      "laneId": "lane-15"
+    },
+    {
+      "eventId": "event-40",
+      "startTimeMillis": 1614137774000,
+      "laneId": "lane-15"
+    },
+    {
+      "eventId": "event-41",
+      "startTimeMillis": 1614137774000,
+      "laneId": "lane-15"
+    },
+    {
+      "eventId": "event-42",
+      "startTimeMillis": 1614137998000,
+      "laneId": "lane-17",
+      "endTimeMillis": 1614141327000
+    },
+    {
+      "eventId": "event-43",
+      "startTimeMillis": 1614137998000,
+      "laneId": "lane-17"
+    },
+    {
+      "eventId": "event-44",
+      "startTimeMillis": 1614137999000,
+      "laneId": "lane-17"
+    },
+    {
+      "eventId": "event-45",
+      "startTimeMillis": 1614137999000,
+      "laneId": "lane-17"
+    },
+    {
+      "eventId": "event-46",
+      "startTimeMillis": 1614138061000,
+      "laneId": "lane-19",
+      "endTimeMillis": 1614140526000
+    },
+    {
+      "eventId": "event-47",
+      "startTimeMillis": 1614138061000,
+      "laneId": "lane-19"
+    },
+    {
+      "eventId": "event-48",
+      "startTimeMillis": 1614138062000,
+      "laneId": "lane-19"
+    },
+    {
+      "eventId": "event-49",
+      "startTimeMillis": 1614138062000,
+      "laneId": "lane-19"
+    },
+    {
+      "eventId": "event-50",
+      "startTimeMillis": 1614138127000,
+      "laneId": "lane-5",
+      "endTimeMillis": 1614141326000
+    },
+    {
+      "eventId": "event-51",
+      "startTimeMillis": 1614138127000,
+      "laneId": "lane-5"
+    },
+    {
+      "eventId": "event-52",
+      "startTimeMillis": 1614138127000,
+      "laneId": "lane-5"
+    },
+    {
+      "eventId": "event-53",
+      "startTimeMillis": 1614138127000,
+      "laneId": "lane-5"
+    },
+    {
+      "eventId": "event-54",
+      "startTimeMillis": 1614138136000,
+      "laneId": "lane-21",
+      "endTimeMillis": 1614140152000
+    },
+    {
+      "eventId": "event-55",
+      "startTimeMillis": 1614138136000,
+      "laneId": "lane-21"
+    },
+    {
+      "eventId": "event-56",
+      "startTimeMillis": 1614138136000,
+      "laneId": "lane-21"
+    },
+    {
+      "eventId": "event-57",
+      "startTimeMillis": 1614138136000,
+      "laneId": "lane-21"
+    },
+    {
+      "eventId": "event-58",
+      "startTimeMillis": 1614138257000,
+      "laneId": "lane-23",
+      "endTimeMillis": 1614141327000
+    },
+    {
+      "eventId": "event-59",
+      "startTimeMillis": 1614138257000,
+      "laneId": "lane-23"
+    },
+    {
+      "eventId": "event-60",
+      "startTimeMillis": 1614138259000,
+      "laneId": "lane-23"
+    },
+    {
+      "eventId": "event-61",
+      "startTimeMillis": 1614138259000,
+      "laneId": "lane-23"
+    },
+    {
+      "eventId": "event-62",
+      "startTimeMillis": 1614138278000,
+      "laneId": "lane-25",
+      "endTimeMillis": 1614138671000
+    },
+    {
+      "eventId": "event-63",
+      "startTimeMillis": 1614138278000,
+      "laneId": "lane-25"
+    },
+    {
+      "eventId": "event-64",
+      "startTimeMillis": 1614138278000,
+      "laneId": "lane-25"
+    },
+    {
+      "eventId": "event-65",
+      "startTimeMillis": 1614138278000,
+      "laneId": "lane-25"
+    },
+    {
+      "eventId": "event-66",
+      "startTimeMillis": 1614138533000,
+      "laneId": "lane-27",
+      "endTimeMillis": 1614140021000
+    },
+    {
+      "eventId": "event-67",
+      "startTimeMillis": 1614138533000,
+      "laneId": "lane-27"
+    },
+    {
+      "eventId": "event-68",
+      "startTimeMillis": 1614138535000,
+      "laneId": "lane-27"
+    },
+    {
+      "eventId": "event-69",
+      "startTimeMillis": 1614138535000,
+      "laneId": "lane-27"
+    },
+    {
+      "eventId": "event-70",
+      "startTimeMillis": 1614138583000,
+      "laneId": "lane-29",
+      "endTimeMillis": 1614141327000
+    },
+    {
+      "eventId": "event-71",
+      "startTimeMillis": 1614138584000,
+      "laneId": "lane-29"
+    },
+    {
+      "eventId": "event-72",
+      "startTimeMillis": 1614138584000,
+      "laneId": "lane-29"
+    },
+    {
+      "eventId": "event-73",
+      "startTimeMillis": 1614138584000,
+      "laneId": "lane-29"
+    },
+    {
+      "eventId": "event-74",
+      "startTimeMillis": 1614138749000,
+      "laneId": "lane-31",
+      "endTimeMillis": 1614141327000
+    },
+    {
+      "eventId": "event-75",
+      "startTimeMillis": 1614138751000,
+      "laneId": "lane-31"
+    },
+    {
+      "eventId": "event-76",
+      "startTimeMillis": 1614138755000,
+      "laneId": "lane-31"
+    },
+    {
+      "eventId": "event-77",
+      "startTimeMillis": 1614138755000,
+      "laneId": "lane-31"
+    },
+    {
+      "eventId": "event-78",
+      "startTimeMillis": 1614139523000,
+      "laneId": "lane-33",
+      "endTimeMillis": 1614140532000
+    },
+    {
+      "eventId": "event-79",
+      "startTimeMillis": 1614139523000,
+      "laneId": "lane-33"
+    },
+    {
+      "eventId": "event-80",
+      "startTimeMillis": 1614139525000,
+      "laneId": "lane-33"
+    },
+    {
+      "eventId": "event-81",
+      "startTimeMillis": 1614139525000,
+      "laneId": "lane-33"
+    },
+    {
+      "eventId": "event-82",
+      "startTimeMillis": 1614140036000,
+      "laneId": "lane-27",
+      "endTimeMillis": 1614141327000
+    },
+    {
+      "eventId": "event-83",
+      "startTimeMillis": 1614140036000,
+      "laneId": "lane-27"
+    },
+    {
+      "eventId": "event-84",
+      "startTimeMillis": 1614140036000,
+      "laneId": "lane-27"
+    },
+    {
+      "eventId": "event-85",
+      "startTimeMillis": 1614140036000,
+      "laneId": "lane-27"
+    },
+    {
+      "eventId": "event-86",
+      "startTimeMillis": 1614140168000,
+      "laneId": "lane-21",
+      "endTimeMillis": 1614141326000
+    },
+    {
+      "eventId": "event-87",
+      "startTimeMillis": 1614140168000,
+      "laneId": "lane-21"
+    },
+    {
+      "eventId": "event-88",
+      "startTimeMillis": 1614140170000,
+      "laneId": "lane-21"
+    },
+    {
+      "eventId": "event-89",
+      "startTimeMillis": 1614140170000,
+      "laneId": "lane-21"
+    }
+  ]
+}

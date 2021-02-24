@@ -26,6 +26,7 @@ export const CollapsedMarks = <EID extends string, LID extends string>(props: Pr
       {mouseCursor}
       {
         <Marks
+          height={height}
           events={events}
           timeScale={timeScale}
           y={y}

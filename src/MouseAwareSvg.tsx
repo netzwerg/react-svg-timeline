@@ -27,7 +27,7 @@ export const MouseAwareSvg = ({ width, height, children }: Props) => {
     if (ctm) {
       return {
         x: (event.clientX - ctm.e) / ctm.a,
-        y: (event.clientY - ctm.f) / ctm.d
+        y: (event.clientY - ctm.f) / ctm.d,
       }
     } else {
       return mousePositionNone
@@ -43,6 +43,7 @@ export const MouseAwareSvg = ({ width, height, children }: Props) => {
       width={width}
       height={height}
       ref={svgRoot}
+      style={{ overflow: 'visible' }}
       onMouseEnter={updateMousePosition}
       onMouseMove={updateMousePosition}
       onMouseLeave={resetMousePosition}
