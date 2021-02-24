@@ -15,7 +15,8 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom",
-    "lint": "tsdx lint"
+    "lint": "tsdx lint",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "@material-ui/core": ">=4.3",
