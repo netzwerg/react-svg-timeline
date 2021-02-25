@@ -28,6 +28,7 @@ export interface TimelineProps<EID, LID> {
   onEventClick?: (eventId: EID) => void
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
+  isTrimming?: boolean
   trimRange?: Domain
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void
   onInteractionEnd?: () => void
@@ -64,6 +65,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onEventClick,
   onZoomRangeChange,
   onCursorMove,
+  isTrimming = false,
   trimRange,
   onTrimRangeChange,
   onInteractionEnd,
@@ -222,6 +224,7 @@ export const Timeline = <EID extends string, LID extends string>({
               isAnimationInProgress={isAnimationInProgress}
               isZoomInPossible={isZoomInPossible}
               isZoomOutPossible={isZoomOutPossible}
+              isTrimming={isTrimming}
               onHover={onZoomScrub}
               onZoomIn={onZoomIn}
               onZoomOut={onZoomOut}

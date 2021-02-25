@@ -9,6 +9,7 @@ export interface Props {
   isAnimationInProgress: boolean
   isZoomInPossible: boolean
   isZoomOutPossible: boolean
+  isTrimming: boolean
   onHover: (mousePositionX: number) => void
   onZoomIn: () => void
   onZoomInCustom: (mouseStartX: number, mouseEndX: number) => void
@@ -97,6 +98,7 @@ export const InteractionHandling = ({
   isAnimationInProgress,
   isZoomInPossible,
   isZoomOutPossible,
+  isTrimming,
   onHover,
   onZoomIn,
   onZoomOut,
@@ -112,15 +114,17 @@ export const InteractionHandling = ({
   const [cursor, setCursor] = useState<Cursor>('default')
   const [isAltKeyDown, setAltKeyDown] = useState(false)
   const [isShiftKeyDown, setShiftKeyDown] = useState(false)
-  const [isTrimming, setIsTrimming] = useState(false)
   const [interactionMode, setInteractionMode] = useState<InteractionMode>(interactionModeNone)
 
   useEffect(() => {
     if (isAnimationInProgress) {
       setInteractionMode(interactionModeAnimationInProgress)
-    } else {
-      setInteractionMode(interactionModeHover)
+
+      return () => {
+        setInteractionMode(interactionModeHover)
+      }
     }
+    return
   }, [isAnimationInProgress])
 
   // detect alt-key presses (SVGs are not input components, listeners must be added to the DOM window instead)
@@ -128,8 +132,6 @@ export const InteractionHandling = ({
     const onKeyChange = (e: KeyboardEvent) => {
       setAltKeyDown(e.altKey)
       setShiftKeyDown(e.shiftKey)
-      // toggle trimming using "t" key
-      setIsTrimming((isTrimming) => (e.key === 't' && e.type === 'keydown' ? !isTrimming : isTrimming))
       if (e.key === 'Escape') {
         onZoomReset()
       }
@@ -143,18 +145,18 @@ export const InteractionHandling = ({
       window.removeEventListener('keydown', onKeyChange)
       window.removeEventListener('keyup', onKeyChange)
     }
-  }, [setAltKeyDown, setShiftKeyDown, setIsTrimming, onZoomReset])
+  }, [setAltKeyDown, setShiftKeyDown, onZoomReset])
 
   useEffect(() => {
-    if (isTrimming) {
+    if (isTrimming && !isAnimationInProgress) {
       setInteractionMode({ type: 'trim', variant: 'none' })
 
       return () => {
-        setInteractionMode({ type: 'hover' })
+        setInteractionMode(interactionModeHover)
       }
     }
     return
-  }, [isTrimming, setInteractionMode])
+  }, [isTrimming, isAnimationInProgress, setInteractionMode])
 
   useEffect(() => {
     if (interactionMode.type === 'animation in progress') {

@@ -57,6 +57,7 @@ const eventTooltip = (e: ExampleEvent) =>
 export const App = () => {
   const classes = useStyles()
   const [laneDisplayMode, setLaneDisplayMode] = useState<LaneDisplayMode>('expanded')
+  const [isTrimming, setIsTrimming] = useState<boolean>(false)
   const [enableClustering, setEnableClustering] = useState<boolean>(false)
   const [suppressMarkAnimation, setSuppressMarkAnimation] = useState<boolean>(false)
   return (
@@ -67,6 +68,8 @@ export const App = () => {
         setLaneDisplayMode={setLaneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
         setSuppressMarkAnimation={setSuppressMarkAnimation}
+        isTrimming={isTrimming}
+        setIsTrimming={setIsTrimming}
         enableClustering={enableClustering}
         setEnableClustering={setEnableClustering}
       />
@@ -76,6 +79,7 @@ export const App = () => {
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
+        isTrimming={isTrimming}
         enableClustering={enableClustering}
       />
       <DemoTimeline
@@ -84,6 +88,7 @@ export const App = () => {
         rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
+        isTrimming={isTrimming}
         enableClustering={enableClustering}
       />
     </div>
@@ -96,6 +101,7 @@ interface DemoTimelineProps {
   timelineComponent: FunctionComponent<ExampleProps>
   laneDisplayMode: LaneDisplayMode
   suppressMarkAnimation: boolean
+  isTrimming: boolean
   enableClustering: boolean
 }
 
@@ -105,6 +111,7 @@ const DemoTimeline = ({
   timelineComponent,
   laneDisplayMode,
   suppressMarkAnimation,
+  isTrimming,
   enableClustering,
 }: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
@@ -182,6 +189,7 @@ const DemoTimeline = ({
             events,
             laneDisplayMode,
             suppressMarkAnimation,
+            isTrimming,
             onEventHover,
             onEventUnhover,
             onEventClick,
@@ -204,6 +212,8 @@ interface ConfigProps {
   setLaneDisplayMode: (laneDisplayMode: LaneDisplayMode) => void
   suppressMarkAnimation: boolean
   setSuppressMarkAnimation: (suppressMarkAnimation: boolean) => void
+  isTrimming: boolean
+  setIsTrimming: (isTrimming: boolean) => void
   enableClustering: boolean
   setEnableClustering: (enableClustering: boolean) => void
 }
@@ -245,10 +255,6 @@ const KeyboardShortcuts = () => {
             <td>Click + Drag</td>
           </tr>
           <tr>
-            <td>Trim (toggle):</td>
-            <td>t</td>
-          </tr>
-          <tr>
             <td>Reset:</td>
             <td>Esc</td>
           </tr>
@@ -263,6 +269,8 @@ const ConfigOptions = ({
   setLaneDisplayMode,
   suppressMarkAnimation,
   setSuppressMarkAnimation,
+  isTrimming,
+  setIsTrimming,
   enableClustering,
   setEnableClustering,
 }: ConfigProps) => {
@@ -273,12 +281,16 @@ const ConfigOptions = ({
 
   const onSuppressMarkAnimationChange = () => setSuppressMarkAnimation(!suppressMarkAnimation)
 
+  const onIsTrimmingChange = () => setIsTrimming(!isTrimming)
+
   const onEnableClusteringChange = () => setEnableClustering(!enableClustering)
 
   return (
     <div className={classes.configToggles}>
       <Typography>Collapse Lanes</Typography>
       <Switch checked={laneDisplayModeChecked} onChange={onLaneDisplayModeChange} />
+      <Typography>Trim</Typography>
+      <Switch checked={isTrimming} onChange={onIsTrimmingChange} />
       <Typography>Cluster Events</Typography>
       <Switch checked={enableClustering} onChange={onEnableClusteringChange} />
       <Typography>Animate Marks</Typography>
