@@ -1,23 +1,12 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { orange } from '@material-ui/core/colors'
 import React from 'react'
 import CursorLabel from '../CursorLabel'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   cursor: {
     stroke: orange.A200,
     strokeWidth: 10,
-  },
-  label: {
-    fill: orange.A200,
-    textAnchor: 'middle',
-    dominantBaseline: 'middle',
-    fontFamily: theme.typography.caption.fontFamily,
-    cursor: 'default',
-  },
-  trimmerArea: {
-    fill: orange.A200,
-    opacity: 0.1,
   },
 }))
 

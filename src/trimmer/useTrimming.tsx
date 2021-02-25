@@ -4,7 +4,7 @@ import { Domain } from '../model'
 import { clamp } from '../shared'
 
 export function useTrimming(
-  domain: Domain,
+  maxDomain: Domain,
   timeScale: ScaleLinear<number, number>,
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void,
   trimRange?: Domain
@@ -12,36 +12,39 @@ export function useTrimming(
   const onTrimStart = useCallback(
     (mousePosX: number) => {
       if (onTrimRangeChange) {
-        onTrimRangeChange(timeScale.invert(mousePosX), trimRange ? trimRange[1] : domain[1])
+        onTrimRangeChange(timeScale.invert(mousePosX), trimRange ? trimRange[1] : maxDomain[1])
       }
     },
-    [trimRange, domain, onTrimRangeChange, timeScale]
+    [trimRange, maxDomain, onTrimRangeChange, timeScale]
   )
 
   const onTrimEnd = useCallback(
     (mousePosX: number) => {
       if (onTrimRangeChange) {
-        onTrimRangeChange(trimRange ? trimRange[0] : domain[0], timeScale.invert(mousePosX))
+        onTrimRangeChange(trimRange ? trimRange[0] : maxDomain[0], timeScale.invert(mousePosX))
       }
     },
-    [trimRange, domain, onTrimRangeChange, timeScale]
+    [trimRange, maxDomain, onTrimRangeChange, timeScale]
   )
 
   /**
    * Always ensure that…
-   * 1. Trim-Range is within Domain-Range
+   * 1. Trim-Range is within MaxDomain-Range
    * 2. Trim-Start is < Trim-End
    * 3. Trim-End is > Trim-Start
    */
   useEffect(() => {
     if (onTrimRangeChange && trimRange) {
-      const [start, end] = [clamp(trimRange[0], domain[0], trimRange[1]), clamp(trimRange[1], trimRange[0], domain[1])]
+      const [start, end] = [
+        clamp(trimRange[0], maxDomain[0], trimRange[1]),
+        clamp(trimRange[1], trimRange[0], maxDomain[1]),
+      ]
 
       if (start !== trimRange[0] || end !== trimRange[1]) {
         onTrimRangeChange(start, end)
       }
     }
-  }, [domain, trimRange, onTrimRangeChange])
+  }, [maxDomain, trimRange, onTrimRangeChange])
 
   return [onTrimStart, onTrimEnd]
 }

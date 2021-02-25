@@ -21,10 +21,12 @@ export function TrimRange({ startX, endX, height, width }: Props) {
 
   const [y1, y2] = [0, height]
 
+  console.log('trimRange', { startX, endX })
+
   return (
     <g>
-      <rect className={classes.trimRange} x={0} y={y1} width={startX} height={y2} />
-      <rect className={classes.trimRange} x={endX} y={y1} width={width - endX} height={y2} />
+      {startX > 0 && <rect className={classes.trimRange} x={0} y={y1} width={startX} height={y2} />}
+      {width - endX > 0 && <rect className={classes.trimRange} x={endX} y={y1} width={width - endX} height={y2} />}
     </g>
   )
 }

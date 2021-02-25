@@ -214,7 +214,7 @@ export const Timeline = <EID extends string, LID extends string>({
             onEventUnhover(eventId)
           }
 
-          const [onTrimStart, onTrimEnd] = useTrimming(domain, timeScale, onTrimRangeChange, trimRange)
+          const [onTrimStart, onTrimEnd] = useTrimming(maxDomain, timeScale, onTrimRangeChange, trimRange)
 
           return (
             <InteractionHandling
@@ -298,9 +298,10 @@ export const Timeline = <EID extends string, LID extends string>({
                     )}
                     {interactionMode.type === 'trim' && timeScale && (
                       <Trimmer
-                        startX={trimRange ? trimRange[0] : domain[0]}
-                        endX={trimRange ? trimRange[1] : domain[1]}
+                        startX={trimRange ? trimRange[0] : maxDomain[0]}
+                        endX={trimRange ? trimRange[1] : maxDomain[1]}
                         height={height}
+                        width={width}
                         timeScale={timeScale}
                         setTrimMode={setTrimHoverMode}
                         dateFormat={dateFormat}
