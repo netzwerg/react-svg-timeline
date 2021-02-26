@@ -28,6 +28,7 @@ export interface TimelineProps<EID, LID> {
   onEventClick?: (eventId: EID) => void
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
+  isTrimming?: boolean
   trimRange?: Domain
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void
   onInteractionEnd?: () => void
@@ -64,6 +65,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onEventClick,
   onZoomRangeChange,
   onCursorMove,
+  isTrimming = false,
   trimRange,
   onTrimRangeChange,
   onInteractionEnd,
@@ -214,7 +216,7 @@ export const Timeline = <EID extends string, LID extends string>({
             onEventUnhover(eventId)
           }
 
-          const [onTrimStart, onTrimEnd] = useTrimming(domain, timeScale, onTrimRangeChange, trimRange)
+          const [onTrimStart, onTrimEnd] = useTrimming(maxDomain, timeScale, onTrimRangeChange, trimRange)
 
           return (
             <InteractionHandling
@@ -222,6 +224,7 @@ export const Timeline = <EID extends string, LID extends string>({
               isAnimationInProgress={isAnimationInProgress}
               isZoomInPossible={isZoomInPossible}
               isZoomOutPossible={isZoomOutPossible}
+              isTrimming={isTrimming}
               onHover={onZoomScrub}
               onZoomIn={onZoomIn}
               onZoomOut={onZoomOut}
@@ -298,9 +301,10 @@ export const Timeline = <EID extends string, LID extends string>({
                     )}
                     {interactionMode.type === 'trim' && timeScale && (
                       <Trimmer
-                        startX={trimRange ? trimRange[0] : domain[0]}
-                        endX={trimRange ? trimRange[1] : domain[1]}
+                        startX={trimRange ? trimRange[0] : maxDomain[0]}
+                        endX={trimRange ? trimRange[1] : maxDomain[1]}
                         height={height}
+                        width={width}
                         timeScale={timeScale}
                         setTrimMode={setTrimHoverMode}
                         dateFormat={dateFormat}
