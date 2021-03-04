@@ -254,13 +254,17 @@ interface EventTooltipProps {
   triggerRef: React.RefObject<SVGElement>
 }
 
-const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipProps) => {
-  const classes = useTooltipStyle()
-
+/**
+ * Calculates the `width` and `height` of the passed tooltip text.
+ */
+const getTooltipDimensions = (inputText: string) => {
+  const text = inputText || ''
   const textLines = text.split('\n')
   const numLinesInText = textLines.length
   const isMultiLineText = numLinesInText > 1
-  const tooltipTextPadding = 15
+  const horizontalPadding = 15
+  const verticalPadding = 5
+
   let width = 0
 
   // Calculate required width from the passed text.
@@ -270,13 +274,47 @@ const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipPr
       const textLineWidth = TextSize.getTextWidth(textLine, TOOLTIP_FONT_SIZE)
       maxWidth = Math.max(textLineWidth, maxWidth)
     })
-    width = maxWidth + tooltipTextPadding * 2
+    width = maxWidth + horizontalPadding * 2
   } else {
-    width = TextSize.getTextWidth(text, TOOLTIP_FONT_SIZE) + tooltipTextPadding * 2
+    width = TextSize.getTextWidth(text, TOOLTIP_FONT_SIZE) + horizontalPadding * 2
   }
 
-  const height = 30
-  const textHeight = isMultiLineText ? 20 * numLinesInText : height * numLinesInText
+  const singleLineHeight = 30
+  const tooltipHeight = (isMultiLineText ? 20 * numLinesInText : singleLineHeight) + verticalPadding
+
+  return {
+    textLines: textLines,
+    tooltipWidth: width,
+    tooltipHeight: tooltipHeight,
+    baseHeight: singleLineHeight,
+  }
+}
+
+interface TooltipTextProps {
+  textLines: string[]
+  className: string
+  tooltipWidth: number
+  tooltipHeight: number
+}
+
+const TooltipText = ({ textLines, className, tooltipWidth, tooltipHeight }: TooltipTextProps) => {
+  return (
+    <text className={className} width={tooltipWidth} height={tooltipHeight}>
+      {textLines.map((textLine, index) => {
+        return (
+          <tspan dy="1.2em" x="10" key={index} textAnchor="start">
+            {textLine}
+          </tspan>
+        )
+      })}
+    </text>
+  )
+}
+
+const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipProps) => {
+  const classes = useTooltipStyle()
+
+  const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text)
 
   return (
     <Tooltip triggerRef={triggerRef}>
@@ -288,15 +326,15 @@ const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipPr
         const tooltipX = type === 'period' ? 0 : type.singleEventX - xOffset
 
         const tooltipYPadding = 12
-        const tooltipY = y - yOffset - textHeight - tooltipYPadding // don't follow mouse
-        const baseY = y - yOffset - height - tooltipYPadding
+        const tooltipY = y - yOffset - tooltipHeight - tooltipYPadding // don't follow mouse
+        const baseY = y - yOffset - baseHeight - tooltipYPadding
 
         // determines how the rectangular tooltip area is offset to the left/right of the arrow
         // the closer to the left edge, the more the rect is shifted to the right (same for right edge)
         const safetyMargin = 15
         const tooltipOffset = scaleLinear()
           .domain([0, parentWidth])
-          .range([safetyMargin, width - safetyMargin])
+          .range([safetyMargin, tooltipWidth - safetyMargin])
 
         const arrowDimension = 20
 
@@ -305,24 +343,14 @@ const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipPr
 
         return (
           <g>
-            <svg x={svgX} y={svgY} width={width} height={textHeight} className={classes.svg}>
+            <svg x={svgX} y={svgY} width={tooltipWidth} height={tooltipHeight} className={classes.svg}>
               <rect width="100%" height="100%" rx={3} ry={3} className={classes.background} />
-
-              {isMultiLineText ? (
-                <text className={classes.text} width={width} height={textHeight}>
-                  {textLines.map((textLine, index) => {
-                    return (
-                      <tspan dy="1.2em" x="10" key={index} textAnchor="start">
-                        {textLine}
-                      </tspan>
-                    )
-                  })}
-                </text>
-              ) : (
-                <text x="50%" y="50%" className={classes.text}>
-                  {text}
-                </text>
-              )}
+              <TooltipText
+                textLines={textLines}
+                tooltipHeight={tooltipHeight}
+                tooltipWidth={tooltipWidth}
+                className={classes.text}
+              />
             </svg>
             <ArrowDown tipX={tooltipX} baseY={baseY} dimension={arrowDimension} className={classes.background} />)
           </g>
