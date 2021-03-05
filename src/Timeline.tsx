@@ -220,6 +220,8 @@ export const Timeline = <EID extends string, LID extends string>({
 
           return (
             <InteractionHandling
+              width={width}
+              height={height}
               mousePosition={mousePosition}
               isAnimationInProgress={isAnimationInProgress}
               isZoomInPossible={isZoomInPossible}

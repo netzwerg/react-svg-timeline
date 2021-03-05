@@ -7,30 +7,32 @@ import { EventComponentFactory, EventComponentRole, TimelineEvent } from './mode
 import { Tooltip } from 'react-svg-tooltip'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
+import TextSize from './TextSize'
 
 const useStyles = makeStyles((theme: Theme) => ({
   eventBackground: {
     strokeWidth: 0,
-    fill: theme.palette.background.paper
+    fill: theme.palette.background.paper,
   },
   eventRect: {
     stroke: theme.palette.background.paper,
     strokeWidth: 2,
-    fillOpacity: 0.5
+    fillOpacity: 0.5,
   },
   eventCircle: {
     stroke: theme.palette.background.paper,
     strokeWidth: 2,
-    fillOpacity: 0.5
+    fillOpacity: 0.5,
   },
   selectedEvent: {
     stroke: selectionColorOpaque,
     strokeWidth: 2,
-    fill: selectionColor
-  }
+    fill: selectionColor,
+  },
 }))
 
 export interface Props<EID, LID> {
+  height: number
   events: ReadonlyArray<TimelineEvent<EID, LID>>
   timeScale: ScaleLinear<number, number>
   y: number
@@ -52,7 +54,7 @@ export interface Props<EID, LID> {
  * (2) that the selection is always visible.
  */
 export const Marks = <EID extends string, LID extends string>(props: Props<EID, LID>) => {
-  const { events } = props
+  const { events, height } = props
   const classes = useStyles()
   const { eventComponent, timeScale, y } = props
 
@@ -94,33 +96,33 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
       )),
-    [comparableEventsIgnoringSelection, comparableTimeScale]
+    [comparableEventsIgnoringSelection, comparableTimeScale, height]
   )
 
   const foregroundMarks = useMemo(
     () =>
       events
-        .filter(_ => true)
+        .filter((_) => true)
         .sort(sortByEventDuration)
         .map((e: TimelineEvent<EID, LID>) => (
           <InteractiveEventMark key={e.eventId} event={e} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
-    [comparableEventsIgnoringSelection, comparableTimeScale]
+    [comparableEventsIgnoringSelection, comparableTimeScale, height]
   )
 
   const selectionMarks = useMemo(
     () =>
       events
-        .filter(e => e.isSelected)
+        .filter((e) => e.isSelected)
         .sort(sortByEventDuration)
         .map((e: TimelineEvent<EID, LID>) => (
           <InteractiveEventMark key={e.eventId} event={e} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
-    [comparableEvents, comparableTimeScale]
+    [comparableEvents, comparableTimeScale, height]
   )
 
   return (
@@ -149,7 +151,7 @@ const InteractiveEventMark = <EID, LID>({
   onEventClick = noOp,
   onEventHover = noOp,
   onEventUnhover = noOp,
-  children
+  children,
 }: InteractiveGroupProps<EID, LID>) => {
   const eventId = event.eventId
 
@@ -192,7 +194,7 @@ const DefaultEventMark = <EID, LID>({
   eventMarkerHeight = 20,
   className,
   y,
-  timeScale
+  timeScale,
 }: DefaultEventMarkProps<EID, LID>) => {
   const theme: Theme = useTheme()
   const startX = timeScale(e.startTimeMillis)!
@@ -225,18 +227,23 @@ const DefaultEventMark = <EID, LID>({
   }
 }
 
+const TOOLTIP_FONT_SIZE = 14
+
 const useTooltipStyle = makeStyles((theme: Theme) => ({
+  svg: {
+    textAlign: 'left',
+  },
   background: {
     fill: theme.palette.text.secondary,
-    strokeWidth: 0
+    strokeWidth: 0,
   },
   text: {
     fill: 'white',
     dominantBaseline: 'middle',
     textAnchor: 'middle',
     fontFamily: theme.typography.caption.fontFamily,
-    fontSize: 14
-  }
+    fontSize: TOOLTIP_FONT_SIZE,
+  },
 }))
 
 interface EventTooltipProps {
@@ -247,10 +254,68 @@ interface EventTooltipProps {
   triggerRef: React.RefObject<SVGElement>
 }
 
+/**
+ * Calculates the `width` and `height` of the passed tooltip text.
+ */
+const getTooltipDimensions = (inputText: string) => {
+  const text = inputText || ''
+  const textLines = text.split('\n')
+  const numLinesInText = textLines.length
+  const isMultiLineText = numLinesInText > 1
+  const horizontalPadding = 15
+  const verticalPadding = 5
+
+  let width = 0
+
+  // Calculate required width from the passed text.
+  if (isMultiLineText) {
+    let maxWidth = 0
+    textLines.forEach((textLine) => {
+      const textLineWidth = TextSize.getTextWidth(textLine, TOOLTIP_FONT_SIZE)
+      maxWidth = Math.max(textLineWidth, maxWidth)
+    })
+    width = maxWidth + horizontalPadding * 2
+  } else {
+    width = TextSize.getTextWidth(text, TOOLTIP_FONT_SIZE) + horizontalPadding * 2
+  }
+
+  const singleLineHeight = 30
+  const tooltipHeight = (isMultiLineText ? 20 * numLinesInText : singleLineHeight) + verticalPadding
+
+  return {
+    textLines: textLines,
+    tooltipWidth: width,
+    tooltipHeight: tooltipHeight,
+    baseHeight: singleLineHeight,
+  }
+}
+
+interface TooltipTextProps {
+  textLines: string[]
+  className: string
+  tooltipWidth: number
+  tooltipHeight: number
+}
+
+const TooltipText = ({ textLines, className, tooltipWidth, tooltipHeight }: TooltipTextProps) => {
+  return (
+    <text className={className} width={tooltipWidth} height={tooltipHeight}>
+      {textLines.map((textLine, index) => {
+        return (
+          <tspan dy="1.2em" x="10" key={index} textAnchor="start">
+            {textLine}
+          </tspan>
+        )
+      })}
+    </text>
+  )
+}
+
 const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipProps) => {
   const classes = useTooltipStyle()
-  const width = type === 'period' ? 180 : 100
-  const height = 30
+
+  const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text)
+
   return (
     <Tooltip triggerRef={triggerRef}>
       {(xOffset, yOffset) => {
@@ -261,26 +326,33 @@ const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: EventTooltipPr
         const tooltipX = type === 'period' ? 0 : type.singleEventX - xOffset
 
         const tooltipYPadding = 12
-        const tooltipY = y - yOffset - height - tooltipYPadding // don't follow mouse
+        const tooltipY = y - yOffset - tooltipHeight - tooltipYPadding // don't follow mouse
+        const baseY = y - yOffset - baseHeight - tooltipYPadding
 
         // determines how the rectangular tooltip area is offset to the left/right of the arrow
         // the closer to the left edge, the more the rect is shifted to the right (same for right edge)
         const safetyMargin = 15
         const tooltipOffset = scaleLinear()
           .domain([0, parentWidth])
-          .range([safetyMargin, width - safetyMargin])
+          .range([safetyMargin, tooltipWidth - safetyMargin])
 
         const arrowDimension = 20
 
+        const svgX = tooltipX - tooltipOffset(xOffset)!
+        const svgY = tooltipY - arrowDimension / 2
+
         return (
           <g>
-            <svg x={tooltipX - tooltipOffset(xOffset)!} y={tooltipY - arrowDimension / 2} width={width} height={height}>
+            <svg x={svgX} y={svgY} width={tooltipWidth} height={tooltipHeight} className={classes.svg}>
               <rect width="100%" height="100%" rx={3} ry={3} className={classes.background} />
-              <text x="50%" y="50%" className={classes.text}>
-                {text}
-              </text>
+              <TooltipText
+                textLines={textLines}
+                tooltipHeight={tooltipHeight}
+                tooltipWidth={tooltipWidth}
+                className={classes.text}
+              />
             </svg>
-            <ArrowDown tipX={tooltipX} baseY={tooltipY} dimension={arrowDimension} className={classes.background} />)
+            <ArrowDown tipX={tooltipX} baseY={baseY} dimension={arrowDimension} className={classes.background} />)
           </g>
         )
       }}

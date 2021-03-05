@@ -1,17 +1,21 @@
 import { timeFormat } from 'd3-time-format'
 import 'react-app-polyfill/ie11'
 import * as React from 'react'
+import cn from 'classnames'
 import { FunctionComponent, useState, useCallback } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Timeline } from '../../dist'
 import { Set as ImmutableSet } from 'immutable'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
-import data from './data.json'
+import Dataset1 from './smallDataset.json'
+// @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
+import Dataset2 from './largeDataset.json'
 import { Typography } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { CustomizedTimeline } from './CustomizedTimeline'
-import { ExampleEvent, ExampleLane, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
+import { ExampleEvent, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
 import Switch from '@material-ui/core/Switch'
+import { Select, MenuItem, InputLabel } from '@material-ui/core'
 import { LaneDisplayMode, TimelineProps } from '../../src'
 import Card from '@material-ui/core/Card'
 import { useMemo } from 'react'
@@ -23,6 +27,9 @@ const useStyles = makeStyles({
     gridTemplateRows: 'auto auto 300px 300px',
     gridRowGap: 100,
     margin: 100,
+  },
+  largeDataset: {
+    gridTemplateRows: 'auto auto 800px 800px',
   },
   controlPanel: {
     display: 'grid',
@@ -47,12 +54,28 @@ const useStyles = makeStyles({
   },
 })
 
-const dateFormat = (ms: number) => timeFormat('%d.%m.%Y')(new Date(ms))
-const lanes: ReadonlyArray<ExampleLane> = data.lanes
-const rawEvents: ReadonlyArray<ExampleEvent> = data.events
+const dateFormat = (ms: number) => timeFormat('%d.%m.%Y %X')(new Date(ms))
 
-const eventTooltip = (e: ExampleEvent) =>
-  e.endTimeMillis ? `${dateFormat(e.startTimeMillis)} - ${dateFormat(e.endTimeMillis)}` : dateFormat(e.startTimeMillis)
+/* Returns dataset object for the chosen option */
+const getDataset = (choice: string) => {
+  switch (choice) {
+    case '1':
+      return Dataset1
+    case '2':
+      return Dataset2
+    default:
+      return Dataset1
+  }
+}
+
+const eventTooltip = (e: ExampleEvent) => {
+  const { startTimeMillis, endTimeMillis, eventId, laneId } = e
+  const eventDescription = `${eventId} (${laneId})`
+
+  return endTimeMillis
+    ? `${eventDescription}\n \nStart: ${dateFormat(startTimeMillis)}\nEnd: ${dateFormat(endTimeMillis)}`
+    : `${eventDescription}\n \nOn: ${dateFormat(startTimeMillis)}`
+}
 
 export const App = () => {
   const classes = useStyles()
@@ -60,8 +83,11 @@ export const App = () => {
   const [isTrimming, setIsTrimming] = useState<boolean>(false)
   const [enableClustering, setEnableClustering] = useState<boolean>(false)
   const [suppressMarkAnimation, setSuppressMarkAnimation] = useState<boolean>(false)
+  const [datasetChosen, setDatasetChosen] = useState<string>('1')
+  const rootClasses = cn(classes.root, datasetChosen === '2' ? classes.largeDataset : '')
+
   return (
-    <div className={classes.root}>
+    <div className={rootClasses}>
       <Typography variant={'h2'}>react-svg-timeline</Typography>
       <ConfigPanel
         laneDisplayMode={laneDisplayMode}
@@ -72,24 +98,26 @@ export const App = () => {
         setIsTrimming={setIsTrimming}
         enableClustering={enableClustering}
         setEnableClustering={setEnableClustering}
+        datasetChosen={datasetChosen}
+        setDatasetChosen={setDatasetChosen}
       />
       <DemoTimeline
         timelineComponent={Timeline}
         title={'Default'}
-        rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
         isTrimming={isTrimming}
         enableClustering={enableClustering}
+        datasetChosen={datasetChosen}
       />
       <DemoTimeline
         timelineComponent={CustomizedTimeline}
         title={'Custom Event Marks'}
-        rawEvents={rawEvents}
         laneDisplayMode={laneDisplayMode}
         suppressMarkAnimation={suppressMarkAnimation}
         isTrimming={isTrimming}
         enableClustering={enableClustering}
+        datasetChosen={datasetChosen}
       />
     </div>
   )
@@ -97,28 +125,31 @@ export const App = () => {
 
 interface DemoTimelineProps {
   title: string
-  rawEvents: ReadonlyArray<ExampleEvent>
   timelineComponent: FunctionComponent<ExampleProps>
   laneDisplayMode: LaneDisplayMode
   suppressMarkAnimation: boolean
   isTrimming: boolean
   enableClustering: boolean
+  datasetChosen: string
 }
 
 const DemoTimeline = ({
   title,
-  rawEvents,
   timelineComponent,
   laneDisplayMode,
   suppressMarkAnimation,
   isTrimming,
   enableClustering,
+  datasetChosen,
 }: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [zoomRange, setZoomRange] = useState<[number, number]>()
   const [cursorZoomRange, setCursorZoomRange] = useState<[number, number] | undefined>()
   const [trimRange, setTrimRange] = useState<[number, number] | undefined>()
+  const dataset = getDataset(datasetChosen)
+  const { lanes, events: rawEvents } = dataset
+
   const events = useMemo(
     () =>
       rawEvents.map((e: ExampleEvent) => ({
@@ -216,6 +247,8 @@ interface ConfigProps {
   setIsTrimming: (isTrimming: boolean) => void
   enableClustering: boolean
   setEnableClustering: (enableClustering: boolean) => void
+  datasetChosen: string
+  setDatasetChosen: (datasetChoice: string) => void
 }
 
 const ConfigPanel = (props: ConfigProps) => {
@@ -273,6 +306,8 @@ const ConfigOptions = ({
   setIsTrimming,
   enableClustering,
   setEnableClustering,
+  datasetChosen,
+  setDatasetChosen,
 }: ConfigProps) => {
   const classes = useStyles()
 
@@ -285,6 +320,11 @@ const ConfigOptions = ({
 
   const onEnableClusteringChange = () => setEnableClustering(!enableClustering)
 
+  const onDatasetChange = (event: any) => {
+    const newDataset = event.target.value
+    setDatasetChosen(newDataset)
+  }
+
   return (
     <div className={classes.configToggles}>
       <Typography>Collapse Lanes</Typography>
@@ -295,6 +335,13 @@ const ConfigOptions = ({
       <Switch checked={enableClustering} onChange={onEnableClusteringChange} />
       <Typography>Animate Marks</Typography>
       <Switch checked={!suppressMarkAnimation} onChange={onSuppressMarkAnimationChange} />
+      <InputLabel id="dataset">
+        <Typography>Dataset</Typography>
+      </InputLabel>
+      <Select labelId="dataset" id="select" value={datasetChosen} onChange={onDatasetChange}>
+        <MenuItem value="1">Dataset 1</MenuItem>
+        <MenuItem value="2">Dataset 2</MenuItem>
+      </Select>
     </div>
   )
 }

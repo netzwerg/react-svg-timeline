@@ -5,6 +5,8 @@ import { noOp } from './shared'
 import { SvgCoordinates } from './MouseAwareSvg'
 
 export interface Props {
+  width: number
+  height: number
   mousePosition: SvgCoordinates
   isAnimationInProgress: boolean
   isZoomInPossible: boolean
@@ -94,6 +96,8 @@ export type InteractionMode =
   | InteractionModeTrim
 
 export const InteractionHandling = ({
+  width,
+  height,
   mousePosition,
   isAnimationInProgress,
   isZoomInPossible,
@@ -271,16 +275,24 @@ export const InteractionHandling = ({
     )
 
   return (
-    <g
-      pointerEvents={'bounding-box'}
-      cursor={cursor}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {children(cursor, interactionMode, setTrimHoverMode)}
-    </g>
+    <>
+      <defs>
+        <clipPath id="clipPath">
+          <rect x="0" y="0" width={width} height={height} />
+        </clipPath>
+      </defs>
+      <g
+        clipPath="url(#clipPath)"
+        pointerEvents={'bounding-box'}
+        cursor={cursor}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        {children(cursor, interactionMode, setTrimHoverMode)}
+      </g>
+    </>
   )
 }

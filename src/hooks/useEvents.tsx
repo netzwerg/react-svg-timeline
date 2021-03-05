@@ -2,23 +2,23 @@ import { useMemo } from 'react'
 import { groups } from 'd3-array'
 import { format } from 'date-fns'
 import { Domain, TimelineEvent, TimelineEventCluster } from '../model'
-import { ZoomScale } from '../ZoomScale'
+import { ZoomScale, ZoomLevels } from '../ZoomScale'
 
 function clusterWidth(scale: ZoomScale): string {
   switch (scale) {
-    case 'maximum':
+    case ZoomLevels.MAX:
       return 'yyyy'
-    case '10 years':
+    case ZoomLevels.TEN_YEARS:
       return 'yyyy-MM'
-    case '1 year':
+    case ZoomLevels.ONE_YEAR:
       return 'yyyy-MM-ww'
-    case '1 month':
+    case ZoomLevels.ONE_MONTH:
       return 'yyyy-MM-ww-dd'
-    case '1 week':
+    case ZoomLevels.ONE_WEEK:
       return 'yyyy-MM-ww-dd-aaa'
-    case '1 day':
+    case ZoomLevels.ONE_DAY:
       return 'yyyy-MM-ww-dd-HH'
-    case 'minimum':
+    case ZoomLevels.MIN:
       return 'T'
     default:
       return 'T'
@@ -46,7 +46,7 @@ export function useEvents<EID extends string, LID extends string>(
     })
 
     // zoomScale 'minimum' is never reached
-    if (!cluster || zoomScale === '1 day') {
+    if (!cluster || zoomScale === ZoomLevels.ONE_DAY) {
       return [eventsInsideDomain, []]
     } else {
       return groups(
