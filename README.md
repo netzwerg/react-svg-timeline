@@ -60,6 +60,31 @@ export const App = () => {
 
 Please check the [example](example) folder for a full-fledged feature demonstration.
 
+## Library Development
+
+### Testing a release candidate
+
+While making changes to this library in the context of a consuming project, [yalc](https://github.com/wclr/yalc) can be very handy:
+
+In `react-svg-timeline`:
+
+```
+yalc publish
+```
+
+In your project consuming the library:
+
+```
+yalc add react-svg-timeline
+```
+
+### Publishing a release
+
+```
+yarn publish
+git push --tags
+```
+
 ## Acknowledgements
 
 Thank you:
