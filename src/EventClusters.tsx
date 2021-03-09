@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScaleBand, scaleLinear, ScaleLinear } from 'd3-scale'
+import { ScaleBand, ScaleLinear, scaleSqrt } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { TimelineEventCluster } from './model'
 import { defaultClusterColor, defaultSingleEventMarkHeight } from './shared'
@@ -38,7 +38,7 @@ export const EventClusters = <LID extends string>({
   // collapsed mode: clamp max radius after a certain lane height (or it will look too massive)
   const clusterRadiusMax = expanded ? yScale.bandwidth() / 1.2 : Math.min(height / 2, 2 * defaultSingleEventMarkHeight)
 
-  const clusterScale = scaleLinear()
+  const clusterScale = scaleSqrt()
     .domain([clusterSizeDomainMin ?? 0, clusterSizeDomainMax ?? 0])
     .range([clusterRadiusMin, clusterRadiusMax])
 
