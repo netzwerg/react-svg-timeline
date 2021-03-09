@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 import { currentZoomScale, nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
-import { scaleLinear } from 'd3-scale'
+import { scaleBand, scaleLinear } from 'd3-scale'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
 import { GridLines } from './GridLines'
@@ -146,6 +146,12 @@ export const Timeline = <EID extends string, LID extends string>({
             .domain(domain)
             .range([timeScalePadding, width - timeScalePadding])
 
+          const yScale = scaleBand<LID>()
+            .domain(lanes.map((l) => l.laneId))
+            .range([0, height])
+            .paddingInner(0.3)
+            .paddingOuter(0.8)
+
           const timeAtCursor = timeScale.invert(mousePosition.x)
 
           const getDomainSpan = (time: number, width: number): Domain => [
@@ -261,10 +267,10 @@ export const Timeline = <EID extends string, LID extends string>({
                     {showMarks && (
                       <>
                         <EventClusters
-                          eventClusters={eventClustersInsideDomain}
                           height={height}
-                          lanes={lanes}
+                          eventClusters={eventClustersInsideDomain}
                           timeScale={timeScale}
+                          yScale={yScale}
                           expanded={laneDisplayMode === 'expanded'}
                         />
                         {laneDisplayMode === 'expanded' ? (
@@ -273,6 +279,7 @@ export const Timeline = <EID extends string, LID extends string>({
                             events={eventsInsideDomain}
                             lanes={lanes}
                             timeScale={timeScale}
+                            yScale={yScale}
                             height={height}
                             eventComponent={eventComponent}
                             onEventHover={onEventHoverDecorated}

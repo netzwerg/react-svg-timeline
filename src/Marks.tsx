@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useMemo, useRef } from 'react'
-import { defaultEventColor, noOp, selectionColor, selectionColorOpaque } from './shared'
+import { defaultEventColor, defaultSingleEventMarkHeight, noOp, selectionColor, selectionColorOpaque } from './shared'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { EventComponentFactory, EventComponentRole, TimelineEvent } from './model'
@@ -191,7 +191,7 @@ interface DefaultEventMarkProps<EID, LID> extends Omit<Props<EID, LID>, 'events'
 
 const DefaultEventMark = <EID, LID>({
   e,
-  eventMarkerHeight = 20,
+  eventMarkerHeight = defaultSingleEventMarkHeight,
   className,
   y,
   timeScale,
@@ -265,7 +265,7 @@ const getTooltipDimensions = (inputText: string) => {
   const horizontalPadding = 15
   const verticalPadding = 5
 
-  let width = 0
+  let width
 
   // Calculate required width from the passed text.
   if (isMultiLineText) {

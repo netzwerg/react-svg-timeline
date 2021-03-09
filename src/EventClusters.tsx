@@ -1,9 +1,10 @@
 import React from 'react'
-import { scaleBand, ScaleLinear } from 'd3-scale'
+import { ScaleBand, scaleLinear, ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { TimelineEventCluster, TimelineLane } from './model'
-import { defaultClusterColor } from './shared'
+import { TimelineEventCluster } from './model'
+import { defaultClusterColor, defaultSingleEventMarkHeight } from './shared'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import { extent } from 'd3-array'
 
 const useStyles = makeStyles((theme: Theme) => ({
   clusterCircle: {
@@ -14,53 +15,46 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 interface Props<LID> {
-  height: number
-  eventClusters: ReadonlyArray<TimelineEventCluster<LID>>
-  timeScale: ScaleLinear<number, number>
-  eventClusterHeight?: number
-  lanes: ReadonlyArray<TimelineLane<LID>>
-  expanded: boolean
+  readonly height: number
+  readonly eventClusters: ReadonlyArray<TimelineEventCluster<LID>>
+  readonly timeScale: ScaleLinear<number, number>
+  readonly yScale: ScaleBand<LID>
+  readonly expanded: boolean
 }
 
 export const EventClusters = <LID extends string>({
-  height,
   eventClusters,
-  lanes,
   timeScale,
-  eventClusterHeight = 20,
+  yScale,
   expanded,
+  height,
 }: Props<LID>) => {
   const classes = useStyles()
 
-  // TODO: This is duplicate to ExpandedMarkers --> Refactor!
-  const yScale = scaleBand()
-    .domain(lanes.map((l) => l.laneId))
-    .range([0, height])
-    .paddingInner(0.1)
-    .paddingOuter(0.8)
+  const [clusterSizeDomainMin, clusterSizeDomainMax] = extent(eventClusters.map((c) => c.size))
+  const clusterRadiusMin = defaultSingleEventMarkHeight / 2
 
-  const clusterSizes = new Set(eventClusters.map((c) => c.size.toString()))
-  const clusterScale = scaleBand()
-    .domain(Array.from(clusterSizes))
-    .range([eventClusterHeight, eventClusterHeight * 2])
+  // expanded mode:  cluster radius solely determined by lane height
+  // collapsed mode: clamp max radius after a certain lane height (or it will look too massive)
+  const clusterRadiusMax = expanded ? yScale.bandwidth() / 1.2 : Math.min(height / 2, 2 * defaultSingleEventMarkHeight)
+
+  const clusterScale = scaleLinear()
+    .domain([clusterSizeDomainMin ?? 0, clusterSizeDomainMax ?? 0])
+    .range([clusterRadiusMin, clusterRadiusMax])
 
   return (
     <g>
-      {lanes.map((lane: TimelineLane<LID>) =>
-        eventClusters
-          .filter((c) => c.laneId === lane.laneId)
-          .map((eventCluster) => (
-            <g key={`eventCluster-${lane.laneId}-${eventCluster.timeMillis}`}>
-              <circle
-                cx={timeScale(eventCluster.timeMillis)}
-                cy={expanded ? yScale(lane.laneId)! : height / 2}
-                r={clusterScale(eventCluster.size.toString())!}
-                className={classes.clusterCircle}
-                fill={eventCluster.color || defaultClusterColor}
-              />
-            </g>
-          ))
-      )}
+      {eventClusters.map((eventCluster) => (
+        <g key={`eventCluster-${eventCluster.laneId}-${eventCluster.timeMillis}`}>
+          <circle
+            cx={timeScale(eventCluster.timeMillis)}
+            cy={expanded ? yScale(eventCluster.laneId) : height / 2}
+            r={clusterScale(eventCluster.size)!}
+            className={classes.clusterCircle}
+            fill={eventCluster.color || defaultClusterColor}
+          />
+        </g>
+      ))}
     </g>
   )
 }
