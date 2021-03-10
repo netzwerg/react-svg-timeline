@@ -74,7 +74,7 @@ export function useEvents<EID extends string, LID extends string>(
                     ) / eventGroup[1].length,
                   laneId: eventGroup[1][0].laneId,
                   size: eventGroup[1].length,
-                  color: eventGroup[1][0].color,
+                  // color: eventGroup[1][0].color,
                 },
               ],
             ]
