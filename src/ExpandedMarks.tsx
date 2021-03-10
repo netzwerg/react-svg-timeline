@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Marks } from './Marks'
-import { scaleBand, ScaleLinear } from 'd3-scale'
+import { ScaleBand, ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { EventComponentFactory, TimelineEvent, TimelineLane } from './model'
 import { Axis } from './Axis'
@@ -21,9 +21,10 @@ interface Props<EID, LID> {
   mouseCursor: React.ReactNode
   height: number
   events: ReadonlyArray<TimelineEvent<EID, LID>>
-  timeScale: ScaleLinear<number, number>
   eventMarkerHeight?: number
   lanes: ReadonlyArray<TimelineLane<LID>>
+  timeScale: ScaleLinear<number, number>
+  yScale: ScaleBand<LID>
   eventComponent?: EventComponentFactory<EID, LID>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
@@ -36,19 +37,13 @@ export const ExpandedMarks = <EID extends string, LID extends string>({
   events,
   lanes,
   timeScale,
+  yScale,
   eventComponent,
   onEventHover,
   onEventUnhover,
   onEventClick,
 }: Props<EID, LID>) => {
   const classes = useStyles()
-
-  const yScale = scaleBand()
-    .domain(lanes.map((l) => l.laneId))
-    .range([0, height])
-    .paddingInner(0.3)
-    .paddingOuter(0.8)
-
   const fontSize = 0.8 * yScale.bandwidth()
 
   const axes = lanes.map((lane: TimelineLane<LID>) => {
