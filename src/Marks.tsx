@@ -84,8 +84,8 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
   const comparableTimeScale = JSON.stringify({ domain: timeScale.domain(), range: timeScale.range() })
 
   // ignoring `isSelected` for background/foreground marks (selectionMarks are rendered specifically)
-  const comparableEventsIgnoringSelection = JSON.stringify(events, (key, value) => {
-    if (key == 'isSelected') return undefined
+  const comparableEventsIgnoringSelectionAndPin = JSON.stringify(events, (key, value) => {
+    if (key == 'isSelected' || key === 'isPinned') return undefined
     return value
   })
 
@@ -96,7 +96,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
       )),
-    [comparableEventsIgnoringSelection, comparableTimeScale, height]
+    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height]
   )
 
   const foregroundMarks = useMemo(
@@ -109,13 +109,13 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
-    [comparableEventsIgnoringSelection, comparableTimeScale, height]
+    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height]
   )
 
-  const selectionMarks = useMemo(
+  const selectionOrPinMarks = useMemo(
     () =>
       events
-        .filter((e) => e.isSelected)
+        .filter((e) => e.isSelected || e.isPinned)
         .sort(sortByEventDuration)
         .map((e: TimelineEvent<EID, LID>) => (
           <InteractiveEventMark key={e.eventId} event={e} {...props}>
@@ -129,7 +129,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
     <g>
       {backgroundMarks}
       {foregroundMarks}
-      {selectionMarks}
+      {selectionOrPinMarks}
     </g>
   )
 }

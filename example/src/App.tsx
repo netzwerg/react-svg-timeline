@@ -158,7 +158,7 @@ const DemoTimeline = ({
         isSelected: selectedEvents.contains(e.eventId),
         isPinned: pinnedEvents.contains(e.eventId),
       })),
-    [rawEvents]
+    [rawEvents, selectedEvents, pinnedEvents]
   )
 
   const onEventHover = (e: TimelineEventId) => setSelectedEvents((prevSelectedEvents) => prevSelectedEvents.add(e))
