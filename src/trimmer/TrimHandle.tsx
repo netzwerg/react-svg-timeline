@@ -1,13 +1,14 @@
 import { makeStyles } from '@material-ui/core'
-import { orange } from '@material-ui/core/colors'
 import React from 'react'
 import CursorLabel from '../CursorLabel'
+import { useTimelineTheme } from '../theme'
+import { TrimmerTheme } from '../theme/model'
 
 const useStyles = makeStyles(() => ({
-  cursor: {
-    stroke: orange.A200,
+  cursor: (trimmerTheme: TrimmerTheme) => ({
+    stroke: trimmerTheme.trimHandle.lineColor,
     strokeWidth: 10,
-  },
+  }),
 }))
 
 interface Props {
@@ -20,7 +21,8 @@ interface Props {
 }
 
 function TrimHandle({ x, label, dateString, height, onMouseEnter, onMouseLeave }: Props) {
-  const classes = useStyles()
+  const trimmerStyle = useTimelineTheme().trimmer
+  const classes = useStyles(trimmerStyle)
   return (
     <>
       <line

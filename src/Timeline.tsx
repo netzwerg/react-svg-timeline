@@ -12,6 +12,8 @@ import { CollapsedMarks } from './CollapsedMarks'
 import { Trimmer, TrimRange, useTrimming } from './trimmer'
 import { useEvents } from './hooks'
 import { EventClusters } from './EventClusters'
+import { TimelineTheme } from './theme'
+import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
 
 export interface TimelineProps<EID, LID> {
   width: number
@@ -23,13 +25,14 @@ export interface TimelineProps<EID, LID> {
   laneDisplayMode?: LaneDisplayMode
   suppressMarkAnimation?: boolean
   enableEventClustering?: boolean
+  isTrimming?: boolean
+  trimRange?: Domain
+  theme?: TimelineTheme
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
-  isTrimming?: boolean
-  trimRange?: Domain
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void
   onInteractionEnd?: () => void
 }
@@ -60,6 +63,7 @@ export const Timeline = <EID extends string, LID extends string>({
   laneDisplayMode = 'expanded',
   suppressMarkAnimation = false,
   enableEventClustering = false,
+  theme,
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick,
@@ -139,193 +143,195 @@ export const Timeline = <EID extends string, LID extends string>({
     const showMarks = suppressMarkAnimation ? !isAnimationInProgress : true
 
     return (
-      <MouseAwareSvg width={width} height={height}>
-        {(mousePosition: SvgCoordinates) => {
-          const timeScalePadding = 50
-          const timeScale = scaleLinear()
-            .domain(domain)
-            .range([timeScalePadding, width - timeScalePadding])
+      <TimelineThemeProvider theme={theme}>
+        <MouseAwareSvg width={width} height={height}>
+          {(mousePosition: SvgCoordinates) => {
+            const timeScalePadding = 50
+            const timeScale = scaleLinear()
+              .domain(domain)
+              .range([timeScalePadding, width - timeScalePadding])
 
-          const yScale = scaleBand<LID>()
-            .domain(lanes.map((l) => l.laneId))
-            .range([0, height])
-            .paddingInner(0.3)
-            .paddingOuter(0.8)
+            const yScale = scaleBand<LID>()
+              .domain(lanes.map((l) => l.laneId))
+              .range([0, height])
+              .paddingInner(0.3)
+              .paddingOuter(0.8)
 
-          const timeAtCursor = timeScale.invert(mousePosition.x)
+            const timeAtCursor = timeScale.invert(mousePosition.x)
 
-          const getDomainSpan = (time: number, width: number): Domain => [
-            Math.max(maxDomainStart, time - width / 2),
-            Math.min(maxDomainEnd, time + width / 2),
-          ]
+            const getDomainSpan = (time: number, width: number): Domain => [
+              Math.max(maxDomainStart, time - width / 2),
+              Math.min(maxDomainEnd, time + width / 2),
+            ]
 
-          const setDomainAnimated = (newDomain: Domain) =>
-            setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
+            const setDomainAnimated = (newDomain: Domain) =>
+              setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
 
-          const updateDomain = (zoomScale: ZoomScale) => () => {
-            if (isDomainChangePossible) {
-              const newZoomWidth = zoomScaleWidth(zoomScale)
-              setDomainAnimated(getDomainSpan(timeAtCursor, newZoomWidth))
-            }
-          }
-
-          const onZoomScrub = () => {
-            if (onCursorMove) {
-              onCursorMove(timeAtCursor, ...getDomainSpan(timeAtCursor, zoomWidth))
-            }
-          }
-
-          const onZoomIn = updateDomain(smallerZoomScale)
-          const onZoomOut = updateDomain(biggerZoomScale)
-
-          const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
-            if (isDomainChangePossible) {
-              const newMin = timeScale.invert(mouseStartX)
-              const newMax = timeScale.invert(mouseEndX)
-              setDomainAnimated([newMin, newMax])
-            }
-          }
-
-          const onZoomInCustomInProgress = (mouseStartX: number, mouseEndX: number) => {
-            if (isDomainChangePossible && onCursorMove) {
-              const newMin = timeScale.invert(mouseStartX)
-              const newMax = timeScale.invert(mouseEndX)
-              onCursorMove(newMax, newMin, newMax)
-            }
-          }
-
-          const onZoomReset = () => {
-            if (isDomainChangePossible) {
-              setDomainAnimated([maxDomainStart, maxDomainEnd])
-            }
-          }
-
-          const onPan = (pixelDelta: number) => {
-            if (isDomainChangePossible) {
-              const [domainMin, domainMax] = domain
-              const [rangeMin, rangeMax] = timeScale.range()
-              const domainDelta = (pixelDelta / (rangeMax - rangeMin)) * (domainMax - domainMin)
-              const [newDomainMin, newDomainMax] = [domainMin + domainDelta, domainMax + domainDelta]
-              if (newDomainMin > maxDomainStart && newDomainMax < maxDomainEnd) {
-                setDomain([newDomainMin, newDomainMax])
+            const updateDomain = (zoomScale: ZoomScale) => () => {
+              if (isDomainChangePossible) {
+                const newZoomWidth = zoomScaleWidth(zoomScale)
+                setDomainAnimated(getDomainSpan(timeAtCursor, newZoomWidth))
               }
             }
-          }
 
-          const onEventHoverDecorated = (eventId: EID) => {
-            setIsMouseOverEvent(true)
-            onEventHover(eventId)
-          }
+            const onZoomScrub = () => {
+              if (onCursorMove) {
+                onCursorMove(timeAtCursor, ...getDomainSpan(timeAtCursor, zoomWidth))
+              }
+            }
 
-          const onEventUnhoverDecorated = (eventId: EID) => {
-            setIsMouseOverEvent(false)
-            onEventUnhover(eventId)
-          }
+            const onZoomIn = updateDomain(smallerZoomScale)
+            const onZoomOut = updateDomain(biggerZoomScale)
 
-          const [onTrimStart, onTrimEnd] = useTrimming(maxDomain, timeScale, onTrimRangeChange, trimRange)
+            const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
+              if (isDomainChangePossible) {
+                const newMin = timeScale.invert(mouseStartX)
+                const newMax = timeScale.invert(mouseEndX)
+                setDomainAnimated([newMin, newMax])
+              }
+            }
 
-          return (
-            <InteractionHandling
-              width={width}
-              height={height}
-              mousePosition={mousePosition}
-              isAnimationInProgress={isAnimationInProgress}
-              isZoomInPossible={isZoomInPossible}
-              isZoomOutPossible={isZoomOutPossible}
-              isTrimming={isTrimming}
-              onHover={onZoomScrub}
-              onZoomIn={onZoomIn}
-              onZoomOut={onZoomOut}
-              onZoomInCustom={onZoomInCustom}
-              onZoomInCustomInProgress={onZoomInCustomInProgress}
-              onZoomReset={onZoomReset}
-              onPan={onPan}
-              onTrimStart={onTrimStart}
-              onTrimEnd={onTrimEnd}
-              onInteractionEnd={onInteractionEnd}
-            >
-              {(cursor, interactionMode, setTrimHoverMode) => {
-                const mouseCursor =
-                  isNoEventSelected && interactionMode.type !== 'trim' ? (
-                    <MouseCursor
-                      mousePosition={mousePosition.x}
-                      cursorLabel={dateFormat(timeAtCursor)}
-                      cursor={cursor}
-                      interactionMode={interactionMode}
-                      zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
-                      zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
-                      zoomScale={smallerZoomScale}
-                      isZoomInPossible={isZoomInPossible}
-                    />
-                  ) : (
-                    <g />
-                  )
+            const onZoomInCustomInProgress = (mouseStartX: number, mouseEndX: number) => {
+              if (isDomainChangePossible && onCursorMove) {
+                const newMin = timeScale.invert(mouseStartX)
+                const newMax = timeScale.invert(mouseEndX)
+                onCursorMove(newMax, newMin, newMax)
+              }
+            }
 
-                return (
-                  <g>
-                    <GridLines height={height} domain={domain} timeScale={timeScale} />
-                    {showMarks && (
-                      <>
-                        <EventClusters
-                          height={height}
-                          eventClusters={eventClustersInsideDomain}
-                          timeScale={timeScale}
-                          yScale={yScale}
-                          expanded={laneDisplayMode === 'expanded'}
-                        />
-                        {laneDisplayMode === 'expanded' ? (
-                          <ExpandedMarks
-                            mouseCursor={mouseCursor}
-                            events={eventsInsideDomain}
-                            lanes={lanes}
+            const onZoomReset = () => {
+              if (isDomainChangePossible) {
+                setDomainAnimated([maxDomainStart, maxDomainEnd])
+              }
+            }
+
+            const onPan = (pixelDelta: number) => {
+              if (isDomainChangePossible) {
+                const [domainMin, domainMax] = domain
+                const [rangeMin, rangeMax] = timeScale.range()
+                const domainDelta = (pixelDelta / (rangeMax - rangeMin)) * (domainMax - domainMin)
+                const [newDomainMin, newDomainMax] = [domainMin + domainDelta, domainMax + domainDelta]
+                if (newDomainMin > maxDomainStart && newDomainMax < maxDomainEnd) {
+                  setDomain([newDomainMin, newDomainMax])
+                }
+              }
+            }
+
+            const onEventHoverDecorated = (eventId: EID) => {
+              setIsMouseOverEvent(true)
+              onEventHover(eventId)
+            }
+
+            const onEventUnhoverDecorated = (eventId: EID) => {
+              setIsMouseOverEvent(false)
+              onEventUnhover(eventId)
+            }
+
+            const [onTrimStart, onTrimEnd] = useTrimming(maxDomain, timeScale, onTrimRangeChange, trimRange)
+
+            return (
+              <InteractionHandling
+                width={width}
+                height={height}
+                mousePosition={mousePosition}
+                isAnimationInProgress={isAnimationInProgress}
+                isZoomInPossible={isZoomInPossible}
+                isZoomOutPossible={isZoomOutPossible}
+                isTrimming={isTrimming}
+                onHover={onZoomScrub}
+                onZoomIn={onZoomIn}
+                onZoomOut={onZoomOut}
+                onZoomInCustom={onZoomInCustom}
+                onZoomInCustomInProgress={onZoomInCustomInProgress}
+                onZoomReset={onZoomReset}
+                onPan={onPan}
+                onTrimStart={onTrimStart}
+                onTrimEnd={onTrimEnd}
+                onInteractionEnd={onInteractionEnd}
+              >
+                {(cursor, interactionMode, setTrimHoverMode) => {
+                  const mouseCursor =
+                    isNoEventSelected && interactionMode.type !== 'trim' ? (
+                      <MouseCursor
+                        mousePosition={mousePosition.x}
+                        cursorLabel={dateFormat(timeAtCursor)}
+                        cursor={cursor}
+                        interactionMode={interactionMode}
+                        zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
+                        zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
+                        zoomScale={smallerZoomScale}
+                        isZoomInPossible={isZoomInPossible}
+                      />
+                    ) : (
+                      <g />
+                    )
+
+                  return (
+                    <g>
+                      <GridLines height={height} domain={domain} timeScale={timeScale} />
+                      {showMarks && (
+                        <>
+                          <EventClusters
+                            height={height}
+                            eventClusters={eventClustersInsideDomain}
                             timeScale={timeScale}
                             yScale={yScale}
-                            height={height}
-                            eventComponent={eventComponent}
-                            onEventHover={onEventHoverDecorated}
-                            onEventUnhover={onEventUnhoverDecorated}
-                            onEventClick={onEventClick}
+                            expanded={laneDisplayMode === 'expanded'}
                           />
-                        ) : (
-                          <CollapsedMarks
-                            mouseCursor={mouseCursor}
-                            events={eventsInsideDomain}
-                            timeScale={timeScale}
-                            height={height}
-                            eventComponent={eventComponent}
-                            onEventHover={onEventHoverDecorated}
-                            onEventUnhover={onEventUnhoverDecorated}
-                            onEventClick={onEventClick}
-                          />
-                        )}
-                      </>
-                    )}
-                    {trimRange && (
-                      <TrimRange
-                        startX={timeScale(trimRange[0])!}
-                        endX={timeScale(trimRange[1])!}
-                        height={height}
-                        width={width}
-                      />
-                    )}
-                    {interactionMode.type === 'trim' && timeScale && (
-                      <Trimmer
-                        startX={trimRange ? trimRange[0] : maxDomain[0]}
-                        endX={trimRange ? trimRange[1] : maxDomain[1]}
-                        height={height}
-                        width={width}
-                        timeScale={timeScale}
-                        setTrimMode={setTrimHoverMode}
-                        dateFormat={dateFormat}
-                      />
-                    )}
-                  </g>
-                )
-              }}
-            </InteractionHandling>
-          )
-        }}
-      </MouseAwareSvg>
+                          {laneDisplayMode === 'expanded' ? (
+                            <ExpandedMarks
+                              mouseCursor={mouseCursor}
+                              events={eventsInsideDomain}
+                              lanes={lanes}
+                              timeScale={timeScale}
+                              yScale={yScale}
+                              height={height}
+                              eventComponent={eventComponent}
+                              onEventHover={onEventHoverDecorated}
+                              onEventUnhover={onEventUnhoverDecorated}
+                              onEventClick={onEventClick}
+                            />
+                          ) : (
+                            <CollapsedMarks
+                              mouseCursor={mouseCursor}
+                              events={eventsInsideDomain}
+                              timeScale={timeScale}
+                              height={height}
+                              eventComponent={eventComponent}
+                              onEventHover={onEventHoverDecorated}
+                              onEventUnhover={onEventUnhoverDecorated}
+                              onEventClick={onEventClick}
+                            />
+                          )}
+                        </>
+                      )}
+                      {trimRange && (
+                        <TrimRange
+                          startX={timeScale(trimRange[0])!}
+                          endX={timeScale(trimRange[1])!}
+                          height={height}
+                          width={width}
+                        />
+                      )}
+                      {interactionMode.type === 'trim' && timeScale && (
+                        <Trimmer
+                          startX={trimRange ? trimRange[0] : maxDomain[0]}
+                          endX={trimRange ? trimRange[1] : maxDomain[1]}
+                          height={height}
+                          width={width}
+                          timeScale={timeScale}
+                          setTrimMode={setTrimHoverMode}
+                          dateFormat={dateFormat}
+                        />
+                      )}
+                    </g>
+                  )
+                }}
+              </InteractionHandling>
+            )
+          }}
+        </MouseAwareSvg>
+      </TimelineThemeProvider>
     )
   }
 }

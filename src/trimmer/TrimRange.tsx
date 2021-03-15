@@ -1,12 +1,13 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core'
-import { grey } from '@material-ui/core/colors'
+import { useTimelineTheme } from '../theme'
+import { TrimmerTheme } from '../theme/model'
 
 const useStyles = makeStyles(() => ({
-  trimRange: {
-    fill: grey.A200,
+  trimRange: (trimmerTheme: TrimmerTheme) => ({
+    fill: trimmerTheme.trimRange.outsideFillColor,
     opacity: 0.1,
-  },
+  }),
 }))
 
 interface Props {
@@ -17,12 +18,9 @@ interface Props {
 }
 
 export function TrimRange({ startX, endX, height, width }: Props) {
-  const classes = useStyles()
-
+  const trimmerStyle = useTimelineTheme().trimmer
+  const classes = useStyles(trimmerStyle)
   const [y1, y2] = [0, height]
-
-  console.log('trimRange', { startX, endX })
-
   return (
     <g>
       {startX > 0 && <rect className={classes.trimRange} x={0} y={y1} width={startX} height={y2} />}
