@@ -1,6 +1,11 @@
 export interface TimelineTheme {
+  readonly xAxis: XAxisTheme
   readonly tooltip: TooltipTheme
   readonly trimmer: TrimmerTheme
+}
+
+export interface XAxisTheme {
+  readonly labelColor: string
 }
 
 export interface TooltipTheme {

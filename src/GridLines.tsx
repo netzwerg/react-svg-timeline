@@ -7,6 +7,8 @@ import { Domain } from './model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
 import { range } from './shared'
+import { useTimelineTheme } from './theme'
+import { XAxisTheme } from './theme/model'
 
 interface Props {
   height: number
@@ -16,8 +18,8 @@ interface Props {
 
 const gridLineStyle = (theme: Theme) => ({
   line: {
-    stroke: theme.palette.grey['500']
-  }
+    stroke: theme.palette.grey['500'],
+  },
 })
 
 export const GridLines = ({ height, domain, timeScale }: Props) => {
@@ -40,14 +42,14 @@ export const GridLines = ({ height, domain, timeScale }: Props) => {
 
 const useYearViewStyles = makeStyles((theme: Theme) => ({
   ...gridLineStyle(theme),
-  label: {
-    fill: theme.palette.text.secondary,
+  label: (xAxisTheme: XAxisTheme) => ({
+    fill: xAxisTheme.labelColor,
     opacity: 0.5,
     fontFamily: theme.typography.caption.fontFamily,
     fontWeight: 'bold',
     textAnchor: 'middle',
-    cursor: 'default'
-  }
+    cursor: 'default',
+  }),
 }))
 
 interface YearViewProps extends Props {
@@ -55,7 +57,8 @@ interface YearViewProps extends Props {
 }
 
 const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearViewProps) => {
-  const classes = useYearViewStyles()
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useYearViewStyles(xAxisTheme)
 
   // not calendar-based (and thus not accounting for leap years), but good enough for horizontal placement of labels
   const yearWidth = yearDuration
@@ -64,7 +67,7 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
   const endYear = new Date(domain[1]).getFullYear()
 
   // -1/+1 to get starting/ending lines, additional +1 because range end is exclusive
-  const lines = range(startYear - 1, endYear + 2).map(year => {
+  const lines = range(startYear - 1, endYear + 2).map((year) => {
     const yearTimestamp = new Date(year, 0, 1).valueOf()
     const x = timeScale(yearTimestamp)!
     const xMidYear = timeScale(yearTimestamp + yearWidth / 2)!
@@ -106,8 +109,8 @@ const useMonthViewStyles = makeStyles((theme: Theme) => ({
     fontSize: monthViewLabelFontSize,
     fontWeight: 'bold',
     textAnchor: 'middle',
-    cursor: 'default'
-  }
+    cursor: 'default',
+  },
 }))
 
 interface MonthViewProps extends Props {
@@ -191,7 +194,7 @@ interface WeekStripesProps {
 const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
   const theme: Theme = useTheme()
   const monthEnd = endOfMonth(monthStart)
-  const lines = range(1, 6).map(weekNumber => {
+  const lines = range(1, 6).map((weekNumber) => {
     const weekStart = startOfWeek(addWeeks(monthStart, weekNumber))
     const key = weekNumber
     if (isEqual(weekStart, monthEnd) || isBefore(weekStart, monthEnd)) {

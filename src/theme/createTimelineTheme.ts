@@ -1,5 +1,5 @@
 import { Theme as MaterialTheme } from '@material-ui/core'
-import { TimelineTheme, TooltipTheme, TrimmerTheme } from './model'
+import { TimelineTheme, TooltipTheme, TrimmerTheme, XAxisTheme } from './model'
 
 const defaultOrange = '#ffab40'
 const defaultGrey = '#aaaaaa'
@@ -10,6 +10,9 @@ const defaultOpacity = 0.1
 
 export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThemeOptions): TimelineTheme => {
   const defaults: TimelineTheme = {
+    xAxis: {
+      labelColor: theme.palette.text.secondary,
+    },
     tooltip: {
       backgroundColor: theme.palette.text.secondary,
     },
@@ -37,9 +40,11 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
 }
 
 export interface TimelineThemeOptions {
+  xAxis?: XAxisThemeOptions
   tooltip?: TooltipThemeOptions
   trimmer?: TrimmerThemeOptions
 }
 
+type XAxisThemeOptions = Partial<XAxisTheme>
 type TooltipThemeOptions = Partial<TooltipTheme>
 type TrimmerThemeOptions = Partial<TrimmerTheme>

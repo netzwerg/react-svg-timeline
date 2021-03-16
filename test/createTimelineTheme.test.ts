@@ -5,6 +5,9 @@ describe('createTimelineTheme', () => {
   const materialTheme = createMuiTheme()
   const defaultTheme = createTimelineTheme(materialTheme)
   expect(defaultTheme).toEqual({
+    xAxis: {
+      labelColor: 'rgba(0, 0, 0, 0.54)',
+    },
     tooltip: {
       backgroundColor: 'rgba(0, 0, 0, 0.54)',
     },
@@ -28,6 +31,9 @@ describe('createTimelineTheme', () => {
       },
     })
     expect(theme).toEqual({
+      xAxis: {
+        labelColor: 'rgba(0, 0, 0, 0.54)',
+      },
       tooltip: {
         backgroundColor: 'pink',
       },
