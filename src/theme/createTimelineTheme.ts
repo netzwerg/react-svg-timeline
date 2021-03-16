@@ -2,6 +2,7 @@ import { Theme as MaterialTheme } from '@material-ui/core'
 import { TimelineTheme, TooltipTheme, TrimmerTheme } from './model'
 
 const defaultOrange = '#ffab40'
+const defaultGrey = '#aaaaaa'
 const defaultOpacity = 0.1
 
 // Still relying on Material theme for some defaults
@@ -16,9 +17,9 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       trimHandleColor: defaultOrange,
       trimHandleWidth: 10,
       trimTriangleColor: defaultOrange,
-      trimRangeInsideColor: defaultOrange,
-      trimRangeInsideOpacity: defaultOpacity,
-      trimRangeOutsideColor: defaultOrange,
+      trimRangeInsideColor: 'transparent',
+      trimRangeInsideOpacity: 0,
+      trimRangeOutsideColor: defaultGrey,
       trimRangeOutsideOpacity: defaultOpacity,
     },
   }
