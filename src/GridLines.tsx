@@ -102,15 +102,15 @@ const monthViewLabelFontSize = 18
 
 const useMonthViewStyles = makeStyles((theme: Theme) => ({
   ...gridLineStyle(theme),
-  label: {
-    fill: theme.palette.text.secondary,
+  label: (xAxisTheme: XAxisTheme) => ({
+    fill: xAxisTheme.labelColor,
     opacity: 0.5,
     fontFamily: theme.typography.caption.fontFamily,
     fontSize: monthViewLabelFontSize,
     fontWeight: 'bold',
     textAnchor: 'middle',
     cursor: 'default',
-  },
+  }),
 }))
 
 interface MonthViewProps extends Props {
@@ -118,7 +118,8 @@ interface MonthViewProps extends Props {
 }
 
 const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: MonthViewProps) => {
-  const classes = useMonthViewStyles()
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useMonthViewStyles(xAxisTheme)
 
   // not calendar-based (fixed 30 days), but good enough for horizontal placement of labels
   const monthWidth = monthDuration
@@ -169,7 +170,8 @@ interface MonthLineProps {
 }
 
 const MonthLine = ({ x, month }: MonthLineProps) => {
-  const classes = useMonthViewStyles()
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useMonthViewStyles(xAxisTheme)
   return (
     <line
       className={classes.line}
