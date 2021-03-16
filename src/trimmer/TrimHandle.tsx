@@ -21,8 +21,8 @@ interface Props {
 }
 
 function TrimHandle({ x, label, dateString, height, onMouseEnter, onMouseLeave }: Props) {
-  const trimmerStyle = useTimelineTheme().trimmer
-  const classes = useStyles(trimmerStyle)
+  const trimmerTheme = useTimelineTheme().trimmer
+  const classes = useStyles(trimmerTheme)
   return (
     <>
       <line
@@ -35,7 +35,14 @@ function TrimHandle({ x, label, dateString, height, onMouseEnter, onMouseLeave }
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       />
-      <CursorLabel x={x} y={'11%'} cursor="default" overline={label} label={dateString} />
+      <CursorLabel
+        x={x}
+        y={'11%'}
+        cursor="default"
+        overline={label}
+        label={dateString}
+        fill={trimmerTheme.trimHandleLabelColor}
+      />
       <line
         className={classes.cursor}
         x1={x}

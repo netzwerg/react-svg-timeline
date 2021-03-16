@@ -4,7 +4,6 @@ import { orange } from '@material-ui/core/colors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   label: {
-    fill: orange.A200,
     textAnchor: 'middle',
     dominantBaseline: 'middle',
     fontFamily: theme.typography.caption.fontFamily,
@@ -18,13 +17,15 @@ interface Props {
   label: string
   y: number | string
   cursor: string
+  fill?: string
 }
 
-function CursorLabel({ x, y, overline, label, cursor }: Props) {
+// TODO: Configure 'fill' via theme once mouse cursor style is also part of theme
+function CursorLabel({ x, y, overline, label, cursor, fill = orange.A200 }: Props) {
   const classes = useStyles()
 
   return (
-    <text className={classes.label} x={x} y={y} cursor={cursor}>
+    <text className={classes.label} x={x} y={y} cursor={cursor} fill={fill}>
       <tspan x={x} cursor={cursor}>
         {overline}
       </tspan>

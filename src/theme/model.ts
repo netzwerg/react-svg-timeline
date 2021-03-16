@@ -15,6 +15,7 @@ export interface TooltipTheme {
 export interface TrimmerTheme {
   readonly trimHandleColor: string
   readonly trimHandleWidth: number
+  readonly trimHandleLabelColor: string
   readonly trimTriangleColor: string
   readonly trimRangeInsideColor: string
   readonly trimRangeInsideOpacity: number

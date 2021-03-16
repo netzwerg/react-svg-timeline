@@ -18,6 +18,7 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
     },
     trimmer: {
       trimHandleColor: defaultOrange,
+      trimHandleLabelColor: defaultOrange,
       trimHandleWidth: 10,
       trimTriangleColor: defaultOrange,
       trimRangeInsideColor: 'transparent',

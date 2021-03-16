@@ -14,6 +14,7 @@ describe('createTimelineTheme', () => {
     trimmer: {
       trimHandleColor: '#ffab40',
       trimHandleWidth: 10,
+      trimHandleLabelColor: '#ffab40',
       trimRangeInsideColor: 'transparent',
       trimRangeInsideOpacity: 0,
       trimRangeOutsideColor: '#aaaaaa',
@@ -40,6 +41,7 @@ describe('createTimelineTheme', () => {
       trimmer: {
         trimHandleColor: '#ffab40',
         trimHandleWidth: 10,
+        trimHandleLabelColor: '#ffab40',
         trimRangeInsideColor: 'transparent',
         trimRangeInsideOpacity: 0,
         trimRangeOutsideColor: '#aaaaaa',
