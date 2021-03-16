@@ -1,5 +1,6 @@
 import { Theme as MaterialTheme } from '@material-ui/core'
 import { TimelineTheme, TooltipTheme, TrimmerTheme, XAxisTheme } from './model'
+import deepMerge from 'ts-deepmerge'
 
 const defaultOrange = '#ffab40'
 const defaultGrey = '#aaaaaa'
@@ -27,17 +28,7 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       trimRangeOutsideOpacity: defaultOpacity,
     },
   }
-  return {
-    ...defaults,
-    tooltip: {
-      ...defaults.tooltip,
-      ...options?.tooltip,
-    },
-    trimmer: {
-      ...defaults.trimmer,
-      ...options?.trimmer,
-    },
-  }
+  return options ? deepMerge(defaults, options) : defaults
 }
 
 export interface TimelineThemeOptions {
