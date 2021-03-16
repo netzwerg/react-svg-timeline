@@ -8,10 +8,11 @@ export interface TooltipTheme {
 }
 
 export interface TrimmerTheme {
-  readonly trimHandle: Readonly<{
-    readonly lineColor: string
-  }>
-  readonly trimRange: Readonly<{
-    readonly outsideFillColor: string
-  }>
+  readonly trimHandleColor: string
+  readonly trimHandleWidth: number
+  readonly trimTriangleColor: string
+  readonly trimRangeInsideColor: string
+  readonly trimRangeInsideOpacity: number
+  readonly trimRangeOutsideColor: string
+  readonly trimRangeOutsideOpacity: number
 }

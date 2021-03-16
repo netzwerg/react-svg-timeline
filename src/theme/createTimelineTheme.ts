@@ -1,29 +1,44 @@
 import { Theme as MaterialTheme } from '@material-ui/core'
-import { TimelineTheme } from './model'
-import { orange } from '@material-ui/core/colors'
+import { TimelineTheme, TooltipTheme, TrimmerTheme } from './model'
 
-// Still relying on Material theme for defaults
-// Eventually, this will be the last dependency, and we can decide to
-// refactor it away...
+const defaultOrange = '#ffab40'
+const defaultOpacity = 0.1
 
-// TODO: More type-safe overrides (while still keeping everything optional, even nested fields)
+// Still relying on Material theme for some defaults
+// Eventually, this will be the last dependency, and we can decide to refactor it away...
 
-export const createTimelineTheme = (theme: MaterialTheme, overrides?: any): TimelineTheme => {
+export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThemeOptions): TimelineTheme => {
   const defaults: TimelineTheme = {
     tooltip: {
       backgroundColor: theme.palette.text.secondary,
     },
     trimmer: {
-      trimHandle: {
-        lineColor: orange.A200,
-      },
-      trimRange: {
-        outsideFillColor: orange.A200,
-      },
+      trimHandleColor: defaultOrange,
+      trimHandleWidth: 10,
+      trimTriangleColor: defaultOrange,
+      trimRangeInsideColor: defaultOrange,
+      trimRangeInsideOpacity: defaultOpacity,
+      trimRangeOutsideColor: defaultOrange,
+      trimRangeOutsideOpacity: defaultOpacity,
     },
   }
   return {
     ...defaults,
-    ...overrides,
+    tooltip: {
+      ...defaults.tooltip,
+      ...options?.tooltip,
+    },
+    trimmer: {
+      ...defaults.trimmer,
+      ...options?.trimmer,
+    },
   }
 }
+
+export interface TimelineThemeOptions {
+  tooltip?: TooltipThemeOptions
+  trimmer?: TrimmerThemeOptions
+}
+
+type TooltipThemeOptions = Partial<TooltipTheme>
+type TrimmerThemeOptions = Partial<TrimmerTheme>

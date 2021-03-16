@@ -6,8 +6,8 @@ import { TrimmerTheme } from '../theme/model'
 
 const useStyles = makeStyles(() => ({
   cursor: (trimmerTheme: TrimmerTheme) => ({
-    stroke: trimmerTheme.trimHandle.lineColor,
-    strokeWidth: 10,
+    stroke: trimmerTheme.trimHandleColor,
+    strokeWidth: trimmerTheme.trimHandleWidth,
   }),
 }))
 

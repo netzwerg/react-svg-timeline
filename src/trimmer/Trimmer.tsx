@@ -1,19 +1,20 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core'
-import { orange } from '@material-ui/core/colors'
 import { ScaleLinear } from 'd3-scale'
 import { TrimHover, TrimNone } from '../InteractionHandling'
 import TrimHandle from './TrimHandle'
 import Triangle, { TriangleDirection } from '../Triangle'
+import { useTimelineTheme } from '../theme'
+import { TrimmerTheme } from '../theme/model'
 
 const useStyles = makeStyles(() => ({
-  trimmerArea: {
-    fill: orange.A200,
-    opacity: 0.1,
-  },
-  triangle: {
-    fill: orange.A200,
-  },
+  trimmerArea: (trimmerTheme: TrimmerTheme) => ({
+    fill: trimmerTheme.trimRangeInsideColor,
+    opacity: trimmerTheme.trimRangeInsideOpacity,
+  }),
+  triangle: (trimmerTheme: TrimmerTheme) => ({
+    fill: trimmerTheme.trimTriangleColor,
+  }),
 }))
 
 interface Props {
@@ -27,7 +28,8 @@ interface Props {
 }
 
 export function Trimmer({ startX, endX, timeScale, height, width, setTrimMode, dateFormat }: Props) {
-  const classes = useStyles()
+  const trimmerTheme = useTimelineTheme().trimmer
+  const classes = useStyles(trimmerTheme)
 
   const [y1, y2] = [0, height]
   const [scaledStartX, scaledEndX] = [timeScale(startX)!, timeScale(endX)!]

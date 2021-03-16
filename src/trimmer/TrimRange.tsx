@@ -5,8 +5,8 @@ import { TrimmerTheme } from '../theme/model'
 
 const useStyles = makeStyles(() => ({
   trimRange: (trimmerTheme: TrimmerTheme) => ({
-    fill: trimmerTheme.trimRange.outsideFillColor,
-    opacity: 0.1,
+    fill: trimmerTheme.trimRangeOutsideColor,
+    opacity: trimmerTheme.trimRangeOutsideOpacity,
   }),
 }))
 
