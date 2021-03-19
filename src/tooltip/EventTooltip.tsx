@@ -1,30 +1,8 @@
-import makeStyles from '@material-ui/core/styles/makeStyles'
-import { Theme } from '@material-ui/core'
 import * as React from 'react'
 import TextSize from '../TextSize'
 import { Tooltip } from 'react-svg-tooltip'
 import { scaleLinear } from 'd3-scale'
-import { TooltipTheme } from '../theme/model'
-import { useTimelineTheme } from '../theme'
-
-const TOOLTIP_FONT_SIZE = 14
-
-const useTooltipStyle = makeStyles((theme: Theme) => ({
-  svg: {
-    textAlign: 'left',
-  },
-  background: (tooltipTheme: TooltipTheme) => ({
-    fill: tooltipTheme.backgroundColor,
-    strokeWidth: 0,
-  }),
-  text: {
-    fill: 'white',
-    dominantBaseline: 'middle',
-    textAnchor: 'middle',
-    fontFamily: theme.typography.caption.fontFamily,
-    fontSize: TOOLTIP_FONT_SIZE,
-  },
-}))
+import { TooltipClasses, TOOLTIP_FONT_SIZE } from './useTooltipStyle'
 
 interface Props {
   readonly type: { singleEventX: number } | 'period'
@@ -32,12 +10,10 @@ interface Props {
   readonly parentWidth: number
   readonly text: string
   readonly triggerRef: React.RefObject<SVGElement>
+  readonly classes: TooltipClasses
 }
 
-export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) => {
-  const tooltipTheme = useTimelineTheme().tooltip
-  const classes = useTooltipStyle(tooltipTheme)
-
+export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }: Props) => {
   const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text)
 
   return (
