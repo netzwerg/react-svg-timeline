@@ -25,6 +25,8 @@ function clusterWidth(scale: ZoomScale): string {
   }
 }
 
+const pinnedOrSelectedGroup = 'isPinnedOrSelected'
+
 // TODO: Don't cluster events with start- AND endTimeMillis if the timespan is larger than the next smaller zoom scale (otherwise there is a possibility, that the event is never fully visible)
 // TODO: Toggling between expand/collapse changes cluster sizes; Clusters are displayed proportional within each lane - this could be desired or not -> decide.
 
@@ -49,18 +51,20 @@ export function useEvents<EID extends string, LID extends string>(
     if (!cluster || zoomScale === ZoomLevels.ONE_DAY) {
       return [eventsInsideDomain, []]
     } else {
-      return groups(
-        eventsInsideDomain,
-        (e) =>
-          `${groupByLane ? `${e.laneId}-` : ''}${format(e.startTimeMillis, clusterWidth(zoomScale))}${
-            e.endTimeMillis ? `-${format(e.endTimeMillis, clusterWidth(zoomScale))}` : ''
-          }`
+      return groups(eventsInsideDomain, (e) =>
+        e.isPinned || e.isSelected
+          ? pinnedOrSelectedGroup
+          : `${groupByLane ? `${e.laneId}-` : ''}${format(e.startTimeMillis, clusterWidth(zoomScale))}${
+              e.endTimeMillis ? `-${format(e.endTimeMillis, clusterWidth(zoomScale))}` : ''
+            }`
       ).reduce(
         (
           acc: [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>],
           eventGroup
         ): [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>] => {
-          if (eventGroup[1].length > 1) {
+          if (eventGroup[0] === pinnedOrSelectedGroup || eventGroup[1].length <= 1) {
+            return [[...acc[0], ...eventGroup[1]], [...acc[1]]]
+          } else {
             return [
               [...acc[0]],
               [
@@ -78,8 +82,6 @@ export function useEvents<EID extends string, LID extends string>(
                 },
               ],
             ]
-          } else {
-            return [[...acc[0], eventGroup[1][0]], [...acc[1]]]
           }
         },
         [[], []] as [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>]
