@@ -24,6 +24,8 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       trimTriangleColor: defaultOrange,
       trimRangeInsideColor: 'transparent',
       trimRangeInsideOpacity: 0,
+      trimRangeInsideHighlightColor: defaultOrange,
+      trimRangeInsideHighlightOpacity: defaultOpacity,
       trimRangeOutsideColor: defaultGrey,
       trimRangeOutsideOpacity: defaultOpacity,
     },

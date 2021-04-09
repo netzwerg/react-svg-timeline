@@ -12,6 +12,10 @@ const useStyles = makeStyles(() => ({
     fill: trimmerTheme.trimRangeInsideColor,
     opacity: trimmerTheme.trimRangeInsideOpacity,
   }),
+  trimmerAreaHighlight: (trimmerTheme: TrimmerTheme) => ({
+    fill: trimmerTheme.trimRangeInsideHighlightColor,
+    opacity: trimmerTheme.trimRangeInsideHighlightOpacity,
+  }),
   triangle: (trimmerTheme: TrimmerTheme) => ({
     fill: trimmerTheme.trimTriangleColor,
   }),
@@ -23,11 +27,21 @@ interface Props {
   height: number
   width: number
   timeScale: ScaleLinear<number, number>
+  highlightActiveArea: boolean
   setTrimMode: (trimHoverMode: TrimHover | TrimNone) => void
   dateFormat: (ms: number) => string
 }
 
-export function Trimmer({ startX, endX, timeScale, height, width, setTrimMode, dateFormat }: Props) {
+export function Trimmer({
+  startX,
+  endX,
+  timeScale,
+  height,
+  width,
+  highlightActiveArea,
+  setTrimMode,
+  dateFormat,
+}: Props) {
   const trimmerTheme = useTimelineTheme().trimmer
   const classes = useStyles(trimmerTheme)
 
@@ -37,7 +51,7 @@ export function Trimmer({ startX, endX, timeScale, height, width, setTrimMode, d
   return (
     <g>
       <rect
-        className={classes.trimmerArea}
+        className={highlightActiveArea ? classes.trimmerAreaHighlight : classes.trimmerArea}
         x={Math.min(scaledStartX, scaledEndX)}
         y={y1}
         width={Math.abs(scaledEndX - scaledStartX)}
@@ -49,7 +63,7 @@ export function Trimmer({ startX, endX, timeScale, height, width, setTrimMode, d
           dateString={dateFormat(startX)}
           label="Date from"
           height={height}
-          onMouseEnter={() => setTrimMode({ variant: 'trim hover start', otherX: endX })}
+          onMouseEnter={() => setTrimMode({ variant: 'trim hover start' })}
           onMouseLeave={() => setTrimMode({ variant: 'none' })}
         />
       ) : (
@@ -67,7 +81,7 @@ export function Trimmer({ startX, endX, timeScale, height, width, setTrimMode, d
           dateString={dateFormat(endX)}
           label="Date to"
           height={height}
-          onMouseEnter={() => setTrimMode({ variant: 'trim hover end', otherX: startX })}
+          onMouseEnter={() => setTrimMode({ variant: 'trim hover end' })}
           onMouseLeave={() => setTrimMode({ variant: 'none' })}
         />
       ) : (
