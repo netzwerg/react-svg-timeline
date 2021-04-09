@@ -72,12 +72,10 @@ export interface TrimNone {
 
 export interface TrimHover {
   variant: 'trim hover start' | 'trim hover end'
-  otherX: number
 }
 
 interface TrimInProgress {
-  variant: 'trim start' | 'trim end'
-  otherX: number
+  variant: 'trim start' | 'trim end' | 'trim pan end'
 }
 
 type InteractionModeTrimHover = TrimHover & Readonly<{ type: 'trim' }>
@@ -197,10 +195,13 @@ export const InteractionHandling = ({
     const anchored: Anchored = { variant: 'anchored', anchorX: mousePosition.x }
 
     if (interactionMode.type === 'trim') {
-      if (interactionMode.variant === 'trim hover start') {
-        setInteractionMode({ type: 'trim', variant: 'trim start', otherX: interactionMode.otherX })
+      if (isShiftKeyDown) {
+        onTrimStart(mousePosition.x)
+        setInteractionMode({ type: 'trim', variant: 'trim pan end' })
+      } else if (interactionMode.variant === 'trim hover start') {
+        setInteractionMode({ type: 'trim', variant: 'trim start' })
       } else if (interactionMode.variant === 'trim hover end') {
-        setInteractionMode({ type: 'trim', variant: 'trim end', otherX: interactionMode.otherX })
+        setInteractionMode({ type: 'trim', variant: 'trim end' })
       }
     } else if (isShiftKeyDown) {
       setInteractionMode({ type: 'rubber band', ...anchored })
@@ -226,7 +227,7 @@ export const InteractionHandling = ({
     if (interactionMode.type === 'trim') {
       if (interactionMode.variant === 'trim start') {
         onTrimStart(mousePosition.x)
-      } else if (interactionMode.variant === 'trim end') {
+      } else if (interactionMode.variant === 'trim end' || interactionMode.variant === 'trim pan end') {
         onTrimEnd(mousePosition.x)
       }
     }
@@ -269,7 +270,8 @@ export const InteractionHandling = ({
     setInteractionMode((interactionMode) =>
       interactionMode.type === 'trim' &&
       interactionMode.variant !== 'trim start' &&
-      interactionMode.variant !== 'trim end'
+      interactionMode.variant !== 'trim end' &&
+      interactionMode.variant !== 'trim pan end'
         ? { type: 'trim', ...trimHoverMode }
         : interactionMode
     )

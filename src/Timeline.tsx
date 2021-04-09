@@ -322,6 +322,7 @@ export const Timeline = <EID extends string, LID extends string>({
                           timeScale={timeScale}
                           setTrimMode={setTrimHoverMode}
                           dateFormat={dateFormat}
+                          highlightActiveArea={interactionMode.variant === 'trim pan end'}
                         />
                       )}
                     </g>

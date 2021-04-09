@@ -19,6 +19,8 @@ export interface TrimmerTheme {
   readonly trimTriangleColor: string
   readonly trimRangeInsideColor: string
   readonly trimRangeInsideOpacity: number
+  readonly trimRangeInsideHighlightColor: string
+  readonly trimRangeInsideHighlightOpacity: number
   readonly trimRangeOutsideColor: string
   readonly trimRangeOutsideOpacity: number
 }
