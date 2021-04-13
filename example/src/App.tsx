@@ -84,6 +84,7 @@ export const App = () => {
   const [enableClustering, setEnableClustering] = useState<boolean>(false)
   const [suppressMarkAnimation, setSuppressMarkAnimation] = useState<boolean>(false)
   const [datasetChosen, setDatasetChosen] = useState<string>('1')
+  const [useCustomRange, setUseCustomRange] = useState<boolean>(false)
   const rootClasses = cn(classes.root, datasetChosen === '2' ? classes.largeDataset : '')
 
   return (
@@ -100,6 +101,8 @@ export const App = () => {
         setEnableClustering={setEnableClustering}
         datasetChosen={datasetChosen}
         setDatasetChosen={setDatasetChosen}
+        useCustomRange={useCustomRange}
+        setUseCustomRange={setUseCustomRange}
       />
       <DemoTimeline
         timelineComponent={Timeline}
@@ -109,6 +112,7 @@ export const App = () => {
         isTrimming={isTrimming}
         enableClustering={enableClustering}
         datasetChosen={datasetChosen}
+        useCustomRange={useCustomRange}
       />
       <DemoTimeline
         timelineComponent={CustomizedTimeline}
@@ -118,6 +122,7 @@ export const App = () => {
         isTrimming={isTrimming}
         enableClustering={enableClustering}
         datasetChosen={datasetChosen}
+        useCustomRange={useCustomRange}
       />
     </div>
   )
@@ -131,6 +136,7 @@ interface DemoTimelineProps {
   isTrimming: boolean
   enableClustering: boolean
   datasetChosen: string
+  useCustomRange: boolean
 }
 
 const DemoTimeline = ({
@@ -141,6 +147,7 @@ const DemoTimeline = ({
   isTrimming,
   enableClustering,
   datasetChosen,
+  useCustomRange,
 }: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
@@ -230,6 +237,7 @@ const DemoTimeline = ({
             onTrimRangeChange,
             onInteractionEnd,
             enableEventClustering: enableClustering,
+            customRange: useCustomRange ? [315529200000, 1640991600000] : undefined,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}
@@ -249,6 +257,8 @@ interface ConfigProps {
   setEnableClustering: (enableClustering: boolean) => void
   datasetChosen: string
   setDatasetChosen: (datasetChoice: string) => void
+  useCustomRange: boolean
+  setUseCustomRange: (useCustomRange: boolean) => void
 }
 
 const ConfigPanel = (props: ConfigProps) => {
@@ -308,6 +318,8 @@ const ConfigOptions = ({
   setEnableClustering,
   datasetChosen,
   setDatasetChosen,
+  useCustomRange,
+  setUseCustomRange,
 }: ConfigProps) => {
   const classes = useStyles()
 
@@ -325,6 +337,8 @@ const ConfigOptions = ({
     setDatasetChosen(newDataset)
   }
 
+  const onUseCustomRangeChange = () => setUseCustomRange(!useCustomRange)
+
   return (
     <div className={classes.configToggles}>
       <Typography>Collapse Lanes</Typography>
@@ -335,6 +349,8 @@ const ConfigOptions = ({
       <Switch checked={enableClustering} onChange={onEnableClusteringChange} />
       <Typography>Animate Marks</Typography>
       <Switch checked={!suppressMarkAnimation} onChange={onSuppressMarkAnimationChange} />
+      <Typography>Custom Range</Typography>
+      <Switch checked={useCustomRange} onChange={onUseCustomRangeChange} />
       <InputLabel id="dataset">
         <Typography>Dataset</Typography>
       </InputLabel>

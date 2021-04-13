@@ -25,6 +25,7 @@ export interface TimelineProps<EID, LID> {
   laneDisplayMode?: LaneDisplayMode
   suppressMarkAnimation?: boolean
   enableEventClustering?: boolean
+  customRange?: Domain
   isTrimming?: boolean
   trimRange?: Domain
   theme?: TimelineTheme
@@ -63,6 +64,7 @@ export const Timeline = <EID extends string, LID extends string>({
   laneDisplayMode = 'expanded',
   suppressMarkAnimation = false,
   enableEventClustering = false,
+  customRange,
   theme,
   onEventHover = noOp,
   onEventUnhover = noOp,
@@ -75,7 +77,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onInteractionEnd,
 }: TimelineProps<EID, LID>) => {
   {
-    const maxDomain = calcMaxDomain(events)
+    const maxDomain = customRange ?? calcMaxDomain(events)
     const maxDomainStart = maxDomain[0]
     const maxDomainEnd = maxDomain[1]
 
