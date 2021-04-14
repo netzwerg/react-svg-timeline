@@ -46,11 +46,16 @@ type Animation =
       toDomain: Domain
     }>
 
-export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID, LID>>): Domain => {
+export const calcMaxDomain = <EID, LID>(
+  events: ReadonlyArray<TimelineEvent<EID, LID>>,
+  customRange?: Domain
+): Domain => {
   const comparableEvents = JSON.stringify(events)
 
   return useMemo(() => {
-    if (events.length > 0) {
+    if (customRange) {
+      return customRange
+    } else if (events.length > 0) {
       const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
       const timeMax = Math.max(
         ...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis))
@@ -59,7 +64,7 @@ export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID,
     } else {
       return [0, Date.now()]
     }
-  }, [comparableEvents])
+  }, [comparableEvents, customRange])
 }
 
 const animationDuration = 1000
@@ -87,7 +92,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onInteractionEnd,
 }: TimelineProps<EID, LID>) => {
   {
-    const maxDomain = customRange ?? calcMaxDomain(events)
+    const maxDomain = calcMaxDomain(events, customRange)
     const maxDomainStart = maxDomain[0]
     const maxDomainEnd = maxDomain[1]
 
