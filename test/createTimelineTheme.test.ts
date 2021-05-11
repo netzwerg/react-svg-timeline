@@ -16,6 +16,8 @@ describe('createTimelineTheme', () => {
       trimHandleWidth: 10,
       trimHandleLabelColor: '#ffab40',
       trimRangeInsideColor: 'transparent',
+      trimRangeInsideHighlightColor: '#ffab40',
+      trimRangeInsideHighlightOpacity: 0.1,
       trimRangeInsideOpacity: 0,
       trimRangeOutsideColor: '#aaaaaa',
       trimRangeOutsideOpacity: 0.1,
@@ -32,22 +34,11 @@ describe('createTimelineTheme', () => {
       },
     })
     expect(theme).toEqual({
-      xAxis: {
-        labelColor: 'rgba(0, 0, 0, 0.54)',
-      },
+      xAxis: defaultTheme.xAxis,
       tooltip: {
         backgroundColor: 'pink',
       },
-      trimmer: {
-        trimHandleColor: '#ffab40',
-        trimHandleWidth: 10,
-        trimHandleLabelColor: '#ffab40',
-        trimRangeInsideColor: 'transparent',
-        trimRangeInsideOpacity: 0,
-        trimRangeOutsideColor: '#aaaaaa',
-        trimRangeOutsideOpacity: 0.1,
-        trimTriangleColor: '#ffab40',
-      },
+      trimmer: defaultTheme.trimmer,
     })
   })
 })
