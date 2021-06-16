@@ -1,4 +1,8 @@
 export * from './model'
 export * from './Timeline'
 export * from './Marks'
+export * from './InteractionHandling'
+export * from './MouseCursor'
+export * from './MouseAwareSvg'
+export * from './ZoomScale'
 export { TimelineTheme, createTimelineTheme } from './theme'

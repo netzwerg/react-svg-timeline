@@ -4,7 +4,7 @@ import { Cursor, Domain } from './model'
 import { noOp } from './shared'
 import { SvgCoordinates } from './MouseAwareSvg'
 
-export interface Props {
+export interface InteractionHandlingProps {
   width: number
   height: number
   mousePosition: SvgCoordinates
@@ -112,7 +112,7 @@ export const InteractionHandling = ({
   onPan,
   onInteractionEnd,
   children,
-}: Props) => {
+}: InteractionHandlingProps) => {
   const [cursor, setCursor] = useState<Cursor>('default')
   const [isAltKeyDown, setAltKeyDown] = useState(false)
   const [isShiftKeyDown, setShiftKeyDown] = useState(false)
