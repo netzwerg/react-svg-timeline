@@ -1,5 +1,11 @@
 import { Domain } from '../src'
-import { nextBiggerZoomScale, nextSmallerZoomScale, zoomScaleWidth, ZoomLevels } from '../src/ZoomScale'
+import {
+  nextBiggerZoomScale,
+  nextSmallerZoomScale,
+  currentZoomScale,
+  zoomScaleWidth,
+  ZoomLevels,
+} from '../src/ZoomScale'
 
 describe('ZoomScale for time-range: 3 days', () => {
   const threeDays: Domain = [0, 3 * zoomScaleWidth(ZoomLevels.ONE_DAY)]
@@ -47,5 +53,16 @@ describe('ZoomScale for time-range: [15-60] minutes', () => {
   })
   it('nextBiggerZoomScale', () => {
     expect(nextBiggerZoomScale(fortyMins)).toEqual(ZoomLevels.THREE_HOURS)
+  })
+})
+
+describe('ZoomScale', () => {
+  const zero = new Date('0000-01-01').getTime()
+  const zero100 = new Date('0100-01-01').getTime()
+
+  it('can handle negative numbers', () => {
+    expect(currentZoomScale([zero, zero100])).toEqual(ZoomLevels.MAX)
+    expect(nextBiggerZoomScale([zero, zero100])).toEqual(ZoomLevels.MAX)
+    expect(nextSmallerZoomScale([zero, zero100])).toEqual(ZoomLevels.TEN_YEARS)
   })
 })

@@ -1,4 +1,5 @@
 import { Domain } from './model'
+import { diff } from './shared'
 
 export const oneSec = 1000 //in ms
 export const oneMin = 60 * oneSec
@@ -93,16 +94,18 @@ export const zoomScaleWidth = (scale: ZoomLevels): number => {
 }
 
 export const currentZoomScale = (currentDomain: Domain): ZoomLevels => {
-  const range = currentDomain[1] - currentDomain[0]
-  return orderedScales.find((s) => zoomScaleWidth(s) <= range) || ZoomLevels.MIN
+  const range = diff(currentDomain[1], currentDomain[0])
+  return range >= zoomScaleWidth(orderedScales[0])
+    ? ZoomLevels.MAX
+    : orderedScales.find((s) => zoomScaleWidth(s) <= range) || ZoomLevels.MIN
 }
 
 export const nextSmallerZoomScale = (currentDomain: Domain): ZoomLevels => {
-  const range = (currentDomain[1] - currentDomain[0]) / 2
+  const range = diff(currentDomain[1], currentDomain[0]) / 2
   return orderedScales.find((s) => zoomScaleWidth(s) <= range) || ZoomLevels.MIN
 }
 
 export const nextBiggerZoomScale = (currentDomain: Domain): ZoomLevels => {
-  const range = (currentDomain[1] - currentDomain[0]) * 2
+  const range = diff(currentDomain[1], currentDomain[0]) * 2
   return [...orderedScales].reverse().find((s) => zoomScaleWidth(s) > range) || ZoomLevels.MAX
 }
