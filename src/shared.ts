@@ -23,3 +23,7 @@ export const range = (start: number, end: number) =>
 export const clamp = (number: number, min: number, max: number): number => {
   return Math.min(Math.max(number, min), max)
 }
+
+export const diff = (value1: number, value2: number): number => {
+  return Math.abs(Math.max(value1, value2) - Math.min(value1, value2))
+}
