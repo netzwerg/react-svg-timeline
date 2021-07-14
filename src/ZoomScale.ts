@@ -37,7 +37,7 @@ export enum ZoomLevels {
 
 export type ZoomScale = ZoomLevels
 
-const orderedScales: ReadonlyArray<ZoomLevels> = [
+export const orderedScales: ReadonlyArray<ZoomLevels> = [
   ZoomLevels.TEN_YEARS,
   ZoomLevels.ONE_YEAR,
   ZoomLevels.ONE_MONTH,
@@ -95,9 +95,14 @@ export const zoomScaleWidth = (scale: ZoomLevels): number => {
 
 export const currentZoomScale = (currentDomain: Domain): ZoomLevels => {
   const range = diff(currentDomain[1], currentDomain[0])
-  return range >= zoomScaleWidth(orderedScales[0])
-    ? ZoomLevels.MAX
-    : orderedScales.find((s) => zoomScaleWidth(s) <= range) || ZoomLevels.MIN
+
+  if (range > zoomScaleWidth(orderedScales[0])) {
+    return ZoomLevels.MAX
+  } else if (range <= zoomScaleWidth(ZoomLevels.MIN)) {
+    return ZoomLevels.MIN
+  } else {
+    return [...orderedScales].reverse().find((s) => range <= zoomScaleWidth(s)) || ZoomLevels.MAX
+  }
 }
 
 export const nextSmallerZoomScale = (currentDomain: Domain): ZoomLevels => {
