@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 import { currentZoomScale, nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleBand, scaleLinear } from 'd3-scale'
@@ -46,10 +46,25 @@ type Animation =
       toDomain: Domain
     }>
 
-export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID, LID>>): Domain => {
-  const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
-  const timeMax = Math.max(...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
-  return [timeMin || NaN, timeMax || NaN]
+export const calcMaxDomain = <EID, LID>(
+  events: ReadonlyArray<TimelineEvent<EID, LID>>,
+  customRange?: Domain
+): Domain => {
+  const comparableEvents = JSON.stringify(events)
+
+  return useMemo(() => {
+    if (customRange) {
+      return customRange
+    } else if (events.length > 0) {
+      const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
+      const timeMax = Math.max(
+        ...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis))
+      )
+      return [timeMin, timeMax]
+    } else {
+      return [0, Date.now()]
+    }
+  }, [comparableEvents, customRange])
 }
 
 const animationDuration = 1000
@@ -77,7 +92,7 @@ export const Timeline = <EID extends string, LID extends string>({
   onInteractionEnd,
 }: TimelineProps<EID, LID>) => {
   {
-    const maxDomain = customRange ?? calcMaxDomain(events)
+    const maxDomain = calcMaxDomain(events, customRange)
     const maxDomainStart = maxDomain[0]
     const maxDomainEnd = maxDomain[1]
 
