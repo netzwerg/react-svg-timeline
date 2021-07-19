@@ -13,7 +13,7 @@ A React event timeline component based on SVG.
 
 ## Installation
 
-`yarn install react-svg-timeline`
+`yarn add react-svg-timeline`
 
 or
 
