@@ -21,6 +21,7 @@ export interface InteractionHandlingProps {
   onTrimStart: (mousePosX: number) => void
   onTrimEnd: (mousePosX: number) => void
   onPan: (pixelDelta: number) => void
+  onInteractionModeChange?: (interactionMode: InteractionMode) => void
   onInteractionEnd?: () => void
   children: (
     cursor: Cursor,
@@ -110,6 +111,7 @@ export const InteractionHandling = ({
   onTrimStart,
   onTrimEnd,
   onPan,
+  onInteractionModeChange,
   onInteractionEnd,
   children,
 }: InteractionHandlingProps) => {
@@ -181,6 +183,12 @@ export const InteractionHandling = ({
   }, [isAltKeyDown, isShiftKeyDown, isZoomInPossible, isZoomOutPossible, interactionMode])
 
   useEffect(() => {
+    if (onInteractionModeChange) {
+      onInteractionModeChange(interactionMode)
+    }
+  }, [onInteractionModeChange, interactionMode])
+
+  useEffect(() => {
     if (interactionMode.type === 'none' && onInteractionEnd) {
       onInteractionEnd()
     }
@@ -243,7 +251,7 @@ export const InteractionHandling = ({
   }
 
   const onMouseLeave = () => {
-    if (interactionMode.type === 'hover') {
+    if (interactionMode.type === 'hover' || interactionMode.type === 'panning') {
       setInteractionMode(interactionModeNone)
     }
   }
