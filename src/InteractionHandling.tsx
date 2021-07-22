@@ -53,6 +53,10 @@ interface InProgress {
   currentX: number
 }
 
+interface InteractionModeGrabbing extends Anchored {
+  type: 'grabbing'
+}
+
 interface InteractionModePanning extends Anchored {
   type: 'panning'
 }
@@ -93,6 +97,7 @@ export type InteractionMode =
   | InteractionModePanning
   | InteractionModeRubberBand
   | InteractionModeTrim
+  | InteractionModeGrabbing
 
 export const InteractionHandling = ({
   width,
@@ -215,11 +220,18 @@ export const InteractionHandling = ({
       setInteractionMode({ type: 'rubber band', ...anchored })
       onZoomInCustomInProgress(...getRubberRange(anchored.anchorX, anchored.anchorX))
     } else {
-      setInteractionMode({ type: 'panning', ...anchored })
+      setInteractionMode({ type: 'grabbing', ...anchored })
     }
   }
 
   const onMouseMove = (e: React.MouseEvent) => {
+    // anything below threshold is considered a click rather than a drag
+    if (interactionMode.type === 'grabbing' && Math.abs(interactionMode.anchorX - mousePosition.x) > 2) {
+      setInteractionMode((previousInteractionMode) => ({
+        ...(previousInteractionMode as InteractionModeGrabbing),
+        type: 'panning',
+      }))
+    }
     if (interactionMode.type === 'panning') {
       onPan(-e.movementX)
     }
@@ -258,8 +270,7 @@ export const InteractionHandling = ({
 
   const onMouseUp = (e: React.MouseEvent) => {
     // anything below threshold is considered a click rather than a drag
-    const isPanning = interactionMode.type === 'panning' && Math.abs(interactionMode.anchorX - mousePosition.x) < 5
-    const isZoom = e.button === 0 && (interactionMode.type === 'hover' || isPanning)
+    const isZoom = e.button === 0 && interactionMode.type === 'grabbing'
 
     if (interactionMode.type === 'rubber band') {
       onZoomInCustom(...getRubberRange(interactionMode.anchorX, mousePosition.x))
