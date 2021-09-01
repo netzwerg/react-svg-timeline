@@ -13,21 +13,21 @@ const useStyles = makeStyles({
     color: backgroundColor,
     fill: backgroundColor,
     stroke: backgroundColor,
-    strokeWidth: 2
+    strokeWidth: 2,
   },
   foreground: {
     color: foregroundColor,
     fill: foregroundColor,
     stroke: foregroundColor,
-    strokeWidth: 2
+    strokeWidth: 2,
   },
   selected: {
     stroke: 'grey',
-    strokeDasharray: '4'
+    strokeDasharray: '4',
   },
   pinned: {
-    stroke: 'black'
-  }
+    stroke: 'black',
+  },
 })
 
 export const CustomizedTimeline = (props: TimelineProps<TimelineEventId, TimelineLaneId>) => {

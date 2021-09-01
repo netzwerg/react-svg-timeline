@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { monthDuration, nextSmallerZoomScale, weekDuration, yearDuration } from './ZoomScale'
+import { monthDuration, weekDuration, yearDuration, ZoomLevels } from './ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
 import { Domain } from './model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -13,6 +13,7 @@ import { XAxisTheme } from './theme/model'
 interface Props {
   height: number
   domain: Domain
+  smallerZoomScale: ZoomLevels
   timeScale: ScaleLinear<number, number>
 }
 
@@ -22,14 +23,13 @@ const gridLineStyle = (theme: Theme) => ({
   },
 })
 
-export const GridLines = ({ height, domain, timeScale }: Props) => {
-  const scale = nextSmallerZoomScale(domain)
-  switch (scale) {
-    case '10 years':
+export const GridLines = ({ height, domain, smallerZoomScale, timeScale }: Props) => {
+  switch (smallerZoomScale) {
+    case ZoomLevels.TEN_YEARS:
       return <YearView height={height} domain={domain} timeScale={timeScale} showDecadesOnly={true} />
-    case '1 year':
+    case ZoomLevels.ONE_YEAR:
       return <YearView height={height} domain={domain} timeScale={timeScale} />
-    case '1 month':
+    case ZoomLevels.ONE_MONTH:
       return <MonthView height={height} domain={domain} timeScale={timeScale} />
     default:
       return <MonthView height={height} domain={domain} timeScale={timeScale} showWeekStripes={true} />
@@ -52,7 +52,7 @@ const useYearViewStyles = makeStyles((theme: Theme) => ({
   }),
 }))
 
-interface YearViewProps extends Props {
+interface YearViewProps extends Omit<Props, 'smallerZoomScale'> {
   showDecadesOnly?: boolean
 }
 
@@ -113,7 +113,7 @@ const useMonthViewStyles = makeStyles((theme: Theme) => ({
   }),
 }))
 
-interface MonthViewProps extends Props {
+interface MonthViewProps extends Omit<Props, 'smallerZoomScale'> {
   showWeekStripes?: boolean
 }
 

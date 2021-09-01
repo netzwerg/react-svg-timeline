@@ -5,17 +5,17 @@ import {
   currentZoomScale,
   zoomScaleWidth,
   ZoomLevels,
-  orderedScales,
+  defaultOrderedZoomLevels,
 } from '../src/ZoomScale'
 
 describe('ZoomScale for time-range: 3 days', () => {
   const threeDays: Domain = [0, 3 * zoomScaleWidth(ZoomLevels.ONE_DAY)]
 
   it('nextSmallerZoomScale', () => {
-    expect(nextSmallerZoomScale(threeDays)).toEqual(ZoomLevels.ONE_DAY)
+    expect(nextSmallerZoomScale(threeDays, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_DAY)
   })
   it('nextBiggerZoomScale', () => {
-    expect(nextBiggerZoomScale(threeDays)).toEqual(ZoomLevels.ONE_WEEK)
+    expect(nextBiggerZoomScale(threeDays, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_WEEK)
   })
 })
 
@@ -24,17 +24,17 @@ describe('ZoomScale for time-range: [1-12] hours', () => {
   const threeHours: Domain = [0, 3 * zoomScaleWidth(ZoomLevels.ONE_HOUR)]
 
   it('nextSmallerZoomScale', () => {
-    expect(nextSmallerZoomScale(fiveHours)).toEqual(ZoomLevels.ONE_HOUR)
+    expect(nextSmallerZoomScale(fiveHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_HOUR)
   })
   it('nextBiggerZoomScale', () => {
-    expect(nextBiggerZoomScale(fiveHours)).toEqual(ZoomLevels.TWELVE_HOURS)
+    expect(nextBiggerZoomScale(fiveHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.TWELVE_HOURS)
   })
 
   it('nextSmallerZoomScale', () => {
-    expect(nextSmallerZoomScale(threeHours)).toEqual(ZoomLevels.ONE_HOUR)
+    expect(nextSmallerZoomScale(threeHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_HOUR)
   })
   it('nextBiggerZoomScale', () => {
-    expect(nextBiggerZoomScale(threeHours)).toEqual(ZoomLevels.TWELVE_HOURS)
+    expect(nextBiggerZoomScale(threeHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.TWELVE_HOURS)
   })
 })
 
@@ -43,17 +43,17 @@ describe('ZoomScale for time-range: [15-60] minutes', () => {
   const fortyMins: Domain = [0, 40 * zoomScaleWidth(ZoomLevels.ONE_MIN)]
 
   it('nextSmallerZoomScale', () => {
-    expect(nextSmallerZoomScale(twentyFiveMins)).toEqual(ZoomLevels.TEN_MINS)
+    expect(nextSmallerZoomScale(twentyFiveMins, defaultOrderedZoomLevels)).toEqual(ZoomLevels.TEN_MINS)
   })
   it('nextBiggerZoomScale', () => {
-    expect(nextBiggerZoomScale(twentyFiveMins)).toEqual(ZoomLevels.ONE_HOUR)
+    expect(nextBiggerZoomScale(twentyFiveMins, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_HOUR)
   })
 
   it('nextSmallerZoomScale', () => {
-    expect(nextSmallerZoomScale(fortyMins)).toEqual(ZoomLevels.FIFTEEN_MINS)
+    expect(nextSmallerZoomScale(fortyMins, defaultOrderedZoomLevels)).toEqual(ZoomLevels.FIFTEEN_MINS)
   })
   it('nextBiggerZoomScale', () => {
-    expect(nextBiggerZoomScale(fortyMins)).toEqual(ZoomLevels.THREE_HOURS)
+    expect(nextBiggerZoomScale(fortyMins, defaultOrderedZoomLevels)).toEqual(ZoomLevels.THREE_HOURS)
   })
 })
 
@@ -62,43 +62,68 @@ describe('ZoomScale', () => {
   const zero100 = new Date('0100-01-01').getTime()
 
   it('can handle negative numbers', () => {
-    expect(currentZoomScale([zero, zero100])).toEqual(ZoomLevels.MAX)
-    expect(nextBiggerZoomScale([zero, zero100])).toEqual(ZoomLevels.MAX)
-    expect(nextSmallerZoomScale([zero, zero100])).toEqual(ZoomLevels.TEN_YEARS)
+    expect(currentZoomScale([zero, zero100], defaultOrderedZoomLevels)).toEqual(ZoomLevels.MAX)
+    expect(nextBiggerZoomScale([zero, zero100], defaultOrderedZoomLevels)).toEqual(ZoomLevels.MAX)
+    expect(nextSmallerZoomScale([zero, zero100], defaultOrderedZoomLevels)).toEqual(ZoomLevels.TEN_YEARS)
   })
 
   it('should handle normal ranges correctly', () => {
-    for (let i = 1; i < orderedScales.length - 1; i++) {
-      expect(currentZoomScale([0, zoomScaleWidth(orderedScales[i])])).toEqual(orderedScales[i])
+    for (let i = 1; i < defaultOrderedZoomLevels.length - 1; i++) {
+      expect(currentZoomScale([0, zoomScaleWidth(defaultOrderedZoomLevels[i])], defaultOrderedZoomLevels)).toEqual(
+        defaultOrderedZoomLevels[i]
+      )
     }
   })
 
-  it(`should handle ranges smaller than ${orderedScales[orderedScales.length - 1]} correctly`, () => {
-    expect(currentZoomScale([0, zoomScaleWidth(orderedScales[orderedScales.length - 1])])).toEqual(
-      orderedScales[orderedScales.length - 1]
-    )
-    expect(nextSmallerZoomScale([0, zoomScaleWidth(orderedScales[orderedScales.length - 1])])).toEqual(ZoomLevels.MIN)
-    expect(nextBiggerZoomScale([0, zoomScaleWidth(orderedScales[orderedScales.length - 1])])).toEqual(
-      orderedScales[orderedScales.length - 2]
-    )
+  it(`should handle ranges smaller than ${
+    defaultOrderedZoomLevels[defaultOrderedZoomLevels.length - 1]
+  } correctly`, () => {
+    expect(
+      currentZoomScale(
+        [0, zoomScaleWidth(defaultOrderedZoomLevels[defaultOrderedZoomLevels.length - 1])],
+        defaultOrderedZoomLevels
+      )
+    ).toEqual(defaultOrderedZoomLevels[defaultOrderedZoomLevels.length - 1])
+    expect(
+      nextSmallerZoomScale(
+        [0, zoomScaleWidth(defaultOrderedZoomLevels[defaultOrderedZoomLevels.length - 1])],
+        defaultOrderedZoomLevels
+      )
+    ).toEqual(ZoomLevels.MIN)
+    expect(
+      nextBiggerZoomScale(
+        [0, zoomScaleWidth(defaultOrderedZoomLevels[defaultOrderedZoomLevels.length - 1])],
+        defaultOrderedZoomLevels
+      )
+    ).toEqual(defaultOrderedZoomLevels[defaultOrderedZoomLevels.length - 2])
   })
 
   it(`should handle ranges larger than ${ZoomLevels.TEN_YEARS} correctly`, () => {
-    expect(currentZoomScale([0, zoomScaleWidth(orderedScales[0])])).toEqual(orderedScales[0])
-    expect(nextSmallerZoomScale([0, zoomScaleWidth(orderedScales[0])])).toEqual(orderedScales[1])
-    expect(nextBiggerZoomScale([0, zoomScaleWidth(orderedScales[0])])).toEqual(ZoomLevels.MAX)
+    expect(currentZoomScale([0, zoomScaleWidth(defaultOrderedZoomLevels[0])], defaultOrderedZoomLevels)).toEqual(
+      defaultOrderedZoomLevels[0]
+    )
+    expect(nextSmallerZoomScale([0, zoomScaleWidth(defaultOrderedZoomLevels[0])], defaultOrderedZoomLevels)).toEqual(
+      defaultOrderedZoomLevels[1]
+    )
+    expect(nextBiggerZoomScale([0, zoomScaleWidth(defaultOrderedZoomLevels[0])], defaultOrderedZoomLevels)).toEqual(
+      ZoomLevels.MAX
+    )
   })
 
   it(`should handle range width of ${ZoomLevels.MIN} correctly`, () => {
-    expect(currentZoomScale([0, zoomScaleWidth(ZoomLevels.MIN)])).toEqual(ZoomLevels.MIN)
-    expect(nextSmallerZoomScale([0, zoomScaleWidth(ZoomLevels.MIN)])).toEqual(ZoomLevels.MIN)
-    expect(nextBiggerZoomScale([0, zoomScaleWidth(ZoomLevels.MIN)])).toEqual(ZoomLevels.ONE_MIN)
+    expect(currentZoomScale([0, zoomScaleWidth(ZoomLevels.MIN)], defaultOrderedZoomLevels)).toEqual(ZoomLevels.MIN)
+    expect(nextSmallerZoomScale([0, zoomScaleWidth(ZoomLevels.MIN)], defaultOrderedZoomLevels)).toEqual(ZoomLevels.MIN)
+    expect(nextBiggerZoomScale([0, zoomScaleWidth(ZoomLevels.MIN)], defaultOrderedZoomLevels)).toEqual(
+      ZoomLevels.ONE_MIN
+    )
   })
 
   it(`should handle range width of ${ZoomLevels.MAX} correctly`, () => {
-    expect(currentZoomScale([0, zoomScaleWidth(ZoomLevels.MAX)])).toEqual(ZoomLevels.MAX)
-    expect(nextSmallerZoomScale([0, zoomScaleWidth(ZoomLevels.MAX)])).toEqual(ZoomLevels.TEN_YEARS)
-    expect(nextBiggerZoomScale([0, zoomScaleWidth(ZoomLevels.MAX)])).toEqual(ZoomLevels.MAX)
+    expect(currentZoomScale([0, zoomScaleWidth(ZoomLevels.MAX)], defaultOrderedZoomLevels)).toEqual(ZoomLevels.MAX)
+    expect(nextSmallerZoomScale([0, zoomScaleWidth(ZoomLevels.MAX)], defaultOrderedZoomLevels)).toEqual(
+      ZoomLevels.TEN_YEARS
+    )
+    expect(nextBiggerZoomScale([0, zoomScaleWidth(ZoomLevels.MAX)], defaultOrderedZoomLevels)).toEqual(ZoomLevels.MAX)
   })
 
   it('should calculate nextSmallerZoomScale to be at least 50% smaller than currentZoomScale', () => {
@@ -108,11 +133,11 @@ describe('ZoomScale', () => {
     const twelveHours: Domain = [0, 12 * zoomScaleWidth(ZoomLevels.ONE_HOUR)]
     const elevenHours: Domain = [0, 11 * zoomScaleWidth(ZoomLevels.ONE_HOUR)]
 
-    expect(nextSmallerZoomScale(twentyFiveHours)).toEqual(ZoomLevels.TWELVE_HOURS)
-    expect(nextSmallerZoomScale(twentyFourHours)).toEqual(ZoomLevels.TWELVE_HOURS)
-    expect(nextSmallerZoomScale(twentyThreeHours)).toEqual(ZoomLevels.SIX_HOURS)
-    expect(nextSmallerZoomScale(twelveHours)).toEqual(ZoomLevels.SIX_HOURS)
-    expect(nextSmallerZoomScale(elevenHours)).toEqual(ZoomLevels.THREE_HOURS)
+    expect(nextSmallerZoomScale(twentyFiveHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.TWELVE_HOURS)
+    expect(nextSmallerZoomScale(twentyFourHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.TWELVE_HOURS)
+    expect(nextSmallerZoomScale(twentyThreeHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.SIX_HOURS)
+    expect(nextSmallerZoomScale(twelveHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.SIX_HOURS)
+    expect(nextSmallerZoomScale(elevenHours, defaultOrderedZoomLevels)).toEqual(ZoomLevels.THREE_HOURS)
   })
 
   it('should calculate nextBiggerZoomScale to be at least 50% bigger than currentZoomScale', () => {
@@ -122,10 +147,10 @@ describe('ZoomScale', () => {
     const sixDays: Domain = [0, 6 * zoomScaleWidth(ZoomLevels.ONE_DAY)]
     const sevenDays: Domain = [0, 7 * zoomScaleWidth(ZoomLevels.ONE_DAY)]
 
-    expect(nextBiggerZoomScale(oneDay)).toEqual(ZoomLevels.ONE_WEEK)
-    expect(nextBiggerZoomScale(threeDays)).toEqual(ZoomLevels.ONE_WEEK)
-    expect(nextBiggerZoomScale(fourDays)).toEqual(ZoomLevels.ONE_MONTH)
-    expect(nextBiggerZoomScale(sixDays)).toEqual(ZoomLevels.ONE_MONTH)
-    expect(nextBiggerZoomScale(sevenDays)).toEqual(ZoomLevels.ONE_MONTH)
+    expect(nextBiggerZoomScale(oneDay, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_WEEK)
+    expect(nextBiggerZoomScale(threeDays, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_WEEK)
+    expect(nextBiggerZoomScale(fourDays, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_MONTH)
+    expect(nextBiggerZoomScale(sixDays, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_MONTH)
+    expect(nextBiggerZoomScale(sevenDays, defaultOrderedZoomLevels)).toEqual(ZoomLevels.ONE_MONTH)
   })
 })

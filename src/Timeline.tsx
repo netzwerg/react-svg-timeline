@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
-import { currentZoomScale, nextBiggerZoomScale, nextSmallerZoomScale, ZoomScale, zoomScaleWidth } from './ZoomScale'
+import { defaultOrderedZoomLevels, ZoomLevels, ZoomScale, zoomScaleWidth } from './ZoomScale'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
@@ -14,6 +14,7 @@ import { useEvents } from './hooks'
 import { EventClusters } from './EventClusters'
 import { TimelineTheme } from './theme'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
+import { useZoomLevels } from './hooks/useZoomLevels'
 
 export interface TimelineProps<EID, LID> {
   width: number
@@ -26,6 +27,7 @@ export interface TimelineProps<EID, LID> {
   suppressMarkAnimation?: boolean
   enableEventClustering?: boolean
   customRange?: Domain
+  zoomLevels?: ReadonlyArray<ZoomLevels>
   isTrimming?: boolean
   trimRange?: Domain
   theme?: TimelineTheme
@@ -65,6 +67,7 @@ export const Timeline = <EID extends string, LID extends string>({
   suppressMarkAnimation = false,
   enableEventClustering = false,
   customRange,
+  zoomLevels = defaultOrderedZoomLevels,
   theme,
   onEventHover = noOp,
   onEventUnhover = noOp,
@@ -84,6 +87,8 @@ export const Timeline = <EID extends string, LID extends string>({
     const [domain, setDomain] = useState<Domain>(maxDomain) // TODO --> onRangeChange-Event when domain changes?
     const [animation, setAnimation] = useState<Animation>('none')
     const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
+
+    const [zoomScale, smallerZoomScale, biggerZoomScale] = useZoomLevels(domain, zoomLevels)
 
     const now = Date.now()
 
@@ -120,9 +125,6 @@ export const Timeline = <EID extends string, LID extends string>({
       }
     }, [animation, now])
 
-    const zoomScale = currentZoomScale(domain)
-    const smallerZoomScale = nextSmallerZoomScale(domain)
-    const biggerZoomScale = nextBiggerZoomScale(domain)
     const zoomWidth = zoomScaleWidth(smallerZoomScale)
     const currentDomainWidth = domain[1] - domain[0]
     const maxDomainWidth = maxDomainEnd - maxDomainStart
@@ -270,7 +272,12 @@ export const Timeline = <EID extends string, LID extends string>({
 
                   return (
                     <g>
-                      <GridLines height={height} domain={domain} timeScale={timeScale} />
+                      <GridLines
+                        height={height}
+                        domain={domain}
+                        smallerZoomScale={smallerZoomScale}
+                        timeScale={timeScale}
+                      />
                       {showMarks && (
                         <>
                           <EventClusters
