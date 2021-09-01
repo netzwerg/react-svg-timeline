@@ -37,7 +37,7 @@ export enum ZoomLevels {
 
 export type ZoomScale = ZoomLevels
 
-export const orderedScales: ReadonlyArray<ZoomLevels> = [
+export const defaultOrderedZoomLevels: ReadonlyArray<ZoomLevels> = [
   ZoomLevels.TEN_YEARS,
   ZoomLevels.ONE_YEAR,
   ZoomLevels.ONE_MONTH,
@@ -93,24 +93,33 @@ export const zoomScaleWidth = (scale: ZoomLevels): number => {
   }
 }
 
-export const currentZoomScale = (currentDomain: Domain): ZoomLevels => {
+export const currentZoomScale = (
+  currentDomain: Domain,
+  orderedSelectedZoomLevels: ReadonlyArray<ZoomLevels>
+): ZoomLevels => {
   const range = diff(currentDomain[1], currentDomain[0])
 
-  if (range > zoomScaleWidth(orderedScales[0])) {
+  if (range > zoomScaleWidth(orderedSelectedZoomLevels[0])) {
     return ZoomLevels.MAX
   } else if (range <= zoomScaleWidth(ZoomLevels.MIN)) {
     return ZoomLevels.MIN
   } else {
-    return [...orderedScales].reverse().find((s) => range <= zoomScaleWidth(s)) || ZoomLevels.MAX
+    return [...orderedSelectedZoomLevels].reverse().find((s) => range <= zoomScaleWidth(s)) || ZoomLevels.MAX
   }
 }
 
-export const nextSmallerZoomScale = (currentDomain: Domain): ZoomLevels => {
+export const nextSmallerZoomScale = (
+  currentDomain: Domain,
+  orderedSelectedZoomLevels: ReadonlyArray<ZoomLevels>
+): ZoomLevels => {
   const range = diff(currentDomain[1], currentDomain[0]) / 2
-  return orderedScales.find((s) => zoomScaleWidth(s) <= range) || ZoomLevels.MIN
+  return orderedSelectedZoomLevels.find((s) => zoomScaleWidth(s) <= range) || ZoomLevels.MIN
 }
 
-export const nextBiggerZoomScale = (currentDomain: Domain): ZoomLevels => {
+export const nextBiggerZoomScale = (
+  currentDomain: Domain,
+  orderedSelectedZoomLevels: ReadonlyArray<ZoomLevels>
+): ZoomLevels => {
   const range = diff(currentDomain[1], currentDomain[0]) * 2
-  return [...orderedScales].reverse().find((s) => zoomScaleWidth(s) > range) || ZoomLevels.MAX
+  return [...orderedSelectedZoomLevels].reverse().find((s) => zoomScaleWidth(s) > range) || ZoomLevels.MAX
 }
