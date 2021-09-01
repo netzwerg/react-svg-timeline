@@ -18,6 +18,13 @@ export const yearDuration = 365 * dayDuration
 
 export enum ZoomLevels {
   MIN = 'minimum',
+  TEN_MS = '10 ms',
+  HUNDRED_MS = '100 ms',
+  FIVEHUNDRED_MS = '500 ms',
+  ONE_SEC = '1 sec',
+  FIVE_SECS = '5 secs',
+  TEN_SECS = '10 secs',
+  THIRTY_SECS = '30 secs',
   ONE_MIN = '1 min',
   FIVE_MINS = '5 mins',
   TEN_MINS = '10 mins',
@@ -86,6 +93,20 @@ export const zoomScaleWidth = (scale: ZoomLevels): number => {
       return fiveMins
     case ZoomLevels.ONE_MIN:
       return oneMin
+    case ZoomLevels.THIRTY_SECS:
+      return 30 * oneSec
+    case ZoomLevels.TEN_SECS:
+      return 10 * oneSec
+    case ZoomLevels.FIVE_SECS:
+      return 5 * oneSec
+    case ZoomLevels.ONE_SEC:
+      return oneSec
+    case ZoomLevels.FIVEHUNDRED_MS:
+      return 500
+    case ZoomLevels.HUNDRED_MS:
+      return 100
+    case ZoomLevels.TEN_MS:
+      return 10
     case ZoomLevels.MIN:
       return 0
     default:
