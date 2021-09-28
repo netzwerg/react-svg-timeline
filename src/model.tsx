@@ -9,6 +9,7 @@ export interface TimelineEvent<EID, LID> {
   tooltip?: string
   isSelected?: boolean
   isPinned?: boolean
+  type?: string
 }
 
 export interface TimelineLane<LID> {
