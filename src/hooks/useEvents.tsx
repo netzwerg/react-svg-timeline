@@ -30,13 +30,13 @@ const pinnedOrSelectedGroup = 'isPinnedOrSelected'
 // TODO: Don't cluster events with start- AND endTimeMillis if the timespan is larger than the next smaller zoom scale (otherwise there is a possibility, that the event is never fully visible)
 // TODO: Toggling between expand/collapse changes cluster sizes; Clusters are displayed proportional within each lane - this could be desired or not -> decide.
 
-export function useEvents<EID extends string, LID extends string>(
-  events: ReadonlyArray<TimelineEvent<EID, LID>>,
+export function useEvents<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+  events: ReadonlyArray<E>,
   domain: Domain,
   zoomScale: ZoomScale,
   groupByLane: boolean,
   cluster: boolean
-): [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>] {
+): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>] {
   const comparableEvents = JSON.stringify(events)
 
   return useMemo(() => {
@@ -59,9 +59,9 @@ export function useEvents<EID extends string, LID extends string>(
             }`
       ).reduce(
         (
-          acc: [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>],
+          acc: [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>],
           eventGroup
-        ): [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>] => {
+        ): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>] => {
           if (eventGroup[0] === pinnedOrSelectedGroup || eventGroup[1].length <= 1) {
             return [[...acc[0], ...eventGroup[1]], [...acc[1]]]
           } else {
@@ -84,7 +84,7 @@ export function useEvents<EID extends string, LID extends string>(
             ]
           }
         },
-        [[], []] as [ReadonlyArray<TimelineEvent<EID, LID>>, ReadonlyArray<TimelineEventCluster<LID>>]
+        [[], []] as [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>]
       )
     }
   }, [comparableEvents, domain, zoomScale, groupByLane, cluster])

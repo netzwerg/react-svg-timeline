@@ -31,13 +31,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-export interface Props<EID, LID> {
+export interface Props<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   height: number
-  events: ReadonlyArray<TimelineEvent<EID, LID>>
+  events: ReadonlyArray<E>
   timeScale: ScaleLinear<number, number>
   y: number
   eventMarkerHeight?: number
-  eventComponent?: EventComponentFactory<EID, LID>
+  eventComponent?: EventComponentFactory<EID, LID, E>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -53,7 +53,9 @@ export interface Props<EID, LID> {
  * This (1) assures that short periods or single events lying inside a longer event period are still selectable, and
  * (2) that the selection is always visible.
  */
-export const Marks = <EID extends string, LID extends string>(props: Props<EID, LID>) => {
+export const Marks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+  props: Props<EID, LID, E>
+) => {
   const { events, height } = props
   const timelineTheme = useTimelineTheme()
   const classes = useStyles()
@@ -61,10 +63,9 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
   const { eventComponent, timeScale, y } = props
 
   // shorter periods on top of longer ones
-  const sortByEventDuration = (e: TimelineEvent<EID, LID>) =>
-    -(e.endTimeMillis ? e.endTimeMillis - e.startTimeMillis : 0)
+  const sortByEventDuration = (e: E) => -(e.endTimeMillis ? e.endTimeMillis - e.startTimeMillis : 0)
 
-  const defaultEventComponent = (e: TimelineEvent<EID, LID>, role: EventComponentRole) => {
+  const defaultEventComponent = (e: E, role: EventComponentRole) => {
     if (role === 'background') {
       // opaque background to prevent axis-/grid-lines from shining through
       return <DefaultEventMark e={e} className={classes.eventBackground} {...props} />
@@ -93,7 +94,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
 
   const backgroundMarks = useMemo(
     () =>
-      events.map((e: TimelineEvent<EID, LID>) => (
+      events.map((e: E) => (
         <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
@@ -106,7 +107,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
       events
         .filter((_) => true)
         .sort(sortByEventDuration)
-        .map((e: TimelineEvent<EID, LID>) => (
+        .map((e: E) => (
           <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
@@ -119,7 +120,7 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
       events
         .filter((e) => e.isSelected || e.isPinned)
         .sort(sortByEventDuration)
-        .map((e: TimelineEvent<EID, LID>) => (
+        .map((e: E) => (
           <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
@@ -136,8 +137,8 @@ export const Marks = <EID extends string, LID extends string>(props: Props<EID, 
   )
 }
 
-interface InteractiveGroupProps<EID, LID> {
-  event: TimelineEvent<EID, LID>
+interface InteractiveGroupProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
+  event: E
   timeScale: ScaleLinear<number, number>
   y: number
   onEventHover?: (eventId: EID) => void
@@ -147,7 +148,7 @@ interface InteractiveGroupProps<EID, LID> {
   children: React.ReactNode
 }
 
-const InteractiveEventMark = <EID, LID>({
+const InteractiveEventMark = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   event,
   y,
   timeScale,
@@ -156,7 +157,7 @@ const InteractiveEventMark = <EID, LID>({
   onEventUnhover = noOp,
   tooltipClasses,
   children,
-}: InteractiveGroupProps<EID, LID>) => {
+}: InteractiveGroupProps<EID, LID, E>) => {
   const eventId = event.eventId
 
   const onMouseEnter = () => onEventHover(eventId)
@@ -194,19 +195,20 @@ const InteractiveEventMark = <EID, LID>({
   )
 }
 
-interface DefaultEventMarkProps<EID, LID> extends Omit<Props<EID, LID>, 'events'> {
-  e: TimelineEvent<EID, LID>
+interface DefaultEventMarkProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>
+  extends Omit<Props<EID, LID, E>, 'events'> {
+  e: E
   className: string
   eventMarkerHeight?: number
 }
 
-const DefaultEventMark = <EID, LID>({
+const DefaultEventMark = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   e,
   eventMarkerHeight = defaultSingleEventMarkHeight,
   className,
   y,
   timeScale,
-}: DefaultEventMarkProps<EID, LID>) => {
+}: DefaultEventMarkProps<EID, LID, E>) => {
   const theme: Theme = useTheme()
   const startX = timeScale(e.startTimeMillis)!
   const strokeColor = e.isPinned ? (theme.palette.type === 'dark' ? 'white' : 'black') : undefined

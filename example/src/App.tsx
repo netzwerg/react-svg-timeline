@@ -219,7 +219,7 @@ const DemoTimeline = ({
       </Typography>
       <AutoSizer>
         {({ width, height }: Size) => {
-          const timelineProps: TimelineProps<TimelineEventId, TimelineLaneId> = {
+          const timelineProps: TimelineProps<TimelineEventId, TimelineLaneId, ExampleEvent> = {
             width,
             height,
             dateFormat,

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-interface Props<LID> {
+interface Props<LID extends string> {
   readonly height: number
   readonly eventClusters: ReadonlyArray<TimelineEventCluster<LID>>
   readonly timeScale: ScaleLinear<number, number>

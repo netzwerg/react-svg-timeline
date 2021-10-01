@@ -16,13 +16,13 @@ import { TimelineTheme } from './theme'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
 import { useZoomLevels } from './hooks/useZoomLevels'
 
-export interface TimelineProps<EID, LID> {
+export interface TimelineProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   width: number
   height: number
-  events: ReadonlyArray<TimelineEvent<EID, LID>>
+  events: ReadonlyArray<E>
   lanes: ReadonlyArray<TimelineLane<LID>>
   dateFormat: (ms: number) => string
-  eventComponent?: EventComponentFactory<EID, LID>
+  eventComponent?: EventComponentFactory<EID, LID, E>
   laneDisplayMode?: LaneDisplayMode
   suppressMarkAnimation?: boolean
   enableEventClustering?: boolean
@@ -48,7 +48,9 @@ type Animation =
       toDomain: Domain
     }>
 
-export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID, LID>>): Domain => {
+export const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+  events: ReadonlyArray<E>
+): Domain => {
   const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
   const timeMax = Math.max(...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
   return [timeMin || NaN, timeMax || NaN]
@@ -56,7 +58,7 @@ export const calcMaxDomain = <EID, LID>(events: ReadonlyArray<TimelineEvent<EID,
 
 const animationDuration = 1000
 
-export const Timeline = <EID extends string, LID extends string>({
+export const Timeline = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   width,
   height,
   events,
@@ -78,7 +80,7 @@ export const Timeline = <EID extends string, LID extends string>({
   trimRange,
   onTrimRangeChange,
   onInteractionEnd,
-}: TimelineProps<EID, LID>) => {
+}: TimelineProps<EID, LID, E>) => {
   {
     const maxDomain = customRange ?? calcMaxDomain(events)
     const maxDomainStart = maxDomain[0]
@@ -155,7 +157,7 @@ export const Timeline = <EID extends string, LID extends string>({
               .domain(domain)
               .range([timeScalePadding, width - timeScalePadding])
 
-            const yScale = scaleBand<LID>()
+            const yScale = scaleBand()
               .domain(lanes.map((l) => l.laneId))
               .range([0, height])
               .paddingInner(0.3)

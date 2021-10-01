@@ -17,21 +17,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-interface Props<EID, LID> {
+interface Props<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   mouseCursor: React.ReactNode
   height: number
-  events: ReadonlyArray<TimelineEvent<EID, LID>>
+  events: ReadonlyArray<E>
   eventMarkerHeight?: number
   lanes: ReadonlyArray<TimelineLane<LID>>
   timeScale: ScaleLinear<number, number>
   yScale: ScaleBand<LID>
-  eventComponent?: EventComponentFactory<EID, LID>
+  eventComponent?: EventComponentFactory<EID, LID, E>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
 }
 
-export const ExpandedMarks = <EID extends string, LID extends string>({
+export const ExpandedMarks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   mouseCursor,
   height,
   events,
@@ -42,7 +42,7 @@ export const ExpandedMarks = <EID extends string, LID extends string>({
   onEventHover,
   onEventUnhover,
   onEventClick,
-}: Props<EID, LID>) => {
+}: Props<EID, LID, E>) => {
   const classes = useStyles()
   const fontSize = 0.8 * yScale.bandwidth()
 

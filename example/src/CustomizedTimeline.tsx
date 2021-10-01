@@ -1,9 +1,9 @@
-import { Timeline, TimelineProps } from '../../dist'
+import { Timeline } from '../../dist'
 import * as React from 'react'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import cn from 'classnames'
-import { ExampleComponentFactory, TimelineEventId, TimelineLaneId } from './types'
+import { ExampleComponentFactory, ExampleEvent, ExampleProps } from './types'
 
 const backgroundColor = 'white'
 const foregroundColor = 'rgb(233, 30, 99, 0.5)'
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   },
 })
 
-export const CustomizedTimeline = (props: TimelineProps<TimelineEventId, TimelineLaneId>) => {
+export const CustomizedTimeline = (props: ExampleProps) => {
   const classes = useStyles()
 
   // Often, it is useful to draw events semi-transparently, such that 'event accumulations' become visible
@@ -38,7 +38,7 @@ export const CustomizedTimeline = (props: TimelineProps<TimelineEventId, Timelin
   // To give you the possibility to draw opaque event marks in the background and semi-transparent events in the
   // foreground, the eventComponent factory is invoked twice (with the 'role' parameter distinguishing the calls)
 
-  const eventComponent: ExampleComponentFactory = (e, role, timeScale, y) => {
+  const eventComponent: ExampleComponentFactory = (e: ExampleEvent, role, timeScale, y) => {
     const className =
       role === 'background'
         ? classes.background

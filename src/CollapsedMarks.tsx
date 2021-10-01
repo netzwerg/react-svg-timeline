@@ -4,19 +4,21 @@ import { ScaleLinear } from 'd3-scale'
 import { EventComponentFactory, TimelineEvent } from './model'
 import { Axis } from './Axis'
 
-interface Props<EID, LID> {
+interface Props<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   mouseCursor: React.ReactNode
   height: number
-  events: ReadonlyArray<TimelineEvent<EID, LID>>
+  events: ReadonlyArray<E>
   timeScale: ScaleLinear<number, number>
   eventMarkerHeight?: number
-  eventComponent?: EventComponentFactory<EID, LID>
+  eventComponent?: EventComponentFactory<EID, LID, E>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
 }
 
-export const CollapsedMarks = <EID extends string, LID extends string>(props: Props<EID, LID>) => {
+export const CollapsedMarks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+  props: Props<EID, LID, E>
+) => {
   const { mouseCursor, height, events, timeScale, eventComponent, onEventHover, onEventUnhover, onEventClick } = props
   const y = height / 2
 
