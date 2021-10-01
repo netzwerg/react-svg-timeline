@@ -5,6 +5,17 @@
   "author": "Rahel Lüthy <rahel.luethy@gmail.com>",
   "license": "MIT",
   "repository": "netzwerg/react-svg-timeline",
+  "keywords": [
+    "react",
+    "timeline",
+    "events",
+    "visualization",
+    "interactive",
+    "chart",
+    "graph",
+    "plot",
+    "svg"
+  ],
   "main": "dist/index.js",
   "module": "dist/react-svg-timeline.esm.js",
   "typings": "dist/index.d.ts",
