@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 import React from 'react'
-import CursorLabel from '../CursorLabel'
+import { CursorLabel } from '../layers/interaction'
 import { useTimelineTheme } from '../theme'
 import { TrimmerTheme } from '../theme/model'
 
