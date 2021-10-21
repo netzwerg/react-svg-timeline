@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ZoomScale } from './ZoomScale'
+import { ZoomScale } from './shared/ZoomScale'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { orange } from '@material-ui/core/colors'
 import { Cursor } from './model'

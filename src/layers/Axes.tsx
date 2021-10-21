@@ -3,7 +3,7 @@ import { ScaleBand } from 'd3-scale'
 import { makeStyles, Theme } from '@material-ui/core'
 import { TimelineLane } from '../model'
 import { Axis } from './Axis'
-import { defaultLaneColor } from '../shared'
+import { defaultLaneColor } from '../utils'
 
 const LANE_LABEL_FONT_SIZE = '16px'
 const useStyles = makeStyles((theme: Theme) => ({

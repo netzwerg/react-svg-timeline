@@ -1,5 +1,5 @@
-import { Domain } from './model'
-import { diff } from './shared'
+import { Domain } from '../model'
+import { diff } from '../utils'
 
 export const oneSec = 1000 //in ms
 export const oneMin = 60 * oneSec

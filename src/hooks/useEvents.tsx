@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { groups } from 'd3-array'
 import { format } from 'date-fns'
 import { Domain, TimelineEvent, TimelineEventCluster } from '../model'
-import { ZoomScale, ZoomLevels } from '../ZoomScale'
+import { ZoomScale, ZoomLevels } from '../shared/ZoomScale'
 
 function clusterWidth(scale: ZoomScale): string {
   switch (scale) {

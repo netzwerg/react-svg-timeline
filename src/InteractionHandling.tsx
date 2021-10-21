@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { Cursor, Domain } from './model'
-import { noOp } from './shared'
+import { noOp } from './utils'
 import { SvgCoordinates } from './MouseAwareSvg'
 
 export interface InteractionHandlingProps {

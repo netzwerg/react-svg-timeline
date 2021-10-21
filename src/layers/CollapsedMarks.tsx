@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Marks } from './Marks'
 import { ScaleLinear } from 'd3-scale'
-import { EventComponentFactory, TimelineEvent } from './model'
+import { EventComponentFactory, TimelineEvent } from '../model'
 
 interface Props<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   height: number

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 import { ScaleLinear } from 'd3-scale'
 import { TrimHover, TrimNone } from '../InteractionHandling'
 import TrimHandle from './TrimHandle'
-import Triangle, { TriangleDirection } from '../Triangle'
+import Triangle, { TriangleDirection } from '../shared/Triangle'
 import { useTimelineTheme } from '../theme'
 import { TrimmerTheme } from '../theme/model'
 

@@ -1,5 +1,11 @@
 import { Domain } from '../model'
-import { currentZoomScale, nextBiggerZoomScale, nextSmallerZoomScale, ZoomLevels, zoomScaleWidth } from '../ZoomScale'
+import {
+  currentZoomScale,
+  nextBiggerZoomScale,
+  nextSmallerZoomScale,
+  ZoomLevels,
+  zoomScaleWidth,
+} from '../shared/ZoomScale'
 
 export function useZoomLevels(
   domain: Domain,
