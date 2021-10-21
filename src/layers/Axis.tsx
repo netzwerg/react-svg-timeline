@@ -5,8 +5,8 @@ import { Theme } from '@material-ui/core'
 const useAxisStyles = makeStyles((theme: Theme) => ({
   axis: {
     stroke: theme.palette.grey['500'],
-    strokeWidth: 2
-  }
+    strokeWidth: 2,
+  },
 }))
 
 export const Axis = ({ y }: { y: number }) => {
