@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core'
-import { useTimelineTheme } from '../theme'
-import { TrimmerTheme } from '../theme/model'
+import { useTimelineTheme } from '../../../theme'
+import { TrimmerTheme } from '../../../theme/model'
 
 const useStyles = makeStyles(() => ({
   trimRange: (trimmerTheme: TrimmerTheme) => ({

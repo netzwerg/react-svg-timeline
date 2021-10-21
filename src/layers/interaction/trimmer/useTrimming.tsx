@@ -1,7 +1,7 @@
 import { ScaleLinear } from 'd3-scale'
 import { useCallback, useEffect } from 'react'
-import { Domain } from '../model'
-import { clamp } from '../utils'
+import { Domain } from '../../../model'
+import { clamp } from '../../../utils'
 
 export function useTrimming(
   maxDomain: Domain,
