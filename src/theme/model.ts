@@ -6,6 +6,8 @@ export interface TimelineTheme {
 
 export interface XAxisTheme {
   readonly labelColor: string
+  readonly monthLabelFontSize?: string
+  readonly yearLabelFontSize?: string
 }
 
 export interface TooltipTheme {
