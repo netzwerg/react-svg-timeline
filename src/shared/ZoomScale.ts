@@ -144,3 +144,8 @@ export const nextBiggerZoomScale = (
   const range = diff(currentDomain[1], currentDomain[0]) * 2
   return [...orderedSelectedZoomLevels].reverse().find((s) => zoomScaleWidth(s) > range) || ZoomLevels.MAX
 }
+
+export const getDomainSpan = (domainStart: number, domainEnd: number, time: number, width: number): Domain => [
+  Math.max(domainStart, time - width / 2),
+  Math.min(domainEnd, time + width / 2),
+]

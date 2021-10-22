@@ -1,14 +1,13 @@
 import React from 'react'
 import { ScaleLinear } from 'd3-scale'
 
-import { useZoomLevels } from '../../hooks/useZoomLevels'
-
 import { Domain } from '../../model'
-import { ZoomLevels, ZoomScale, zoomScaleWidth } from '../../shared/ZoomScale'
+import { ZoomLevels, getDomainSpan } from '../../shared/ZoomScale'
 import { InteractionHandling } from './InteractionHandling'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
 import { Trimmer, TrimRange, useTrimming } from './trimmer'
+import { useZoom } from '../../hooks'
 
 export interface InteractionProps {
   width: number
@@ -51,62 +50,37 @@ export const Interaction = ({
   onTrimRangeChange,
   onInteractionEnd,
 }: InteractionProps) => {
-  const [, smallerZoomScale, biggerZoomScale] = useZoomLevels(domain, zoomLevels)
-
-  const zoomWidth = zoomScaleWidth(smallerZoomScale)
-  const currentDomainWidth = domain[1] - domain[0]
-  const maxDomainWidth = maxDomainEnd - maxDomainStart
-
-  const isZoomInPossible = smallerZoomScale !== 'minimum'
-  const isZoomOutPossible = currentDomainWidth < maxDomainWidth
+  const [
+    ,
+    zoomWidth,
+    smallerZoomScale,
+    ,
+    isZoomInPossible,
+    isZoomOutPossible,
+    onZoomIn,
+    onZoomOut,
+    onZoomReset,
+    onZoomInCustom,
+    onZoomInCustomInProgress,
+  ] = useZoom({
+    domain,
+    maxDomainStart,
+    maxDomainEnd,
+    zoomLevels,
+    isDomainChangePossible,
+    timeScale,
+    onDomainChange,
+    onCursorMove,
+  })
 
   return (
     <MouseAwareSvg width={width} height={height}>
       {(mousePosition: SvgCoordinates) => {
         const timeAtCursor = timeScale.invert(mousePosition.x)
 
-        const getDomainSpan = (time: number, width: number): Domain => [
-          Math.max(maxDomainStart, time - width / 2),
-          Math.min(maxDomainEnd, time + width / 2),
-        ]
-
-        const setDomainAnimated = (newDomain: Domain) => onDomainChange(newDomain, true)
-
-        const updateDomain = (zoomScale: ZoomScale) => () => {
-          if (isDomainChangePossible) {
-            const newZoomWidth = zoomScaleWidth(zoomScale)
-            setDomainAnimated(getDomainSpan(timeAtCursor, newZoomWidth))
-          }
-        }
-
-        const onZoomScrub = () => {
+        const onScrub = () => {
           if (onCursorMove) {
-            onCursorMove(timeAtCursor, ...getDomainSpan(timeAtCursor, zoomWidth))
-          }
-        }
-
-        const onZoomIn = updateDomain(smallerZoomScale)
-        const onZoomOut = updateDomain(biggerZoomScale)
-
-        const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
-          if (isDomainChangePossible) {
-            const newMin = timeScale.invert(mouseStartX)
-            const newMax = timeScale.invert(mouseEndX)
-            setDomainAnimated([newMin, newMax])
-          }
-        }
-
-        const onZoomInCustomInProgress = (mouseStartX: number, mouseEndX: number) => {
-          if (isDomainChangePossible && onCursorMove) {
-            const newMin = timeScale.invert(mouseStartX)
-            const newMax = timeScale.invert(mouseEndX)
-            onCursorMove(newMax, newMin, newMax)
-          }
-        }
-
-        const onZoomReset = () => {
-          if (isDomainChangePossible) {
-            setDomainAnimated([maxDomainStart, maxDomainEnd])
+            onCursorMove(timeAtCursor, ...getDomainSpan(maxDomainStart, maxDomainEnd, timeAtCursor, zoomWidth))
           }
         }
 
@@ -133,9 +107,13 @@ export const Interaction = ({
             isZoomInPossible={isZoomInPossible}
             isZoomOutPossible={isZoomOutPossible}
             isTrimming={isTrimming}
-            onHover={onZoomScrub}
-            onZoomIn={onZoomIn}
-            onZoomOut={onZoomOut}
+            onHover={onScrub}
+            onZoomIn={() => {
+              onZoomIn(timeAtCursor)
+            }}
+            onZoomOut={() => {
+              onZoomOut(timeAtCursor)
+            }}
             onZoomInCustom={onZoomInCustom}
             onZoomInCustomInProgress={onZoomInCustomInProgress}
             onZoomReset={onZoomReset}
