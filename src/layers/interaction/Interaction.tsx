@@ -10,7 +10,7 @@ import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
 import { Trimmer, TrimRange, useTrimming } from './trimmer'
 
-export interface InteractionLayerProps {
+export interface InteractionProps {
   width: number
   height: number
   domain: Domain
@@ -31,7 +31,7 @@ export interface InteractionLayerProps {
   onInteractionEnd?: () => void
 }
 
-export const InteractionLayer = ({
+export const Interaction = ({
   width,
   height,
   domain,
@@ -50,7 +50,7 @@ export const InteractionLayer = ({
   onCursorMove,
   onTrimRangeChange,
   onInteractionEnd,
-}: InteractionLayerProps) => {
+}: InteractionProps) => {
   const [, smallerZoomScale, biggerZoomScale] = useZoomLevels(domain, zoomLevels)
 
   const zoomWidth = zoomScaleWidth(smallerZoomScale)

@@ -1,17 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
+
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
-import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
-import { scaleBand, scaleLinear } from 'd3-scale'
-import { GridLines } from './layers/GridLines'
-import { ExpandedMarks } from './layers/ExpandedMarks'
-import { InteractionLayer } from './layers/interaction'
-import { noOp } from './utils'
-import { CollapsedMarks } from './layers/CollapsedMarks'
-import { useEvents } from './hooks'
-import { EventClusters } from './layers/EventClusters'
+
 import { TimelineTheme } from './theme'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
-import { useZoomLevels } from './hooks/useZoomLevels'
+
+import { useEvents, useTimeline, useTimelineAnimation } from './hooks'
+
+import { noOp } from './utils'
+
+import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
+
+import { GridLines } from './layers/GridLines'
+import { ExpandedMarks } from './layers/ExpandedMarks'
+import { Interaction } from './layers/interaction'
+import { CollapsedMarks } from './layers/CollapsedMarks'
+import { EventClusters } from './layers/EventClusters'
 import { Axes } from './layers/Axes'
 import { Axis } from './layers/Axis'
 
@@ -39,24 +43,6 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   onInteractionEnd?: () => void
 }
 
-type Animation =
-  | 'none'
-  | Readonly<{
-      startMs: number
-      fromDomain: Domain
-      toDomain: Domain
-    }>
-
-export const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
-  events: ReadonlyArray<E>
-): Domain => {
-  const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
-  const timeMax = Math.max(...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
-  return [timeMin || NaN, timeMax || NaN]
-}
-
-const animationDuration = 1000
-
 export const Timeline = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   width,
   height,
@@ -81,85 +67,38 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   onInteractionEnd,
 }: TimelineProps<EID, LID, E>) => {
   {
-    const maxDomain = customRange ?? calcMaxDomain(events)
-    const maxDomainStart = maxDomain[0]
-    const maxDomainEnd = maxDomain[1]
+    const [
+      domain,
+      setDomain,
+      maxDomain,
+      maxDomainStart,
+      maxDomainEnd,
+      zoomScale,
+      smallerZoomScale,
+      timeScale,
+      yScale,
+    ] = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
 
-    const [domain, setDomain] = useState<Domain>(maxDomain) // TODO --> onRangeChange-Event when domain changes?
-    const [animation, setAnimation] = useState<Animation>('none')
-    const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
+    const [isAnimationInProgress, setAnimation] = useTimelineAnimation({ maxDomainStart, maxDomainEnd, setDomain })
 
-    const [zoomScale, smallerZoomScale] = useZoomLevels(domain, zoomLevels)
-
-    const now = Date.now()
-
-    useEffect(() => {
-      setAnimation('none')
-      setDomain([maxDomainStart, maxDomainEnd])
-    }, [maxDomainStart, maxDomainEnd])
-
-    useEffect(() => {
-      if (onZoomRangeChange) {
-        onZoomRangeChange(...domain)
-      }
-    }, [domain, onZoomRangeChange])
-
-    useEffect(() => {
-      if (animation !== 'none') {
-        const elapsed = now - animation.startMs
-        if (elapsed < animationDuration) {
-          const t = elapsed / animationDuration
-          const deltaStart = t * (animation.toDomain[0] - animation.fromDomain[0])
-          const deltaEnd = t * (animation.toDomain[1] - animation.fromDomain[1])
-
-          const animatedDomain: Domain = [animation.fromDomain[0] + deltaStart, animation.fromDomain[1] + deltaEnd]
-          requestAnimationFrame(() => {
-            setDomain(animatedDomain)
-            if (animatedDomain[0] === animation.toDomain[0] && animatedDomain[1] === animation.toDomain[1]) {
-              setAnimation('none')
-            }
-          })
-        } else {
-          setDomain(animation.toDomain)
-          setAnimation('none')
-        }
-      }
-    }, [animation, now])
-
-    const [eventsInsideDomain, eventClustersInsideDomain] = useEvents(
+    const [
+      eventsInsideDomain,
+      eventClustersInsideDomain,
+      isNoEventSelected,
+      isMouseOverEvent,
+      onEventHoverDecorated,
+      onEventUnhoverDecorated,
+    ] = useEvents(
       events,
       domain,
       zoomScale,
       laneDisplayMode === 'expanded',
-      enableEventClustering
+      enableEventClustering,
+      onEventHover,
+      onEventUnhover
     )
 
-    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
-
-    const isAnimationInProgress = animation !== 'none'
-
     const showMarks = suppressMarkAnimation ? !isAnimationInProgress : true
-
-    const timeScalePadding = 50
-    const timeScale = scaleLinear()
-      .domain(domain)
-      .range([timeScalePadding, width - timeScalePadding])
-
-    const yScale = scaleBand()
-      .domain(lanes.map((l) => l.laneId))
-      .range([0, height])
-      .paddingInner(0.3)
-      .paddingOuter(0.8)
-
-    const onEventHoverDecorated = (eventId: EID) => {
-      setIsMouseOverEvent(true)
-      onEventHover(eventId)
-    }
-
-    const onEventUnhoverDecorated = (eventId: EID) => {
-      setIsMouseOverEvent(false)
-      onEventUnhover(eventId)
-    }
 
     const handleDomainChange = useCallback(
       (newDomain: Domain, animated: boolean) => {
@@ -177,7 +116,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height}>
           <GridLines height={height} domain={domain} smallerZoomScale={smallerZoomScale} timeScale={timeScale} />
           {laneDisplayMode === 'expanded' ? <Axes lanes={lanes} yScale={yScale} /> : <Axis y={height / 2} />}
-          <InteractionLayer
+          <Interaction
             width={width}
             height={height}
             domain={domain}

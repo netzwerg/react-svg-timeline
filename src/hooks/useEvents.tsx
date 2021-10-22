@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { groups } from 'd3-array'
 import { format } from 'date-fns'
 import { Domain, TimelineEvent, TimelineEventCluster } from '../model'
@@ -35,11 +35,32 @@ export function useEvents<EID extends string, LID extends string, E extends Time
   domain: Domain,
   zoomScale: ZoomScale,
   groupByLane: boolean,
-  cluster: boolean
-): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>] {
+  cluster: boolean,
+  onEventHover: (eventId: EID) => void,
+  onEventUnhover: (eventId: EID) => void
+): [
+  ReadonlyArray<E>,
+  ReadonlyArray<TimelineEventCluster<LID>>,
+  boolean,
+  boolean,
+  (eventId: EID) => void,
+  (eventId: EID) => void
+] {
+  const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
+
+  const onEventHoverDecorated = (eventId: EID) => {
+    setIsMouseOverEvent(true)
+    onEventHover(eventId)
+  }
+
+  const onEventUnhoverDecorated = (eventId: EID) => {
+    setIsMouseOverEvent(false)
+    onEventUnhover(eventId)
+  }
+
   const comparableEvents = JSON.stringify(events)
 
-  return useMemo(() => {
+  const [eventsInsideDomain, eventClustersInsideDomain, isNoEventSelected] = useMemo(() => {
     const eventsInsideDomain = events.filter((e) => {
       const isStartInView = e.startTimeMillis >= domain[0] && e.startTimeMillis <= domain[1]
       const isEndInView = e.endTimeMillis && e.endTimeMillis >= domain[0] && e.endTimeMillis <= domain[1]
@@ -47,9 +68,11 @@ export function useEvents<EID extends string, LID extends string, E extends Time
       return isStartInView || isEndInView || isSpanningAcrossView
     })
 
+    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
+
     // zoomScale 'minimum' is never reached
     if (!cluster || zoomScale === ZoomLevels.ONE_DAY) {
-      return [eventsInsideDomain, []]
+      return [eventsInsideDomain, [], isNoEventSelected]
     } else {
       return groups(eventsInsideDomain, (e) =>
         e.isPinned || e.isSelected
@@ -59,11 +82,11 @@ export function useEvents<EID extends string, LID extends string, E extends Time
             }`
       ).reduce(
         (
-          acc: [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>],
+          acc: [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean],
           eventGroup
-        ): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>] => {
+        ): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean] => {
           if (eventGroup[0] === pinnedOrSelectedGroup || eventGroup[1].length <= 1) {
-            return [[...acc[0], ...eventGroup[1]], [...acc[1]]]
+            return [[...acc[0], ...eventGroup[1]], [...acc[1]], isNoEventSelected]
           } else {
             return [
               [...acc[0]],
@@ -81,11 +104,21 @@ export function useEvents<EID extends string, LID extends string, E extends Time
                   // color: eventGroup[1][0].color,
                 },
               ],
+              isNoEventSelected,
             ]
           }
         },
-        [[], []] as [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>]
+        [[], [], isNoEventSelected] as [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean]
       )
     }
   }, [comparableEvents, domain, zoomScale, groupByLane, cluster])
+
+  return [
+    eventsInsideDomain,
+    eventClustersInsideDomain,
+    isNoEventSelected,
+    isMouseOverEvent,
+    onEventHoverDecorated,
+    onEventUnhoverDecorated,
+  ]
 }

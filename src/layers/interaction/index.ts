@@ -1,2 +1,2 @@
 export * from './model'
-export * from './InteractionLayer'
+export * from './Interaction'
