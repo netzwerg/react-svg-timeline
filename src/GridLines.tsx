@@ -154,7 +154,6 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
     const xMidMonth = timeScale(monthTimestamp + monthWidth / 2)
     const xLast = timeScale(addMonths(monthTimestamp, 1))!
     const isLast = index === monthNumbers.length - 1
-    console.log('showWeekStripes', showWeekStripes)
     return (
       <g key={rawMonth}>
         {showWeekStripes && <WeekStripes monthStart={monthTimestamp} timeScale={timeScale} />}
