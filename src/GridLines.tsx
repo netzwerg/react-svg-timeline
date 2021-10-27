@@ -15,6 +15,7 @@ interface Props {
   domain: Domain
   smallerZoomScale: ZoomLevels
   timeScale: ScaleLinear<number, number>
+  weekStripes?: boolean
 }
 
 const gridLineStyle = (theme: Theme) => ({
@@ -23,7 +24,7 @@ const gridLineStyle = (theme: Theme) => ({
   },
 })
 
-export const GridLines = ({ height, domain, smallerZoomScale, timeScale }: Props) => {
+export const GridLines = ({ height, domain, smallerZoomScale, timeScale, weekStripes }: Props) => {
   switch (smallerZoomScale) {
     case ZoomLevels.TEN_YEARS:
       return <YearView height={height} domain={domain} timeScale={timeScale} showDecadesOnly={true} />
@@ -32,7 +33,14 @@ export const GridLines = ({ height, domain, smallerZoomScale, timeScale }: Props
     case ZoomLevels.ONE_MONTH:
       return <MonthView height={height} domain={domain} timeScale={timeScale} />
     default:
-      return <MonthView height={height} domain={domain} timeScale={timeScale} showWeekStripes={true} />
+      return (
+        <MonthView
+          height={height}
+          domain={domain}
+          timeScale={timeScale}
+          showWeekStripes={weekStripes === undefined ? true : weekStripes}
+        />
+      )
   }
 }
 
