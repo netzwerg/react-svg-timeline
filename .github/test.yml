@@ -1,0 +1,105 @@
+name: test
+on:
+  push:
+    branches:
+    - clutch
+  pull_request:
+    branches:
+    - clutch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          check-latest: true
+      - name: node_modules cache
+        id: node-modules-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: build cache
+        if: |
+          steps.node-modules-cache.outputs.cache-hit == 'true' &&
+          github.ref != 'refs/heads/clutch'
+        id: build-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/dist
+            !**/node_modules
+          key: ${{ runner.os }}-dist-${{ hashFiles('**/yarn.lock') }}
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: build
+        run: yarn build
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          check-latest: true
+      - name: node_modules cache
+        id: node-modules-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: build cache
+        if: |
+          steps.node-modules-cache.outputs.cache-hit == 'true' &&
+          github.ref != 'refs/heads/clutch'
+        id: build-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/dist
+            !**/node_modules
+          key: ${{ runner.os }}-dist-${{ hashFiles('**/yarn.lock') }}
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: lint
+        run: yarn lint
+  test:
+        runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          check-latest: true
+      - name: node_modules cache
+        id: node-modules-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: build cache
+        if: |
+          steps.node-modules-cache.outputs.cache-hit == 'true' &&
+          github.ref != 'refs/heads/clutch'
+        id: build-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/dist
+            !**/node_modules
+          key: ${{ runner.os }}-dist-${{ hashFiles('**/yarn.lock') }}
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: test
+        run: yarn test
