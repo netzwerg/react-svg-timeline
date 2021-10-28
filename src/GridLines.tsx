@@ -65,7 +65,7 @@ interface YearViewProps extends Omit<Props, 'smallerZoomScale'> {
 }
 
 const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearViewProps) => {
-  const xAxisTheme = useTimelineTheme().xAxis
+  const xAxisTheme: XAxisTheme = useTimelineTheme().xAxis
   const classes = useYearViewStyles(xAxisTheme)
 
   // not calendar-based (and thus not accounting for leap years), but good enough for horizontal placement of labels
@@ -80,7 +80,7 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
     const x = timeScale(yearTimestamp)!
     const xMidYear = timeScale(yearTimestamp + yearWidth / 2)!
     const width = 2 * (xMidYear - x)
-    const fontSize = Math.max(width * 0.1, 14)
+    const fontSize = xAxisTheme.yearLabelFontSize ? xAxisTheme.yearLabelFontSize : Math.max(width * 0.1, 14)
     const isDecade = year % 10 === 0
     return (
       <g key={year}>
@@ -114,7 +114,7 @@ const useMonthViewStyles = makeStyles((theme: Theme) => ({
     fill: xAxisTheme.labelColor,
     opacity: 0.5,
     fontFamily: theme.typography.caption.fontFamily,
-    fontSize: monthViewLabelFontSize,
+    fontSize: xAxisTheme.monthLabelFontSize ? xAxisTheme.monthLabelFontSize : monthViewLabelFontSize,
     fontWeight: 'bold',
     textAnchor: 'middle',
     cursor: 'default',
