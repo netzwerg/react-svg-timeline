@@ -1,5 +1,6 @@
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { Theme } from '@material-ui/core'
+import { TooltipTheme } from '../theme/model'
 import { ClassNameMap } from '@material-ui/styles'
 
 export type TooltipClasses = ClassNameMap<'background' | 'text' | 'svg'>
@@ -10,15 +11,15 @@ export const useTooltipStyle = makeStyles((theme: Theme) => ({
   svg: {
     textAlign: 'left',
   },
-  background: () => ({
-    fill: 'red',
+  background: (tooltipTheme: TooltipTheme) => ({
+    fill: tooltipTheme.backgroundColor,
     strokeWidth: 0,
   }),
-  text: {
-    fill: 'white',
+  text: (tooltipTheme: TooltipTheme) => ({
+    fill: tooltipTheme.backgroundColor ? tooltipTheme.backgroundColor: 'white',
     dominantBaseline: 'middle',
     textAnchor: 'middle',
     fontFamily: theme.typography.caption.fontFamily,
-    fontSize: TOOLTIP_FONT_SIZE,
-  },
+    fontSize: tooltipTheme.fontSize ? tooltipTheme.fontSize : TOOLTIP_FONT_SIZE,
+  }),
 }))
