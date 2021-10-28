@@ -2,17 +2,18 @@ import * as React from 'react'
 import { ZoomScale } from './ZoomScale'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { orange } from '@material-ui/core/colors'
+import type { Theme } from '@material-ui/core'
 import { Cursor } from './model'
 import { InteractionMode } from './InteractionHandling'
 import CursorLabel from './CursorLabel'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme, { color: string }>(() => ({
   cursor: {
-    stroke: orange.A200,
+    stroke: ({ color }) => color,
     strokeWidth: 2,
   },
   zoomRange: {
-    fill: orange.A200,
+    fill: ({ color }) => color,
     opacity: 0.1,
   },
 }))
@@ -21,6 +22,7 @@ interface Props {
   mousePosition: number
   cursorLabel: string
   cursor: Cursor
+  cursorColor?: string
   interactionMode: InteractionMode
   zoomRangeStart: number
   zoomRangeEnd: number
@@ -32,6 +34,7 @@ export const MouseCursor = ({
   mousePosition,
   cursorLabel,
   cursor,
+  cursorColor,
   interactionMode,
   zoomRangeStart,
   zoomRangeEnd,
@@ -47,13 +50,13 @@ export const MouseCursor = ({
           return <g />
         }
         case 'panning':
-          return <PanningCursor mousePosition={mousePosition} />
+          return <PanningCursor mousePosition={mousePosition} cursorColor={cursorColor} />
         case 'rubber band': {
           const [start, end] =
             interactionMode.variant === 'anchored'
               ? [interactionMode.anchorX, undefined]
               : [interactionMode.anchorX, interactionMode.currentX]
-          return <RubberBandCursor start={start} end={end} />
+          return <RubberBandCursor start={start} end={end} cursorColor={cursorColor} />
         }
         default:
           return (
@@ -61,6 +64,7 @@ export const MouseCursor = ({
               mousePosition={mousePosition}
               cursor={cursor}
               cursorLabel={cursorLabel}
+              cursorColor={cursorColor}
               zoomScale={zoomScale}
               isZoomInPossible={isZoomInPossible}
               zoomRangeStart={zoomRangeStart}
@@ -88,6 +92,7 @@ interface ZoomCursorProps {
   mousePosition: number
   cursor: Cursor
   cursorLabel: string
+  cursorColor?: string
   zoomScale: ZoomScale
   isZoomInPossible: boolean
   zoomRangeStart: number
@@ -98,12 +103,13 @@ const ZoomCursor = ({
   mousePosition,
   cursor,
   cursorLabel,
+  cursorColor,
   zoomScale,
   isZoomInPossible,
   zoomRangeStart,
   zoomRangeEnd,
 }: ZoomCursorProps) => {
-  const classes = useStyles()
+  const classes = useStyles({ color: cursorColor || orange.A200 })
   return (
     <g>
       <rect
@@ -122,6 +128,7 @@ const ZoomCursor = ({
         cursor={cursor}
         overline={cursorLabel}
         label={isZoomInPossible ? zoomScale : ''}
+        fill={cursorColor}
       />
       <line className={classes.cursor} x1={mousePosition} y1="23%" x2={mousePosition} y2="100%" cursor={cursor} />
     </g>
@@ -134,10 +141,11 @@ const ZoomCursor = ({
 
 interface PanningProps {
   mousePosition: number
+  cursorColor?: string
 }
 
-const PanningCursor = ({ mousePosition }: PanningProps) => {
-  const classes = useStyles()
+const PanningCursor = ({ mousePosition, cursorColor }: PanningProps) => {
+  const classes = useStyles({ color: cursorColor || orange.A200 })
   return (
     <g>
       <line className={classes.cursor} x1={mousePosition} y1={'0%'} x2={mousePosition} y2={'100%'} cursor={'grab'} />
@@ -152,10 +160,11 @@ const PanningCursor = ({ mousePosition }: PanningProps) => {
 interface RubberBandProps {
   start: number
   end?: number
+  cursorColor?: string
 }
 
-const RubberBandCursor = ({ start, end }: RubberBandProps) => {
-  const classes = useStyles()
+const RubberBandCursor = ({ start, end, cursorColor }: RubberBandProps) => {
+  const classes = useStyles({ color: cursorColor || orange.A200 })
   const [y1, y2] = ['0%', '100%']
   return (
     <g>

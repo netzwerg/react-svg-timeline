@@ -39,6 +39,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void
   onInteractionEnd?: () => void
   weekStripes?: boolean
+  cursorColor?: string
 }
 
 type Animation =
@@ -82,6 +83,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   onTrimRangeChange,
   onInteractionEnd,
   weekStripes,
+  cursorColor,
 }: TimelineProps<EID, LID, E>) => {
   {
     const maxDomain = customRange ?? calcMaxDomain(events)
@@ -264,6 +266,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
                         mousePosition={mousePosition.x}
                         cursorLabel={dateFormat(timeAtCursor)}
                         cursor={cursor}
+                        cursorColor={cursorColor}
                         interactionMode={interactionMode}
                         zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
                         zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
