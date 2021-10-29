@@ -15,6 +15,9 @@ export interface XAxisTheme {
 
 export interface TooltipTheme {
   readonly backgroundColor: string
+  readonly strokeColor?: string
+  readonly strokeWidth?: number
+  readonly fontColor?: string
 }
 
 export interface TrimmerTheme {
