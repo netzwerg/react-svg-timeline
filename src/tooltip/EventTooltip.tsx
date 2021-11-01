@@ -11,9 +11,10 @@ interface Props {
   readonly text: string
   readonly triggerRef: React.RefObject<SVGElement>
   readonly classes: TooltipClasses
+  readonly tooltipArrow?: boolean
 }
 
-export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }: Props) => {
+export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes, tooltipArrow }: Props) => {
   const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text)
 
   return (
@@ -31,12 +32,14 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }
 
         // determines how the rectangular tooltip area is offset to the left/right of the arrow
         // the closer to the left edge, the more the rect is shifted to the right (same for right edge)
-        const safetyMargin = 15
+        // if the arrow prop is falsy, safety margin is 0
+        const safetyMargin = tooltipArrow ? 15 : 0
         const tooltipOffset = scaleLinear()
           .domain([0, parentWidth])
           .range([safetyMargin, tooltipWidth - safetyMargin])
 
-        const arrowDimension = 20
+        // if prop value is falsy, reduce the number so that the tooltip is closer to the event mark
+        const arrowDimension = tooltipArrow ? 20 : 10
 
         const svgX = tooltipX - tooltipOffset(xOffset)!
         const svgY = tooltipY - arrowDimension / 2
@@ -52,7 +55,9 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }
                 className={classes.text}
               />
             </svg>
-            <ArrowDown tipX={tooltipX} baseY={baseY} dimension={arrowDimension} className={classes.background} />)
+            {tooltipArrow && (
+              <ArrowDown tipX={tooltipX} baseY={baseY} dimension={arrowDimension} className={classes.background} />
+            )}
           </g>
         )
       }}

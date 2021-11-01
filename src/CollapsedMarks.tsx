@@ -14,12 +14,23 @@ interface Props<EID extends string, LID extends string, E extends TimelineEvent<
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
+  tooltipArrow?: boolean
 }
 
 export const CollapsedMarks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   props: Props<EID, LID, E>
 ) => {
-  const { mouseCursor, height, events, timeScale, eventComponent, onEventHover, onEventUnhover, onEventClick } = props
+  const {
+    mouseCursor,
+    height,
+    events,
+    timeScale,
+    eventComponent,
+    onEventHover,
+    onEventUnhover,
+    onEventClick,
+    tooltipArrow,
+  } = props
   const y = height / 2
 
   return (
@@ -36,6 +47,7 @@ export const CollapsedMarks = <EID extends string, LID extends string, E extends
           onEventHover={onEventHover}
           onEventUnhover={onEventUnhover}
           onEventClick={onEventClick}
+          tooltipArrow={tooltipArrow}
         />
       }
     </g>

@@ -41,6 +41,7 @@ export interface Props<EID extends string, LID extends string, E extends Timelin
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
+  tooltipArrow?: boolean
 }
 
 /**
@@ -146,6 +147,7 @@ interface InteractiveGroupProps<EID extends string, LID extends string, E extend
   onEventClick?: (eventId: EID) => void
   tooltipClasses: TooltipClasses
   children: React.ReactNode
+  tooltipArrow?: boolean
 }
 
 const InteractiveEventMark = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
@@ -157,6 +159,7 @@ const InteractiveEventMark = <EID extends string, LID extends string, E extends 
   onEventUnhover = noOp,
   tooltipClasses,
   children,
+  tooltipArrow,
 }: InteractiveGroupProps<EID, LID, E>) => {
   const eventId = event.eventId
 
@@ -187,6 +190,7 @@ const InteractiveEventMark = <EID extends string, LID extends string, E extends 
           triggerRef={triggerRef}
           text={event.tooltip}
           classes={tooltipClasses}
+          tooltipArrow={tooltipArrow}
         />
       ) : (
         <g />

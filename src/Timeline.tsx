@@ -40,6 +40,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   onInteractionEnd?: () => void
   weekStripes?: boolean
   cursorColor?: string
+  tooltipArrow?: boolean
 }
 
 type Animation =
@@ -84,6 +85,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   onInteractionEnd,
   weekStripes,
   cursorColor,
+  tooltipArrow = true,
 }: TimelineProps<EID, LID, E>) => {
   {
     const maxDomain = customRange ?? calcMaxDomain(events)
@@ -307,6 +309,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
                               onEventHover={onEventHoverDecorated}
                               onEventUnhover={onEventUnhoverDecorated}
                               onEventClick={onEventClick}
+                              tooltipArrow={tooltipArrow}
                             />
                           ) : (
                             <CollapsedMarks
@@ -318,6 +321,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
                               onEventHover={onEventHoverDecorated}
                               onEventUnhover={onEventUnhoverDecorated}
                               onEventClick={onEventClick}
+                              tooltipArrow={tooltipArrow}
                             />
                           )}
                         </>
