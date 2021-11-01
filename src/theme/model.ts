@@ -18,6 +18,8 @@ export interface TooltipTheme {
   readonly strokeColor?: string
   readonly strokeWidth?: number
   readonly fontColor?: string
+  readonly rx?: number
+  readonly ry?: number
 }
 
 export interface TrimmerTheme {

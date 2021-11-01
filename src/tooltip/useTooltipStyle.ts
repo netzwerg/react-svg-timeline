@@ -15,6 +15,8 @@ export const useTooltipStyle = makeStyles((theme: Theme) => ({
     fill: tooltipTheme.backgroundColor,
     strokeWidth: tooltipTheme.strokeWidth ? tooltipTheme.strokeWidth : 0,
     stroke: tooltipTheme.strokeColor ? tooltipTheme.strokeColor : 'transparent',
+    rx: tooltipTheme.rx ? tooltipTheme.rx : 3,
+    ry: tooltipTheme.ry ? tooltipTheme.ry : 3,
   }),
   text: (tooltipTheme: TooltipTheme) => ({
     fill: tooltipTheme.fontColor ? tooltipTheme.fontColor : 'white',

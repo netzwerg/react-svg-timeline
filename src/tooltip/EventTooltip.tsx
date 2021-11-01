@@ -47,7 +47,7 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes, 
         return (
           <g>
             <svg x={svgX} y={svgY} width={tooltipWidth} height={tooltipHeight} className={classes.svg}>
-              <rect width="100%" height="100%" rx={3} ry={3} className={classes.background} />
+              <rect width="100%" height="100%" className={classes.background} />
               <TooltipText
                 textLines={textLines}
                 tooltipHeight={tooltipHeight}
