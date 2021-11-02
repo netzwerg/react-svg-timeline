@@ -41,6 +41,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   weekStripes?: boolean
   cursorColor?: string
   tooltipArrow?: boolean
+  animationDuration?: number
 }
 
 type Animation =
@@ -58,8 +59,6 @@ export const calcMaxDomain = <EID extends string, LID extends string, E extends 
   const timeMax = Math.max(...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
   return [timeMin || NaN, timeMax || NaN]
 }
-
-const animationDuration = 1000
 
 export const Timeline = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   width,
@@ -86,6 +85,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   weekStripes,
   cursorColor,
   tooltipArrow = true,
+  animationDuration = 1000,
 }: TimelineProps<EID, LID, E>) => {
   {
     const maxDomain = customRange ?? calcMaxDomain(events)
