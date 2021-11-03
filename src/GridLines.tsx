@@ -34,11 +34,10 @@ export const GridLines = ({ height, domain, smallerZoomScale, timeScale, weekStr
       return <MonthView height={height} domain={domain} timeScale={timeScale} />
     default:
       return (
-        <MonthView
+        <HourView
           height={height}
           domain={domain}
           timeScale={timeScale}
-          showWeekStripes={weekStripes === undefined ? true : weekStripes}
         />
       )
   }
@@ -219,6 +218,72 @@ const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
       return <g key={key} />
     }
   })
+
+  return <g>{lines}</g>
+}
+
+/* ·················································································································· */
+/*  Hour
+/* ·················································································································· */
+
+interface HourLineProps {
+  xPosition: number
+  height?: string
+}
+
+const HourLine = ({ xPosition, height }: HourLineProps) => {
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useMonthViewStyles(xAxisTheme)
+  return (
+    <line
+      className={classes.line}
+      x1={xPosition}
+      y1={0}
+      x2={xPosition}
+      y2={height ? height : '20%'}
+      strokeWidth={1} // slightly fatter year boundary
+    />
+  )
+}
+
+const MINUTE_OFFSET_MS = 60000;
+
+// TODO(smonero): I have no idea what this is for and why we are omitting smallerZoomScale
+// TODO: figure it out
+interface HourViewProps extends Omit<Props, 'smallerZoomScale'> {
+}
+
+const HourView = ({ height, domain, timeScale }: HourViewProps) => {
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useMonthViewStyles(xAxisTheme)
+
+  // Scale the bounds slightly inside so they don't touch the edges
+  const leftBoundMs = domain[0] + MINUTE_OFFSET_MS;
+  const rightBoundMs = domain[1] - MINUTE_OFFSET_MS;
+
+  const leftBoundDate = new Date(leftBoundMs);
+  const rightBoundDate = new Date(rightBoundMs);
+
+  const leftBoundPos = timeScale(leftBoundMs)!
+  const rightBoundPos = timeScale(rightBoundMs)!
+
+  // TODO: What should I use as the key? Does it matter?
+  const lines = [
+      (<g key={leftBoundDate.getMilliseconds}>
+        {/* TODO: maybe add stuff to HourLine like the date or time ago? */}
+        <HourLine xPosition={leftBoundPos} />
+        <text className={classes.label} x={leftBoundPos} y={height - 0.5 * monthViewLabelFontSize}>
+          {leftBoundDate.toLocaleTimeString()}
+        </text>
+        {/* TODO: add day? Requires logic */}
+      </g>),
+      (<g key={rightBoundDate.getMilliseconds}>
+        <HourLine xPosition={rightBoundPos} />
+        <text className={classes.label} x={rightBoundPos} y={height - 1.5 * monthViewLabelFontSize}>
+          {rightBoundDate.toLocaleTimeString()}
+        </text>
+      </g>)
+  ];
 
   return <g>{lines}</g>
 }
