@@ -22,7 +22,10 @@ export const useTimelineAnimation = ({
   setDomain,
   maxDomainStart,
   maxDomainEnd,
-}: UseTimelineAnimationProps): [boolean, React.Dispatch<React.SetStateAction<Animation>>] => {
+}: UseTimelineAnimationProps): {
+  isAnimationInProgress: boolean
+  setAnimation: React.Dispatch<React.SetStateAction<Animation>>
+} => {
   const [animation, setAnimation] = useState<Animation>('none')
 
   const now = Date.now()
@@ -55,5 +58,5 @@ export const useTimelineAnimation = ({
 
   const isAnimationInProgress = animation !== 'none'
 
-  return [isAnimationInProgress, setAnimation]
+  return { isAnimationInProgress, setAnimation }
 }

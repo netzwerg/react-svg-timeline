@@ -50,11 +50,9 @@ export const Interaction = ({
   onTrimRangeChange,
   onInteractionEnd,
 }: InteractionProps) => {
-  const [
-    ,
+  const {
     zoomWidth,
-    smallerZoomScale,
-    ,
+    nextSmallerZoomScale,
     isZoomInPossible,
     isZoomOutPossible,
     onZoomIn,
@@ -62,7 +60,7 @@ export const Interaction = ({
     onZoomReset,
     onZoomInCustom,
     onZoomInCustomInProgress,
-  ] = useZoom({
+  } = useZoom({
     domain,
     maxDomainStart,
     maxDomainEnd,
@@ -133,7 +131,7 @@ export const Interaction = ({
                       interactionMode={interactionMode}
                       zoomRangeStart={timeScale(timeAtCursor - zoomWidth / 2)!}
                       zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
-                      zoomScale={smallerZoomScale}
+                      zoomScale={nextSmallerZoomScale}
                       isZoomInPossible={isZoomInPossible}
                     />
                   ) : (

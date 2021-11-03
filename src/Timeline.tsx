@@ -70,31 +70,31 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   onInteractionEnd,
 }: TimelineProps<EID, LID, E>) => {
   {
-    const [
+    const {
       domain,
       setDomain,
       maxDomain,
       maxDomainStart,
       maxDomainEnd,
-      zoomScale,
-      smallerZoomScale,
+      currentZoomScale,
+      nextSmallerZoomScale,
       timeScale,
       yScale,
-    ] = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
+    } = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
 
-    const [isAnimationInProgress, setAnimation] = useTimelineAnimation({ maxDomainStart, maxDomainEnd, setDomain })
+    const { isAnimationInProgress, setAnimation } = useTimelineAnimation({ maxDomainStart, maxDomainEnd, setDomain })
 
-    const [
+    const {
       eventsInsideDomain,
       eventClustersInsideDomain,
       isNoEventSelected,
       isMouseOverEvent,
       onEventHoverDecorated,
       onEventUnhoverDecorated,
-    ] = useEvents(
+    } = useEvents(
       events,
       domain,
-      zoomScale,
+      currentZoomScale,
       laneDisplayMode === 'expanded',
       enableEventClustering,
       onEventHover,
@@ -120,7 +120,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           key="grid"
           height={height}
           domain={domain}
-          smallerZoomScale={smallerZoomScale}
+          smallerZoomScale={nextSmallerZoomScale}
           timeScale={timeScale}
         />
       ),

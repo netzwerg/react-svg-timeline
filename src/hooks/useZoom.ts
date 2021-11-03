@@ -22,26 +22,26 @@ export const useZoom = ({
   timeScale,
   onDomainChange,
   onCursorMove,
-}: UseZoomProps): [
-  ZoomLevels,
-  number,
-  ZoomLevels,
-  ZoomLevels,
-  boolean,
-  boolean,
-  (timeAtCursor?: number | undefined) => void,
-  (timeAtCursor?: number | undefined) => void,
-  () => void,
-  (mouseStartX: number, mouseEndX: number) => void,
-  (mouseStartX: number, mouseEndX: number) => void
-] => {
-  const [zoomScale, smallerZoomScale, biggerZoomScale] = useZoomLevels(domain, zoomLevels)
+}: UseZoomProps): {
+  currentZoomScale: ZoomLevels
+  zoomWidth: number
+  nextSmallerZoomScale: ZoomLevels
+  nextBiggerZoomScale: ZoomLevels
+  isZoomInPossible: boolean
+  isZoomOutPossible: boolean
+  onZoomIn: (timeAtCursor?: number | undefined) => void
+  onZoomOut: (timeAtCursor?: number | undefined) => void
+  onZoomReset: () => void
+  onZoomInCustom: (mouseStartX: number, mouseEndX: number) => void
+  onZoomInCustomInProgress: (mouseStartX: number, mouseEndX: number) => void
+} => {
+  const { currentZoomScale, nextSmallerZoomScale, nextBiggerZoomScale } = useZoomLevels(domain, zoomLevels)
 
-  const zoomWidth = zoomScaleWidth(smallerZoomScale)
+  const zoomWidth = zoomScaleWidth(nextSmallerZoomScale)
   const currentDomainWidth = domain[1] - domain[0]
   const maxDomainWidth = maxDomainEnd - maxDomainStart
 
-  const isZoomInPossible = smallerZoomScale !== 'minimum'
+  const isZoomInPossible = nextSmallerZoomScale !== 'minimum'
   const isZoomOutPossible = currentDomainWidth < maxDomainWidth
 
   const setDomainAnimated = (newDomain: Domain) => onDomainChange(newDomain, true)
@@ -55,8 +55,8 @@ export const useZoom = ({
     }
   }
 
-  const onZoomIn = updateDomain(smallerZoomScale)
-  const onZoomOut = updateDomain(biggerZoomScale)
+  const onZoomIn = updateDomain(nextSmallerZoomScale)
+  const onZoomOut = updateDomain(nextBiggerZoomScale)
 
   const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
     if (isDomainChangePossible) {
@@ -80,11 +80,11 @@ export const useZoom = ({
     }
   }
 
-  return [
-    zoomScale,
+  return {
+    currentZoomScale,
     zoomWidth,
-    smallerZoomScale,
-    biggerZoomScale,
+    nextSmallerZoomScale,
+    nextBiggerZoomScale,
     isZoomInPossible,
     isZoomOutPossible,
     onZoomIn,
@@ -92,5 +92,5 @@ export const useZoom = ({
     onZoomReset,
     onZoomInCustom,
     onZoomInCustomInProgress,
-  ]
+  }
 }

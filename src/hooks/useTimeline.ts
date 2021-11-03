@@ -31,24 +31,24 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
   customRange,
   zoomLevels,
   onZoomRangeChange,
-}: UseTimelineProps<EID, LID, E>): [
-  Domain,
-  React.Dispatch<React.SetStateAction<Domain>>,
-  Domain,
-  number,
-  number,
-  ZoomLevels,
-  ZoomLevels,
-  ScaleLinear<number, number>,
-  ScaleBand<string>
-] => {
+}: UseTimelineProps<EID, LID, E>): {
+  domain: Domain
+  setDomain: React.Dispatch<React.SetStateAction<Domain>>
+  maxDomain: Domain
+  maxDomainStart: number
+  maxDomainEnd: number
+  currentZoomScale: ZoomLevels
+  nextSmallerZoomScale: ZoomLevels
+  timeScale: ScaleLinear<number, number>
+  yScale: ScaleBand<string>
+} => {
   const maxDomain = customRange ?? calcMaxDomain(events)
   const maxDomainStart = maxDomain[0]
   const maxDomainEnd = maxDomain[1]
 
   const [domain, setDomain] = useState<Domain>(maxDomain) // TODO --> onRangeChange-Event when domain changes?
 
-  const [zoomScale, smallerZoomScale] = useZoomLevels(domain, zoomLevels)
+  const { currentZoomScale, nextSmallerZoomScale } = useZoomLevels(domain, zoomLevels)
 
   useEffect(() => {
     setDomain([maxDomainStart, maxDomainEnd])
@@ -71,5 +71,15 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
     .paddingInner(0.3)
     .paddingOuter(0.8)
 
-  return [domain, setDomain, maxDomain, maxDomainStart, maxDomainEnd, zoomScale, smallerZoomScale, timeScale, yScale]
+  return {
+    domain,
+    setDomain,
+    maxDomain,
+    maxDomainStart,
+    maxDomainEnd,
+    currentZoomScale,
+    nextSmallerZoomScale,
+    timeScale,
+    yScale,
+  }
 }

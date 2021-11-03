@@ -30,7 +30,7 @@ const pinnedOrSelectedGroup = 'isPinnedOrSelected'
 // TODO: Don't cluster events with start- AND endTimeMillis if the timespan is larger than the next smaller zoom scale (otherwise there is a possibility, that the event is never fully visible)
 // TODO: Toggling between expand/collapse changes cluster sizes; Clusters are displayed proportional within each lane - this could be desired or not -> decide.
 
-export function useEvents<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+export const useEvents = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>,
   domain: Domain,
   zoomScale: ZoomScale,
@@ -38,14 +38,14 @@ export function useEvents<EID extends string, LID extends string, E extends Time
   cluster: boolean,
   onEventHover: (eventId: EID) => void,
   onEventUnhover: (eventId: EID) => void
-): [
-  ReadonlyArray<E>,
-  ReadonlyArray<TimelineEventCluster<LID>>,
-  boolean,
-  boolean,
-  (eventId: EID) => void,
-  (eventId: EID) => void
-] {
+): {
+  eventsInsideDomain: ReadonlyArray<E>
+  eventClustersInsideDomain: ReadonlyArray<TimelineEventCluster<LID>>
+  isNoEventSelected: boolean
+  isMouseOverEvent: boolean
+  onEventHoverDecorated: (eventId: EID) => void
+  onEventUnhoverDecorated: (eventId: EID) => void
+} => {
   const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
 
   const onEventHoverDecorated = (eventId: EID) => {
@@ -113,12 +113,12 @@ export function useEvents<EID extends string, LID extends string, E extends Time
     }
   }, [comparableEvents, domain, zoomScale, groupByLane, cluster])
 
-  return [
+  return {
     eventsInsideDomain,
     eventClustersInsideDomain,
     isNoEventSelected,
     isMouseOverEvent,
     onEventHoverDecorated,
     onEventUnhoverDecorated,
-  ]
+  }
 }

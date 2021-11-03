@@ -10,12 +10,12 @@ import {
 export function useZoomLevels(
   domain: Domain,
   zoomLevels: ReadonlyArray<ZoomLevels>
-): [ZoomLevels, ZoomLevels, ZoomLevels] {
+): { currentZoomScale: ZoomLevels; nextSmallerZoomScale: ZoomLevels; nextBiggerZoomScale: ZoomLevels } {
   const orderedZoomLevels = [...zoomLevels].sort((a, b) => zoomScaleWidth(b) - zoomScaleWidth(a))
 
-  return [
-    currentZoomScale(domain, orderedZoomLevels),
-    nextSmallerZoomScale(domain, orderedZoomLevels),
-    nextBiggerZoomScale(domain, orderedZoomLevels),
-  ]
+  return {
+    currentZoomScale: currentZoomScale(domain, orderedZoomLevels),
+    nextSmallerZoomScale: nextSmallerZoomScale(domain, orderedZoomLevels),
+    nextBiggerZoomScale: nextBiggerZoomScale(domain, orderedZoomLevels),
+  }
 }
