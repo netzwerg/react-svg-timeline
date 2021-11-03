@@ -5,7 +5,7 @@ import { useZoomLevels } from './useZoomLevels'
 import { Domain, TimelineEvent, TimelineLane, ZoomLevels } from '..'
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale'
 
-const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+export const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>
 ): Domain => {
   const timeMin = Math.min(...events.map((e) => e.startTimeMillis))

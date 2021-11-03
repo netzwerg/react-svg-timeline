@@ -1,4 +1,4 @@
-import { diff, range } from '../src/shared'
+import { diff, range } from '../src/utils'
 
 describe('shared range', () => {
   it('should return a filled array', () => {
