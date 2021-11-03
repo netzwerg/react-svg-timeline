@@ -27,7 +27,7 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes, 
         const tooltipX = type === 'period' ? 0 : type.singleEventX - xOffset
 
         const tooltipYPadding = 12
-        const tooltipY = y - yOffset - tooltipHeight - tooltipYPadding // don't follow mouse
+        const tooltipY = y - yOffset + tooltipHeight - tooltipYPadding;
         const baseY = y - yOffset - baseHeight - tooltipYPadding
 
         // determines how the rectangular tooltip area is offset to the left/right of the arrow
