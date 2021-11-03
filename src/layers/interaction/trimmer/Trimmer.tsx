@@ -1,11 +1,11 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core'
 import { ScaleLinear } from 'd3-scale'
-import { TrimHover, TrimNone } from '../InteractionHandling'
+import { TrimHover, TrimNone } from '..'
 import TrimHandle from './TrimHandle'
-import Triangle, { TriangleDirection } from '../Triangle'
-import { useTimelineTheme } from '../theme'
-import { TrimmerTheme } from '../theme/model'
+import Triangle, { TriangleDirection } from '../../../shared/Triangle'
+import { useTimelineTheme } from '../../../theme'
+import { TrimmerTheme } from '../../../theme/model'
 
 const useStyles = makeStyles(() => ({
   trimmerArea: (trimmerTheme: TrimmerTheme) => ({

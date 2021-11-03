@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { monthDuration, weekDuration, yearDuration, ZoomLevels } from './ZoomScale'
+import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared/ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
-import { Domain } from './model'
+import { Domain } from '../model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
-import { range } from './shared'
-import { useTimelineTheme } from './theme'
-import { XAxisTheme } from './theme/model'
+import { range } from '../utils'
+import { useTimelineTheme } from '../theme'
+import { XAxisTheme } from '../theme/model'
 
 interface Props {
   height: number

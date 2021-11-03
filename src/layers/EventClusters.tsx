@@ -1,8 +1,8 @@
 import React from 'react'
 import { ScaleBand, ScaleLinear, scaleSqrt } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { TimelineEventCluster } from './model'
-import { defaultClusterColor, defaultSingleEventMarkHeight } from './shared'
+import { TimelineEventCluster } from '../model'
+import { defaultClusterColor, defaultSingleEventMarkHeight } from '../utils'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { extent } from 'd3-array'
 

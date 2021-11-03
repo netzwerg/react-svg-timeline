@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { useMemo, useRef } from 'react'
-import { defaultEventColor, defaultSingleEventMarkHeight, noOp, selectionColor, selectionColorOpaque } from './shared'
+import { defaultEventColor, defaultSingleEventMarkHeight, noOp, selectionColor, selectionColorOpaque } from '../utils'
 import { ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { EventComponentFactory, EventComponentRole, TimelineEvent } from './model'
+import { EventComponentFactory, EventComponentRole, TimelineEvent } from '../model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
-import { EventTooltip, TooltipClasses, useTooltipStyle } from './tooltip'
-import { useTimelineTheme } from './theme'
+import { EventTooltip, TooltipClasses, useTooltipStyle } from '../tooltip'
+import { useTimelineTheme } from '../theme'
 
 const useStyles = makeStyles((theme: Theme) => ({
   eventBackground: {

@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core'
 import React from 'react'
-import CursorLabel from '../CursorLabel'
-import { useTimelineTheme } from '../theme'
-import { TrimmerTheme } from '../theme/model'
+import { CursorLabel } from '../CursorLabel'
+import { useTimelineTheme } from '../../../theme'
+import { TrimmerTheme } from '../../../theme/model'
 
 const useStyles = makeStyles(() => ({
   cursor: (trimmerTheme: TrimmerTheme) => ({
