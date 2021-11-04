@@ -31,14 +31,13 @@ export const GridLines = ({ height, domain, smallerZoomScale, timeScale, weekStr
     case ZoomLevels.ONE_YEAR:
       return <YearView height={height} domain={domain} timeScale={timeScale} />
     case ZoomLevels.ONE_MONTH:
-      return <MonthView height={height} domain={domain} timeScale={timeScale} />
+      return <MonthView height={height} domain={domain} timeScale={timeScale} showWeekStripes={weekStripes === undefined ? true : weekStripes} />
     default:
       return (
-        <MonthView
+        <HourView
           height={height}
           domain={domain}
           timeScale={timeScale}
-          showWeekStripes={weekStripes === undefined ? true : weekStripes}
         />
       )
   }
@@ -219,6 +218,94 @@ const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
       return <g key={key} />
     }
   })
+
+  return <g>{lines}</g>
+}
+
+/* ·················································································································· */
+/*  Hour
+/* ·················································································································· */
+
+interface HourLineProps {
+  xPosition: number
+  height?: string
+}
+
+const HourLine = ({ xPosition, height }: HourLineProps) => {
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useMonthViewStyles(xAxisTheme)
+  return (
+    <line
+      className={classes.line}
+      x1={xPosition}
+      y1={0}
+      x2={xPosition}
+      y2={height ? height : '80%'}
+      strokeWidth={1}
+    />
+  )
+}
+
+const TEN_SECOND_OFFSET_MS = 10000;
+interface HourViewProps {
+  height: number
+  domain: [number, number]
+  timeScale: ScaleLinear<number, number>
+}
+
+const defaultHourViewLabelFontSize = 10
+
+const useHourViewStyles = makeStyles((theme: Theme) => ({
+  ...gridLineStyle(theme),
+  label: (xAxisTheme: XAxisTheme) => ({
+    fill: xAxisTheme.labelColor,
+    opacity: 0.5,
+    fontFamily: theme.typography.caption.fontFamily,
+    fontSize: xAxisTheme.hourLabelFontSize ? xAxisTheme.hourLabelFontSize : defaultHourViewLabelFontSize,
+    fontWeight: xAxisTheme.hourLabelFontWeight ? xAxisTheme.hourLabelFontWeight : 'bold',
+    textAnchor: 'middle',
+    cursor: 'default',
+  }),
+}))
+
+const getTimelineBoundsLabel = (date: Date) => {
+  const time = date.toLocaleTimeString();
+  // +1 because months start at 0
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const label = `${month}/${day} ${time}`;
+  return label;
+}
+
+const HourView = ({ height, domain, timeScale }: HourViewProps) => {
+  const xAxisTheme = useTimelineTheme().xAxis
+  const classes = useHourViewStyles(xAxisTheme)
+
+  // Scale the bounds slightly inside so they don't touch the edges
+  const leftBoundMs = domain[0] + TEN_SECOND_OFFSET_MS;
+  const rightBoundMs = domain[1] - TEN_SECOND_OFFSET_MS;
+
+  const leftBoundLabel = getTimelineBoundsLabel(new Date(leftBoundMs));
+  const rightBoundLabel = getTimelineBoundsLabel(new Date(rightBoundMs));
+
+  const leftBoundPos = timeScale(leftBoundMs)!
+  const rightBoundPos = timeScale(rightBoundMs)!
+
+  // TODO: Possibly change key
+  const lines = [
+      (<g key={1}>
+        <HourLine xPosition={leftBoundPos} />
+        <text className={classes.label} x={leftBoundPos} y={height - 0.5 * defaultHourViewLabelFontSize}>
+          {leftBoundLabel}
+        </text>
+      </g>),
+      (<g key={2}>
+        <HourLine xPosition={rightBoundPos} />
+        <text className={classes.label} x={rightBoundPos} y={height - 0.5 * defaultHourViewLabelFontSize}>
+          {rightBoundLabel}
+        </text>
+      </g>)
+  ];
 
   return <g>{lines}</g>
 }

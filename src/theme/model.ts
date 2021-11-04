@@ -9,8 +9,10 @@ export interface XAxisTheme {
   readonly labelColor: string
   readonly monthLabelFontSize?: number
   readonly yearLabelFontSize?: number
+  readonly hourLabelFontSize?: number
   readonly monthLabelFontWeight?: number | 'normal' | 'bold'
   readonly yearLabelFontWeight?: number | 'normal' | 'bold'
+  readonly hourLabelFontWeight?: number | 'normal' | 'bold'
 }
 
 export interface TooltipTheme {
