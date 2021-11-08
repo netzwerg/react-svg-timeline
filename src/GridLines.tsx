@@ -285,8 +285,8 @@ const boundViewLines = ({ height, domain, timeScale }: BoundViewProps) => {
   let rightBoundMs = domain[1] - TEN_SECOND_OFFSET_MS;
 
   if (domain[0] === domain[1]) {
-    leftBoundMs -= TEN_SECOND_OFFSET_MS * 2;
-    rightBoundMs += TEN_SECOND_OFFSET_MS * 2;
+    leftBoundMs -= TEN_SECOND_OFFSET_MS * 10;
+    rightBoundMs += TEN_SECOND_OFFSET_MS * 10;
   }
   // Scale the bounds slightly inside so they don't touch the edges
 
