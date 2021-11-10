@@ -21,7 +21,7 @@ interface Props {
 }
 
 // TODO: Configure 'fill' via theme once mouse cursor style is also part of theme
-function CursorLabel({ x, y, overline, label, cursor, fill = orange.A200 }: Props) {
+export const CursorLabel = ({ x, y, overline, label, cursor, fill = orange.A200 }: Props) => {
   const classes = useStyles()
 
   return (
@@ -35,5 +35,3 @@ function CursorLabel({ x, y, overline, label, cursor, fill = orange.A200 }: Prop
     </text>
   )
 }
-
-export default CursorLabel

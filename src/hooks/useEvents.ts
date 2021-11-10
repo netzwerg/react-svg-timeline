@@ -1,8 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { groups } from 'd3-array'
 import { format } from 'date-fns'
 import { Domain, TimelineEvent, TimelineEventCluster } from '../model'
-import { ZoomScale, ZoomLevels } from '../ZoomScale'
+import { ZoomScale, ZoomLevels } from '../shared/ZoomScale'
 
 function clusterWidth(scale: ZoomScale): string {
   switch (scale) {
@@ -30,16 +30,37 @@ const pinnedOrSelectedGroup = 'isPinnedOrSelected'
 // TODO: Don't cluster events with start- AND endTimeMillis if the timespan is larger than the next smaller zoom scale (otherwise there is a possibility, that the event is never fully visible)
 // TODO: Toggling between expand/collapse changes cluster sizes; Clusters are displayed proportional within each lane - this could be desired or not -> decide.
 
-export function useEvents<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
+export const useEvents = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>,
   domain: Domain,
   zoomScale: ZoomScale,
   groupByLane: boolean,
-  cluster: boolean
-): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>] {
+  cluster: boolean,
+  onEventHover: (eventId: EID) => void,
+  onEventUnhover: (eventId: EID) => void
+): {
+  eventsInsideDomain: ReadonlyArray<E>
+  eventClustersInsideDomain: ReadonlyArray<TimelineEventCluster<LID>>
+  isNoEventSelected: boolean
+  isMouseOverEvent: boolean
+  onEventHoverDecorated: (eventId: EID) => void
+  onEventUnhoverDecorated: (eventId: EID) => void
+} => {
+  const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
+
+  const onEventHoverDecorated = (eventId: EID) => {
+    setIsMouseOverEvent(true)
+    onEventHover(eventId)
+  }
+
+  const onEventUnhoverDecorated = (eventId: EID) => {
+    setIsMouseOverEvent(false)
+    onEventUnhover(eventId)
+  }
+
   const comparableEvents = JSON.stringify(events)
 
-  return useMemo(() => {
+  const [eventsInsideDomain, eventClustersInsideDomain, isNoEventSelected] = useMemo(() => {
     const eventsInsideDomain = events.filter((e) => {
       const isStartInView = e.startTimeMillis >= domain[0] && e.startTimeMillis <= domain[1]
       const isEndInView = e.endTimeMillis && e.endTimeMillis >= domain[0] && e.endTimeMillis <= domain[1]
@@ -47,9 +68,11 @@ export function useEvents<EID extends string, LID extends string, E extends Time
       return isStartInView || isEndInView || isSpanningAcrossView
     })
 
+    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
+
     // zoomScale 'minimum' is never reached
     if (!cluster || zoomScale === ZoomLevels.ONE_DAY) {
-      return [eventsInsideDomain, []]
+      return [eventsInsideDomain, [], isNoEventSelected]
     } else {
       return groups(eventsInsideDomain, (e) =>
         e.isPinned || e.isSelected
@@ -59,11 +82,11 @@ export function useEvents<EID extends string, LID extends string, E extends Time
             }`
       ).reduce(
         (
-          acc: [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>],
+          acc: [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean],
           eventGroup
-        ): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>] => {
+        ): [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean] => {
           if (eventGroup[0] === pinnedOrSelectedGroup || eventGroup[1].length <= 1) {
-            return [[...acc[0], ...eventGroup[1]], [...acc[1]]]
+            return [[...acc[0], ...eventGroup[1]], [...acc[1]], isNoEventSelected]
           } else {
             return [
               [...acc[0]],
@@ -81,11 +104,21 @@ export function useEvents<EID extends string, LID extends string, E extends Time
                   // color: eventGroup[1][0].color,
                 },
               ],
+              isNoEventSelected,
             ]
           }
         },
-        [[], []] as [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>]
+        [[], [], isNoEventSelected] as [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean]
       )
     }
   }, [comparableEvents, domain, zoomScale, groupByLane, cluster])
+
+  return {
+    eventsInsideDomain,
+    eventClustersInsideDomain,
+    isNoEventSelected,
+    isMouseOverEvent,
+    onEventHoverDecorated,
+    onEventUnhoverDecorated,
+  }
 }

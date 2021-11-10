@@ -1,5 +1,5 @@
-import { createTimelineTheme } from '../dist'
 import { createMuiTheme } from '@material-ui/core'
+import { createTimelineTheme } from '../src/theme'
 
 describe('createTimelineTheme', () => {
   const materialTheme = createMuiTheme()

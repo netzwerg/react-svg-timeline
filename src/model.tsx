@@ -37,3 +37,5 @@ export type EventComponentFactory<EID extends string, LID extends string, E exte
 
 export type Cursor = 'default' | 'zoom-out' | 'zoom-in' | 'ew-resize' | 'grab'
 export type LaneDisplayMode = 'expanded' | 'collapsed'
+
+export type TimelineLayer = 'grid' | 'axes' | 'interaction' | 'marks'

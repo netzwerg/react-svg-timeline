@@ -1,5 +1,5 @@
-import { Domain } from './model'
-import { diff } from './shared'
+import { Domain } from '../model'
+import { diff } from '../utils'
 
 export const oneSec = 1000 //in ms
 export const oneMin = 60 * oneSec
@@ -144,3 +144,8 @@ export const nextBiggerZoomScale = (
   const range = diff(currentDomain[1], currentDomain[0]) * 2
   return [...orderedSelectedZoomLevels].reverse().find((s) => zoomScaleWidth(s) > range) || ZoomLevels.MAX
 }
+
+export const getDomainSpan = (domainStart: number, domainEnd: number, time: number, width: number): Domain => [
+  Math.max(domainStart, time - width / 2),
+  Math.min(domainEnd, time + width / 2),
+]

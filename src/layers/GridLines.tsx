@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
-import { monthDuration, weekDuration, yearDuration, ZoomLevels } from './ZoomScale'
+import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared/ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
-import { Domain } from './model'
+import { Domain } from '../model'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useTheme from '@material-ui/core/styles/useTheme'
-import { range } from './shared'
-import { useTimelineTheme } from './theme'
-import { XAxisTheme } from './theme/model'
+import { range } from '../utils'
+import { useTimelineTheme } from '../theme'
+import { XAxisTheme } from '../theme/model'
 
 interface Props {
   height: number
@@ -111,7 +111,11 @@ const useMonthViewStyles = makeStyles((theme: Theme) => ({
     opacity: 0.5,
     fontFamily: theme.typography.caption.fontFamily,
     fontSize: xAxisTheme.monthLabelFontSize ? xAxisTheme.monthLabelFontSize : monthViewLabelFontSize,
+<<<<<<< HEAD:src/GridLines.tsx
     fontWeight: xAxisTheme.monthLabelFontWeight ? xAxisTheme.monthLabelFontWeight : 'bold',
+=======
+    fontWeight: 'bold',
+>>>>>>> 71a3ba8ae5750cc9c0063569fa3b2e4478aee20f:src/layers/GridLines.tsx
     textAnchor: 'middle',
     cursor: 'default',
   }),

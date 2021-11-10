@@ -1,5 +1,5 @@
 import * as React from 'react'
-import TextSize from '../TextSize'
+import TextSize from '../shared/TextSize'
 import { Tooltip } from 'react-svg-tooltip'
 import { scaleLinear } from 'd3-scale'
 import { TooltipClasses, TOOLTIP_FONT_SIZE } from './useTooltipStyle'

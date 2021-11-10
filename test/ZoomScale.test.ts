@@ -6,7 +6,7 @@ import {
   zoomScaleWidth,
   ZoomLevels,
   defaultOrderedZoomLevels,
-} from '../src/ZoomScale'
+} from '../src/shared/ZoomScale'
 
 describe('ZoomScale for time-range: 3 days', () => {
   const threeDays: Domain = [0, 3 * zoomScaleWidth(ZoomLevels.ONE_DAY)]
