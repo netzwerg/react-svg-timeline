@@ -11,9 +11,10 @@ interface Props {
   readonly text: string
   readonly triggerRef: React.RefObject<SVGElement>
   readonly classes: TooltipClasses
+  readonly tooltipBelow?: boolean
 }
 
-export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }: Props) => {
+export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes, tooltipBelow=false }: Props) => {
   const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text)
 
   return (
@@ -26,7 +27,8 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }
         const tooltipX = type === 'period' ? 0 : type.singleEventX - xOffset
 
         const tooltipYPadding = 12
-        const tooltipY = y - yOffset - tooltipHeight - tooltipYPadding // don't follow mouse
+        const offsetY = yOffset + (tooltipBelow ? -tooltipHeight : tooltipHeight)
+        const tooltipY = y - offsetY - tooltipYPadding // don't follow mouse
         const baseY = y - yOffset - baseHeight - tooltipYPadding
 
         // determines how the rectangular tooltip area is offset to the left/right of the arrow
