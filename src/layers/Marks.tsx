@@ -41,6 +41,7 @@ export interface Props<EID extends string, LID extends string, E extends Timelin
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
+  tooltipArrow?: boolean
 }
 
 /**
@@ -61,6 +62,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   const classes = useStyles()
   const tooltipClasses = useTooltipStyle(timelineTheme.tooltip)
   const { eventComponent, timeScale, y } = props
+  const tooltipArrow = props.tooltipArrow ?? true
 
   // shorter periods on top of longer ones
   const sortByEventDuration = (e: E) => -(e.endTimeMillis ? e.endTimeMillis - e.startTimeMillis : 0)
@@ -95,7 +97,13 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   const backgroundMarks = useMemo(
     () =>
       events.map((e: E) => (
-        <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
+        <InteractiveEventMark
+          key={e.eventId}
+          event={e}
+          tooltipClasses={tooltipClasses}
+          {...props}
+          tooltipArrow={tooltipArrow}
+        >
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
       )),
@@ -146,6 +154,7 @@ interface InteractiveGroupProps<EID extends string, LID extends string, E extend
   onEventClick?: (eventId: EID) => void
   tooltipClasses: TooltipClasses
   children: React.ReactNode
+  tooltipArrow?: boolean
 }
 
 const InteractiveEventMark = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
@@ -157,6 +166,7 @@ const InteractiveEventMark = <EID extends string, LID extends string, E extends 
   onEventUnhover = noOp,
   tooltipClasses,
   children,
+  tooltipArrow,
 }: InteractiveGroupProps<EID, LID, E>) => {
   const eventId = event.eventId
 
@@ -187,6 +197,7 @@ const InteractiveEventMark = <EID extends string, LID extends string, E extends 
           triggerRef={triggerRef}
           text={event.tooltip}
           classes={tooltipClasses}
+          tooltipArrow={tooltipArrow}
         />
       ) : (
         <g />

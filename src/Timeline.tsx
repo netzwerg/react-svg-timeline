@@ -43,6 +43,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
   onTrimRangeChange?: (startMillis: number, endMillis: number) => void
   onInteractionEnd?: () => void
+  tooltipArrow?: boolean
 }
 
 export const Timeline = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
@@ -68,6 +69,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   onCursorMove,
   onTrimRangeChange,
   onInteractionEnd,
+  tooltipArrow = true,
 }: TimelineProps<EID, LID, E>) => {
   {
     const {
@@ -173,6 +175,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
               onEventHover={onEventHoverDecorated}
               onEventUnhover={onEventUnhoverDecorated}
               onEventClick={onEventClick}
+              tooltipArrow={tooltipArrow}
             />
           ) : (
             <CollapsedMarks
@@ -183,6 +186,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
               onEventHover={onEventHoverDecorated}
               onEventUnhover={onEventUnhoverDecorated}
               onEventClick={onEventClick}
+              tooltipArrow={tooltipArrow}
             />
           )}
         </g>
