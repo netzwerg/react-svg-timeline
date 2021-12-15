@@ -1,4 +1,4 @@
-# react-svg-timeline [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/react-svg-timeline.svg?style=flat)](https://www.npmjs.com/package/react-svg-timeline) [![Netlify Status](https://api.netlify.com/api/v1/badges/8d78caa2-c055-46a0-9d36-e447dafb1bde/deploy-status)](https://app.netlify.com/sites/react-svg-timeline/deploys)
+# react-svg-timeline [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/react-svg-timeline.svg?style=flat)](https://www.npmjs.com/package/react-svg-timeline)
 
 A React event timeline component based on SVG.
 
@@ -9,7 +9,17 @@ A React event timeline component based on SVG.
 - Custom "rubber band" Zoom
 - Panning
 
-✨ [Interactive Demo](https://react-svg-timeline.netlify.com/) ✨
+## Demo
+
+Out of the box – **plain & simple**:
+
+![](screenshot-timeline-component.png)
+
+Explore our [interactive demo](https://react-svg-timeline.netlify.com/) for more details on **customizations**.
+
+Alternatively, you are free to use just the zooming & panning **interaction logic**, e.g. as a layer of the awesome [Nivo](https://nivo.rocks) line chart:
+
+![](screenshot-nivo-layer.png)
 
 ## Installation
 
