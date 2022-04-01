@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, Fragment } from 'react'
 
 import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 
@@ -192,10 +192,31 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
     return (
       <TimelineThemeProvider theme={theme}>
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height}>
-          {
-            // TODO: Support custom layers
-            layers.map((layer) => layerById[layer])
-          }
+          {layers.map((layer, i) => {
+            if (typeof layer !== 'function') {
+              return layerById[layer]
+            }
+
+            return (
+              <Fragment key={i}>
+                {layer({
+                  width,
+                  height,
+                  domain,
+                  maxDomain,
+                  maxDomainStart,
+                  maxDomainEnd,
+                  currentZoomScale,
+                  nextSmallerZoomScale,
+                  xScale: timeScale,
+                  yScale,
+                  events: eventsInsideDomain,
+                  eventClusters: eventClustersInsideDomain,
+                  lanes,
+                })}
+              </Fragment>
+            )
+          })}
         </svg>
       </TimelineThemeProvider>
     )
