@@ -1,44 +1,57 @@
 import { Theme as MaterialTheme } from '@material-ui/core'
-import { TimelineTheme, TooltipTheme, TrimmerTheme, XAxisTheme } from './model'
+import { TimelineTheme, TooltipTheme, TrimmerTheme, TypographyTheme, XAxisTheme } from './model'
 import deepMerge from 'ts-deepmerge'
 
-const defaultOrange = '#ffab40'
-const defaultGrey = '#aaaaaa'
-const defaultOpacity = 0.1
+const ORANGE_DEFAULT = '#ffab40'
+const GREY_DEFAULT = '#aaaaaa'
+const GREY_500 = '#9e9e9e'
+const OPACITY_DEFAULT = 0.1
 
 // Still relying on Material theme for some defaults
 // Eventually, this will be the last dependency, and we can decide to refactor it away...
 
 export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThemeOptions): TimelineTheme => {
   const defaults: TimelineTheme = {
+    typography: {
+      fontFamily: theme.typography.fontFamily,
+    },
     xAxis: {
       labelColor: theme.palette.text.secondary,
+    },
+    lane: {
+      laneLabelFontSize: 16,
+      middleLine: {
+        width: 1,
+        color: GREY_500,
+      },
     },
     tooltip: {
       backgroundColor: theme.palette.text.secondary,
     },
     trimmer: {
-      trimHandleColor: defaultOrange,
-      trimHandleLabelColor: defaultOrange,
+      trimHandleColor: ORANGE_DEFAULT,
+      trimHandleLabelColor: ORANGE_DEFAULT,
       trimHandleWidth: 10,
-      trimTriangleColor: defaultOrange,
+      trimTriangleColor: ORANGE_DEFAULT,
       trimRangeInsideColor: 'transparent',
       trimRangeInsideOpacity: 0,
-      trimRangeInsideHighlightColor: defaultOrange,
-      trimRangeInsideHighlightOpacity: defaultOpacity,
-      trimRangeOutsideColor: defaultGrey,
-      trimRangeOutsideOpacity: defaultOpacity,
+      trimRangeInsideHighlightColor: ORANGE_DEFAULT,
+      trimRangeInsideHighlightOpacity: OPACITY_DEFAULT,
+      trimRangeOutsideColor: GREY_DEFAULT,
+      trimRangeOutsideOpacity: OPACITY_DEFAULT,
     },
   }
   return options ? deepMerge(defaults, options) : defaults
 }
 
 export interface TimelineThemeOptions {
+  typography?: TypographyThemeOptions
   xAxis?: XAxisThemeOptions
   tooltip?: TooltipThemeOptions
   trimmer?: TrimmerThemeOptions
 }
 
+type TypographyThemeOptions = Partial<TypographyTheme>
 type XAxisThemeOptions = Partial<XAxisTheme>
 type TooltipThemeOptions = Partial<TooltipTheme>
 type TrimmerThemeOptions = Partial<TrimmerTheme>
