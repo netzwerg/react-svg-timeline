@@ -20,10 +20,8 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
     },
     lane: {
       laneLabelFontSize: 16,
-      middleLine: {
-        width: 1,
-        color: GREY_500,
-      },
+      middleLineColor: GREY_500,
+      middleLineWidth: 1,
     },
     tooltip: {
       backgroundColor: theme.palette.text.secondary,

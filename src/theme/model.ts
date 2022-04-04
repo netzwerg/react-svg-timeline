@@ -21,10 +21,8 @@ export interface XAxisTheme {
 
 export interface LaneTheme {
   readonly laneLabelFontSize: number
-  readonly middleLine: Readonly<{
-    readonly color: string
-    readonly width: number
-  }>
+  readonly middleLineColor: string
+  readonly middleLineWidth: number
 }
 
 export interface TooltipTheme {

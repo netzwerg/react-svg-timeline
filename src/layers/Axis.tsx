@@ -10,8 +10,8 @@ export const Axis = ({ y }: { y: number }) => {
       x2="100%"
       y2={y}
       style={{
-        stroke: theme.lane.middleLine.color,
-        strokeWidth: theme.lane.middleLine.width,
+        stroke: theme.lane.middleLineColor,
+        strokeWidth: theme.lane.middleLineWidth,
       }}
     />
   )
