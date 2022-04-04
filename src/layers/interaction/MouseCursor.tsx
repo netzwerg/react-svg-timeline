@@ -1,21 +1,25 @@
 import * as React from 'react'
 import { ZoomScale } from '../../shared/ZoomScale'
-import makeStyles from '@material-ui/core/styles/makeStyles'
-import { orange } from '@material-ui/core/colors'
 import { Cursor } from '../../model'
 import { InteractionMode } from '.'
 import { CursorLabel } from './CursorLabel'
+import { useTimelineTheme } from '../../theme'
 
-const useStyles = makeStyles(() => ({
-  cursor: {
-    stroke: orange.A200,
-    strokeWidth: 2,
-  },
-  zoomRange: {
-    fill: orange.A200,
-    opacity: 0.1,
-  },
-}))
+const useCursorStyle = () => {
+  const theme = useTimelineTheme().mouseCursor
+  return {
+    stroke: theme.lineColor,
+    strokeWidth: theme.lineWidth,
+  }
+}
+
+const useZoomRangeStyle = () => {
+  const theme = useTimelineTheme().mouseCursor
+  return {
+    fill: theme.zoomRangeColor,
+    opacity: theme.zoomRangeOpacity,
+  }
+}
 
 interface Props {
   mousePosition: number
@@ -81,6 +85,7 @@ export const MouseCursor = ({
 }
 
 /* ·················································································································· */
+
 /*  Zoom
 /* ·················································································································· */
 
@@ -103,19 +108,20 @@ const ZoomCursor = ({
   zoomRangeStart,
   zoomRangeEnd,
 }: ZoomCursorProps) => {
-  const classes = useStyles()
+  const cursorStyle = useCursorStyle()
+  const zoomRangeStyle = useZoomRangeStyle()
   return (
     <g>
       <rect
         visibility={isZoomInPossible ? 'visible' : 'hidden'}
-        className={classes.zoomRange}
+        style={zoomRangeStyle}
         x={zoomRangeStart}
         y={0}
         width={zoomRangeEnd - zoomRangeStart}
         height="100%"
         cursor={cursor}
       />
-      <line className={classes.cursor} x1={mousePosition} y1="0%" x2={mousePosition} y2="5%" cursor={cursor} />
+      <line style={cursorStyle} x1={mousePosition} y1="0%" x2={mousePosition} y2="5%" cursor={cursor} />
       <CursorLabel
         x={mousePosition}
         y={isZoomInPossible ? '11%' : '15%'}
@@ -123,12 +129,13 @@ const ZoomCursor = ({
         overline={cursorLabel}
         label={isZoomInPossible ? zoomScale : ''}
       />
-      <line className={classes.cursor} x1={mousePosition} y1="23%" x2={mousePosition} y2="100%" cursor={cursor} />
+      <line style={cursorStyle} x1={mousePosition} y1="23%" x2={mousePosition} y2="100%" cursor={cursor} />
     </g>
   )
 }
 
 /* ·················································································································· */
+
 /*  Panning
 /* ·················································································································· */
 
@@ -137,15 +144,16 @@ interface PanningProps {
 }
 
 const PanningCursor = ({ mousePosition }: PanningProps) => {
-  const classes = useStyles()
+  const cursorStyle = useCursorStyle()
   return (
     <g>
-      <line className={classes.cursor} x1={mousePosition} y1={'0%'} x2={mousePosition} y2={'100%'} cursor={'grab'} />
+      <line style={cursorStyle} x1={mousePosition} y1={'0%'} x2={mousePosition} y2={'100%'} cursor={'grab'} />
     </g>
   )
 }
 
 /* ·················································································································· */
+
 /*  RubberBand
 /* ·················································································································· */
 
@@ -155,21 +163,17 @@ interface RubberBandProps {
 }
 
 const RubberBandCursor = ({ start, end }: RubberBandProps) => {
-  const classes = useStyles()
+  const cursorStyle = useCursorStyle()
+  const zoomRangeStyle = useZoomRangeStyle()
+
   const [y1, y2] = ['0%', '100%']
   return (
     <g>
-      <line className={classes.cursor} x1={start} y1={y1} x2={start} y2={y2} />
+      <line style={cursorStyle} x1={start} y1={y1} x2={start} y2={y2} />
       {end && (
         <g>
-          <line className={classes.cursor} x1={end} y1={y1} x2={end} y2={y2} />
-          <rect
-            className={classes.zoomRange}
-            x={Math.min(start, end)}
-            y={y1}
-            width={Math.abs(end - start)}
-            height={y2}
-          />
+          <line style={cursorStyle} x1={end} y1={y1} x2={end} y2={y2} />
+          <rect style={zoomRangeStyle} x={Math.min(start, end)} y={y1} width={Math.abs(end - start)} height={y2} />
         </g>
       )}
     </g>

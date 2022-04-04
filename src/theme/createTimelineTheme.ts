@@ -1,5 +1,5 @@
 import { Theme as MaterialTheme } from '@material-ui/core'
-import { TimelineTheme, TooltipTheme, TrimmerTheme, TypographyTheme, XAxisTheme } from './model'
+import { MouseCursorTheme, TimelineTheme, TooltipTheme, TrimmerTheme, TypographyTheme, XAxisTheme } from './model'
 import deepMerge from 'ts-deepmerge'
 
 const ORANGE_DEFAULT = '#ffab40'
@@ -40,6 +40,12 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       trimRangeOutsideColor: GREY_DEFAULT,
       trimRangeOutsideOpacity: OPACITY_DEFAULT,
     },
+    mouseCursor: {
+      lineColor: ORANGE_DEFAULT,
+      lineWidth: 2,
+      zoomRangeColor: ORANGE_DEFAULT,
+      zoomRangeOpacity: OPACITY_DEFAULT,
+    },
   }
   return options ? deepMerge(defaults, options) : defaults
 }
@@ -49,9 +55,11 @@ export interface TimelineThemeOptions {
   xAxis?: XAxisThemeOptions
   tooltip?: TooltipThemeOptions
   trimmer?: TrimmerThemeOptions
+  mouseCursor?: MouseCursorThemeOptions
 }
 
 type TypographyThemeOptions = Partial<TypographyTheme>
 type XAxisThemeOptions = Partial<XAxisTheme>
 type TooltipThemeOptions = Partial<TooltipTheme>
 type TrimmerThemeOptions = Partial<TrimmerTheme>
+type MouseCursorThemeOptions = Partial<MouseCursorTheme>

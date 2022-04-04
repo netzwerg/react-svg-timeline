@@ -6,6 +6,7 @@ export interface TimelineTheme {
   readonly lane: LaneTheme
   readonly tooltip: TooltipTheme
   readonly trimmer: TrimmerTheme
+  readonly mouseCursor: MouseCursorTheme
 }
 
 export interface TypographyTheme {
@@ -20,10 +21,10 @@ export interface XAxisTheme {
 
 export interface LaneTheme {
   readonly laneLabelFontSize: number
-  readonly middleLine: {
+  readonly middleLine: Readonly<{
     readonly color: string
     readonly width: number
-  }
+  }>
 }
 
 export interface TooltipTheme {
@@ -41,4 +42,11 @@ export interface TrimmerTheme {
   readonly trimRangeInsideHighlightOpacity: number
   readonly trimRangeOutsideColor: string
   readonly trimRangeOutsideOpacity: number
+}
+
+export interface MouseCursorTheme {
+  readonly lineColor: string
+  readonly lineWidth: number
+  readonly zoomRangeColor: string
+  readonly zoomRangeOpacity: number
 }
