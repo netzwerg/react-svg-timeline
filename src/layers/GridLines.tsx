@@ -6,6 +6,7 @@ import { Domain } from '../model'
 import { range } from '../utils'
 import { useTimelineTheme } from '../theme'
 import { XAxisTheme } from '../theme/model'
+import { CSSProperties } from 'react'
 
 interface Props {
   height: number
@@ -38,7 +39,7 @@ export const GridLines = ({ height, domain, smallerZoomScale, timeScale }: Props
 /*  Year
 /* ·················································································································· */
 
-const useYearViewTextAttributes = () => {
+const useYearViewTextStyle = (): CSSProperties => {
   const theme = useTimelineTheme()
   return {
     fill: theme.xAxis.labelColor,
@@ -56,7 +57,7 @@ interface YearViewProps extends Omit<Props, 'smallerZoomScale'> {
 
 const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearViewProps) => {
   const xAxisTheme: XAxisTheme = useTimelineTheme().xAxis
-  const textAttributes = useYearViewTextAttributes()
+  const textStyle = useYearViewTextStyle()
   const gridLineStyle = useGridLineStyle()
 
   // not calendar-based (and thus not accounting for leap years), but good enough for horizontal placement of labels
@@ -77,7 +78,7 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
       <g key={year}>
         <line style={gridLineStyle} x1={x} y1={0} x2={x} y2={height} />
         <text
-          {...textAttributes}
+          style={textStyle}
           x={xMidYear}
           y="90%"
           fontSize={fontSize}
@@ -99,7 +100,7 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const monthViewLabelFontSize = 18
 
-const useMonthViewTextAttributes = () => {
+const useMonthViewTextStyle = (): CSSProperties => {
   const theme = useTimelineTheme()
   return {
     fill: theme.xAxis.labelColor,
@@ -117,7 +118,7 @@ interface MonthViewProps extends Omit<Props, 'smallerZoomScale'> {
 }
 
 const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: MonthViewProps) => {
-  const textAttributes = useMonthViewTextAttributes()
+  const textStyle = useMonthViewTextStyle()
 
   // not calendar-based (fixed 30 days), but good enough for horizontal placement of labels
   const monthWidth = monthDuration
@@ -148,10 +149,10 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
       <g key={rawMonth}>
         {showWeekStripes && <WeekStripes monthStart={monthTimestamp} timeScale={timeScale} />}
         <MonthLine x={x} month={month} />
-        <text {...textAttributes} x={xMidMonth} y={height - 1.5 * monthViewLabelFontSize}>
+        <text style={textStyle} x={xMidMonth} y={height - 1.5 * monthViewLabelFontSize}>
           {monthName}
         </text>
-        <text {...textAttributes} x={xMidMonth} y={height - 0.5 * monthViewLabelFontSize}>
+        <text style={textStyle} x={xMidMonth} y={height - 0.5 * monthViewLabelFontSize}>
           {year}
         </text>
         {isLast && <MonthLine x={xLast} month={month} />}
