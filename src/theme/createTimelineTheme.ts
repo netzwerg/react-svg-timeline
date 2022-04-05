@@ -58,6 +58,7 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       lineWidth: 2,
       zoomRangeColor: ORANGE_DEFAULT,
       zoomRangeOpacity: OPACITY_DEFAULT,
+      labelColor: ORANGE_DEFAULT,
     },
   }
   return options ? deepMerge(defaults, options) : defaults

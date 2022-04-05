@@ -55,4 +55,5 @@ export interface MouseCursorTheme {
   readonly lineWidth: number
   readonly zoomRangeColor: string
   readonly zoomRangeOpacity: number
+  readonly labelColor: string
 }
