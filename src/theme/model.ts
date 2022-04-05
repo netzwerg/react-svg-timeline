@@ -3,6 +3,7 @@ import * as React from 'react'
 export interface TimelineTheme {
   readonly typography: TypographyTheme
   readonly xAxis: XAxisTheme
+  readonly grid: GridTheme
   readonly lane: LaneTheme
   readonly tooltip: TooltipTheme
   readonly trimmer: TrimmerTheme
@@ -11,12 +12,19 @@ export interface TimelineTheme {
 
 export interface TypographyTheme {
   readonly fontFamily: React.CSSProperties['fontFamily']
+  readonly fontFamilyCaption: React.CSSProperties['fontFamily']
 }
 
 export interface XAxisTheme {
   readonly labelColor: string
   readonly monthLabelFontSize?: number
   readonly yearLabelFontSize?: number
+}
+
+export interface GridTheme {
+  readonly lineColor: string
+  readonly weekStripesColor: string
+  readonly weekStripesOpacity: number
 }
 
 export interface LaneTheme {

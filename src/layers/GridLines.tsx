@@ -1,11 +1,8 @@
 import * as React from 'react'
 import { ScaleLinear } from 'd3-scale'
-import { Theme } from '@material-ui/core'
 import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared/ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
 import { Domain } from '../model'
-import makeStyles from '@material-ui/core/styles/makeStyles'
-import useTheme from '@material-ui/core/styles/useTheme'
 import { range } from '../utils'
 import { useTimelineTheme } from '../theme'
 import { XAxisTheme } from '../theme/model'
@@ -17,11 +14,12 @@ interface Props {
   timeScale: ScaleLinear<number, number>
 }
 
-const gridLineStyle = (theme: Theme) => ({
-  line: {
-    stroke: theme.palette.grey['500'],
-  },
-})
+const useGridLineStyle = () => {
+  const theme = useTimelineTheme()
+  return {
+    stroke: theme.grid.lineColor,
+  }
+}
 
 export const GridLines = ({ height, domain, smallerZoomScale, timeScale }: Props) => {
   switch (smallerZoomScale) {
@@ -40,17 +38,17 @@ export const GridLines = ({ height, domain, smallerZoomScale, timeScale }: Props
 /*  Year
 /* ·················································································································· */
 
-const useYearViewStyles = makeStyles((theme: Theme) => ({
-  ...gridLineStyle(theme),
-  label: (xAxisTheme: XAxisTheme) => ({
-    fill: xAxisTheme.labelColor,
+const useYearViewTextAttributes = () => {
+  const theme = useTimelineTheme()
+  return {
+    fill: theme.xAxis.labelColor,
     opacity: 0.5,
-    fontFamily: theme.typography.caption.fontFamily,
+    fontFamily: theme.typography.fontFamilyCaption,
     fontWeight: 'bold',
     textAnchor: 'middle',
     cursor: 'default',
-  }),
-}))
+  }
+}
 
 interface YearViewProps extends Omit<Props, 'smallerZoomScale'> {
   showDecadesOnly?: boolean
@@ -58,7 +56,8 @@ interface YearViewProps extends Omit<Props, 'smallerZoomScale'> {
 
 const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearViewProps) => {
   const xAxisTheme: XAxisTheme = useTimelineTheme().xAxis
-  const classes = useYearViewStyles(xAxisTheme)
+  const textAttributes = useYearViewTextAttributes()
+  const gridLineStyle = useGridLineStyle()
 
   // not calendar-based (and thus not accounting for leap years), but good enough for horizontal placement of labels
   const yearWidth = yearDuration
@@ -76,9 +75,9 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
     const isDecade = year % 10 === 0
     return (
       <g key={year}>
-        <line className={classes.line} x1={x} y1={0} x2={x} y2={height} />
+        <line style={gridLineStyle} x1={x} y1={0} x2={x} y2={height} />
         <text
-          className={classes.label}
+          {...textAttributes}
           x={xMidYear}
           y="90%"
           fontSize={fontSize}
@@ -100,26 +99,25 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const monthViewLabelFontSize = 18
 
-const useMonthViewStyles = makeStyles((theme: Theme) => ({
-  ...gridLineStyle(theme),
-  label: (xAxisTheme: XAxisTheme) => ({
-    fill: xAxisTheme.labelColor,
+const useMonthViewTextAttributes = () => {
+  const theme = useTimelineTheme()
+  return {
+    fill: theme.xAxis.labelColor,
     opacity: 0.5,
-    fontFamily: theme.typography.caption.fontFamily,
-    fontSize: xAxisTheme.monthLabelFontSize ? xAxisTheme.monthLabelFontSize : monthViewLabelFontSize,
+    fontFamily: theme.typography.fontFamilyCaption,
+    fontSize: theme.xAxis.monthLabelFontSize ? theme.xAxis.monthLabelFontSize : monthViewLabelFontSize,
     fontWeight: 'bold',
     textAnchor: 'middle',
     cursor: 'default',
-  }),
-}))
+  }
+}
 
 interface MonthViewProps extends Omit<Props, 'smallerZoomScale'> {
   showWeekStripes?: boolean
 }
 
 const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: MonthViewProps) => {
-  const xAxisTheme = useTimelineTheme().xAxis
-  const classes = useMonthViewStyles(xAxisTheme)
+  const textAttributes = useMonthViewTextAttributes()
 
   // not calendar-based (fixed 30 days), but good enough for horizontal placement of labels
   const monthWidth = monthDuration
@@ -150,10 +148,10 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
       <g key={rawMonth}>
         {showWeekStripes && <WeekStripes monthStart={monthTimestamp} timeScale={timeScale} />}
         <MonthLine x={x} month={month} />
-        <text className={classes.label} x={xMidMonth} y={height - 1.5 * monthViewLabelFontSize}>
+        <text {...textAttributes} x={xMidMonth} y={height - 1.5 * monthViewLabelFontSize}>
           {monthName}
         </text>
-        <text className={classes.label} x={xMidMonth} y={height - 0.5 * monthViewLabelFontSize}>
+        <text {...textAttributes} x={xMidMonth} y={height - 0.5 * monthViewLabelFontSize}>
           {year}
         </text>
         {isLast && <MonthLine x={xLast} month={month} />}
@@ -170,11 +168,10 @@ interface MonthLineProps {
 }
 
 const MonthLine = ({ x, month }: MonthLineProps) => {
-  const xAxisTheme = useTimelineTheme().xAxis
-  const classes = useMonthViewStyles(xAxisTheme)
+  const style = useGridLineStyle()
   return (
     <line
-      className={classes.line}
+      style={style}
       x1={x}
       y1={0}
       x2={x}
@@ -194,7 +191,7 @@ interface WeekStripesProps {
 }
 
 const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
-  const theme: Theme = useTheme()
+  const theme = useTimelineTheme().grid
   const monthEnd = endOfMonth(monthStart)
   const lines = range(1, 6).map((weekNumber) => {
     const weekStart = startOfWeek(addWeeks(monthStart, weekNumber))
@@ -204,8 +201,8 @@ const WeekStripes = ({ monthStart, timeScale }: WeekStripesProps) => {
       const atEndOfWeek = endOfWeek(addWeeks(monthStart, weekNumber))
       const width = timeScale(atEndOfWeek.valueOf())! - x
       const weekSinceEpoch = Math.floor(weekStart.valueOf() / weekDuration)
-      const fill = weekSinceEpoch % 2 === 0 ? theme.palette.grey['200'] : 'transparent'
-      const opacity = theme.palette.type === 'light' ? 1 : 0.1
+      const fill = weekSinceEpoch % 2 === 0 ? theme.weekStripesColor : 'transparent'
+      const opacity = theme.weekStripesOpacity
       return <rect key={key} fill={fill} opacity={opacity} x={x} y={0} width={width} height="100%" />
     } else {
       return <g key={key} />
