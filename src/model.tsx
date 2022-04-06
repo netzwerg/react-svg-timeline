@@ -49,6 +49,7 @@ export interface CustomLayerProps<EID extends string, LID extends string, E exte
   events: ReadonlyArray<E>
   eventClusters: ReadonlyArray<TimelineEventCluster<LID>>
   lanes: ReadonlyArray<TimelineLane<LID>>
+  laneDisplayMode?: LaneDisplayMode
   xScale: ScaleLinear<number, number>
   yScale: ScaleBand<LID>
   domain: Domain

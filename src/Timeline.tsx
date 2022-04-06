@@ -213,6 +213,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
                   events: eventsInsideDomain,
                   eventClusters: eventClustersInsideDomain,
                   lanes,
+                  laneDisplayMode,
                 })}
               </Fragment>
             )
