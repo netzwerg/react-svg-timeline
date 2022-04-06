@@ -26,7 +26,7 @@ export const Axes = <LID extends string>({ lanes, yScale }: AxesProps<LID>) => {
             <text
               style={{
                 fontSize: theme.lane.laneLabelFontSize,
-                fontFamily: theme.typography.fontFamily,
+                fontFamily: theme.base.fontFamily,
                 fontWeight: 600,
                 opacity: 0.4,
               }}

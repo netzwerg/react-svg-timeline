@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 export interface TimelineTheme {
-  readonly typography: TypographyTheme
+  readonly base: BaseTheme
   readonly xAxis: XAxisTheme
   readonly grid: GridTheme
   readonly lane: LaneTheme
@@ -10,7 +10,8 @@ export interface TimelineTheme {
   readonly mouseCursor: MouseCursorTheme
 }
 
-export interface TypographyTheme {
+export interface BaseTheme {
+  readonly backgroundColor: string
   readonly fontFamily: React.CSSProperties['fontFamily']
   readonly fontFamilyCaption: React.CSSProperties['fontFamily']
 }

@@ -44,7 +44,7 @@ const useYearViewTextStyle = (): CSSProperties => {
   return {
     fill: theme.xAxis.labelColor,
     opacity: 0.5,
-    fontFamily: theme.typography.fontFamilyCaption,
+    fontFamily: theme.base.fontFamilyCaption,
     fontWeight: 'bold',
     textAnchor: 'middle',
     cursor: 'default',
@@ -105,7 +105,7 @@ const useMonthViewTextStyle = (): CSSProperties => {
   return {
     fill: theme.xAxis.labelColor,
     opacity: 0.5,
-    fontFamily: theme.typography.fontFamilyCaption,
+    fontFamily: theme.base.fontFamilyCaption,
     fontSize: theme.xAxis.monthLabelFontSize ? theme.xAxis.monthLabelFontSize : monthViewLabelFontSize,
     fontWeight: 'bold',
     textAnchor: 'middle',

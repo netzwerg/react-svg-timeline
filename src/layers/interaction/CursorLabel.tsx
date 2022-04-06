@@ -7,7 +7,7 @@ const useTextStyle = (fill?: string): CSSProperties => {
     fill: fill ?? theme.mouseCursor.labelColor,
     textAnchor: 'middle',
     dominantBaseline: 'middle',
-    fontFamily: theme.typography.fontFamilyCaption,
+    fontFamily: theme.base.fontFamilyCaption,
     cursor: 'default',
   }
 }
