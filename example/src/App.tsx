@@ -16,7 +16,7 @@ import { CustomizedTimeline } from './CustomizedTimeline'
 import { ExampleEvent, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
 import Switch from '@material-ui/core/Switch'
 import { Select, MenuItem, InputLabel } from '@material-ui/core'
-import { LaneDisplayMode, TimelineProps } from '../../src'
+import { LaneDisplayMode, TimelineLayer, TimelineProps } from '../../src'
 import Card from '@material-ui/core/Card'
 import { useMemo } from 'react'
 
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   root: {
     display: 'grid',
     width: 'calc(100vw - 200px)',
-    gridTemplateRows: 'auto auto 300px 300px',
+    gridTemplateRows: 'auto auto 300px 300px 300px',
     gridRowGap: 100,
     margin: 100,
   },
@@ -85,6 +85,7 @@ export const App = () => {
   const [suppressMarkAnimation, setSuppressMarkAnimation] = useState<boolean>(false)
   const [datasetChosen, setDatasetChosen] = useState<string>('1')
   const [useCustomRange, setUseCustomRange] = useState<boolean>(false)
+
   const rootClasses = cn(classes.root, datasetChosen === '2' ? classes.largeDataset : '')
 
   return (
@@ -124,6 +125,33 @@ export const App = () => {
         datasetChosen={datasetChosen}
         useCustomRange={useCustomRange}
       />
+      <DemoTimeline
+        timelineComponent={Timeline}
+        title={'Custom Layer'}
+        laneDisplayMode={laneDisplayMode}
+        suppressMarkAnimation={suppressMarkAnimation}
+        isTrimming={isTrimming}
+        enableClustering={enableClustering}
+        datasetChosen={datasetChosen}
+        useCustomRange={useCustomRange}
+        layers={[
+          'grid',
+          'axes',
+          ({ height, width, domain, maxDomain }) => {
+            const fontSize = 100 / ((domain[1] - domain[0]) / (maxDomain[1] - maxDomain[0]))
+
+            return (
+              <g>
+                <text x={width / 2} y={height / 2} fontSize={fontSize} textAnchor="middle" fill="#9e9e9e">
+                  Custom Layer
+                </text>
+              </g>
+            )
+          },
+          'marks',
+          'interaction',
+        ]}
+      />
     </div>
   )
 }
@@ -137,6 +165,7 @@ interface DemoTimelineProps {
   enableClustering: boolean
   datasetChosen: string
   useCustomRange: boolean
+  layers?: ReadonlyArray<TimelineLayer>
 }
 
 const DemoTimeline = ({
@@ -148,6 +177,7 @@ const DemoTimeline = ({
   enableClustering,
   datasetChosen,
   useCustomRange,
+  layers,
 }: DemoTimelineProps) => {
   const [selectedEvents, setSelectedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
   const [pinnedEvents, setPinnedEvents] = useState<ImmutableSet<TimelineEventId>>(ImmutableSet())
@@ -238,6 +268,7 @@ const DemoTimeline = ({
             onInteractionEnd,
             enableEventClustering: enableClustering,
             customRange: useCustomRange ? [315529200000, 1640991600000] : undefined,
+            layers,
           }
           return React.createElement(timelineComponent, timelineProps)
         }}
