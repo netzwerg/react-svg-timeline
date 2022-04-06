@@ -35,7 +35,6 @@
     "react-dom": ">=16.3"
   },
   "dependencies": {
-    "@types/d3-array": "^2.9.0",
     "d3-array": "^2.11.0",
     "d3-scale": "^3.0.1",
     "date-fns": "^2.2.1",
@@ -44,9 +43,11 @@
   },
   "devDependencies": {
     "@material-ui/core": "^4.3.3",
-    "@testing-library/react": "^11.0.4",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^12.1.2",
+    "@types/d3-array": "^2.9.0",
     "@types/d3-scale": "^2.1.1",
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^27.4.1",
     "@types/react": "^16.9.51",
     "@types/react-dom": "^16.9.8",
     "husky": "^4.3.0",
@@ -67,6 +68,9 @@
   "jest": {
     "setupFiles": [
       "jest-canvas-mock"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setupTests.ts"
     ]
   }
 }
