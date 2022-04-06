@@ -23,8 +23,6 @@ describe('Timeline', () => {
   it('renders a custom layer', () => {
     const dateFormat = () => 'whatevz'
 
-    const customLayer = ({ height }) => <g>Test Layer {height}</g>
-
     render(
       <Timeline
         width={99}
@@ -32,7 +30,7 @@ describe('Timeline', () => {
         events={events}
         lanes={lanes}
         dateFormat={dateFormat}
-        layers={['axes', 'grid', customLayer]}
+        layers={['axes', 'grid', ({ height }) => <g>Test Layer {height}</g>]}
       />
     )
 
