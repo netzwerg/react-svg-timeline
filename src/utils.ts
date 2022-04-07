@@ -1,15 +1,17 @@
-import { grey, indigo, yellow } from '@material-ui/core/colors'
-
 export const noOp = () => {
   /* ignorance is bliss */
 }
-export const defaultEventColor = indigo['500']
-export const defaultClusterColor = indigo['500']
-export const defaultLaneColor = indigo['500']
 
-export const defaultDarkGrey = grey['800']
-export const selectionColor = 'rgba(255, 255, 141, 0.5)' // transparent yellow A100
-export const selectionColorOpaque = yellow.A100
+const INDIGO_500 = '#3f51b5'
+const YELLOW_A100 = '#ffff8d'
+const YELLOW_A100_TRANSPARENT = 'rgba(255, 255, 141, 0.5)'
+
+export const defaultEventColor = INDIGO_500
+export const defaultClusterColor = INDIGO_500
+export const defaultLaneColor = INDIGO_500
+
+export const selectionColor = YELLOW_A100_TRANSPARENT
+export const selectionColorOpaque = YELLOW_A100
 
 export const defaultSingleEventMarkHeight = 20
 
