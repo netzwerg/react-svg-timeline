@@ -2,6 +2,7 @@ import * as React from 'react'
 
 export interface TimelineTheme {
   readonly base: BaseTheme
+  readonly event: EventTheme
   readonly xAxis: XAxisTheme
   readonly grid: GridTheme
   readonly lane: LaneTheme
@@ -14,6 +15,10 @@ export interface BaseTheme {
   readonly backgroundColor: string
   readonly fontFamily: React.CSSProperties['fontFamily']
   readonly fontFamilyCaption: React.CSSProperties['fontFamily']
+}
+
+export interface EventTheme {
+  readonly pinnedLineColor: string
 }
 
 export interface XAxisTheme {

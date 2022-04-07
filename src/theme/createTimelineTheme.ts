@@ -1,5 +1,14 @@
 import { Theme as MaterialTheme } from '@material-ui/core'
-import { GridTheme, MouseCursorTheme, TimelineTheme, TooltipTheme, TrimmerTheme, BaseTheme, XAxisTheme } from './model'
+import {
+  GridTheme,
+  MouseCursorTheme,
+  TimelineTheme,
+  TooltipTheme,
+  TrimmerTheme,
+  BaseTheme,
+  XAxisTheme,
+  EventTheme,
+} from './model'
 import deepMerge from 'ts-deepmerge'
 
 const ORANGE_DEFAULT = '#ffab40'
@@ -17,6 +26,9 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       backgroundColor: theme.palette.background.paper,
       fontFamily: theme.typography.fontFamily,
       fontFamilyCaption: theme.typography.caption.fontFamily,
+    },
+    event: {
+      pinnedLineColor: theme.palette.type === 'dark' ? 'white' : 'black',
     },
     xAxis: {
       labelColor: theme.palette.text.secondary,
@@ -60,7 +72,8 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
 }
 
 export interface TimelineThemeOptions {
-  typography?: TypographyThemeOptions
+  base?: BaseThemeOptions
+  event?: EventThemeOptions
   xAxis?: XAxisThemeOptions
   grid?: GridThemeOptions
   tooltip?: TooltipThemeOptions
@@ -68,7 +81,8 @@ export interface TimelineThemeOptions {
   mouseCursor?: MouseCursorThemeOptions
 }
 
-type TypographyThemeOptions = Partial<BaseTheme>
+type BaseThemeOptions = Partial<BaseTheme>
+type EventThemeOptions = Partial<EventTheme>
 type XAxisThemeOptions = Partial<XAxisTheme>
 type GridThemeOptions = Partial<GridTheme>
 type TooltipThemeOptions = Partial<TooltipTheme>

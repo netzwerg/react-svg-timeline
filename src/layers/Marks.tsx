@@ -2,9 +2,7 @@ import * as React from 'react'
 import { useMemo, useRef } from 'react'
 import { defaultEventColor, defaultSingleEventMarkHeight, noOp, selectionColor, selectionColorOpaque } from '../utils'
 import { ScaleLinear } from 'd3-scale'
-import { Theme } from '@material-ui/core'
 import { EventComponentFactory, EventComponentRole, TimelineEvent } from '../model'
-import useTheme from '@material-ui/core/styles/useTheme'
 import { EventTooltip } from '../tooltip/EventTooltip'
 import { useTimelineTheme } from '../theme/useTimelineTheme'
 
@@ -212,9 +210,9 @@ const DefaultEventMark = <EID extends string, LID extends string, E extends Time
   y,
   timeScale,
 }: DefaultEventMarkProps<EID, LID, E>) => {
-  const theme: Theme = useTheme()
+  const theme = useTimelineTheme()
   const startX = timeScale(e.startTimeMillis)!
-  const strokeColor = e.isPinned ? (theme.palette.type === 'dark' ? 'white' : 'black') : undefined
+  const strokeColor = e.isPinned ? theme.event.pinnedLineColor : undefined
   if (e.endTimeMillis === undefined) {
     return (
       <circle
