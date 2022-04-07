@@ -1,25 +1,32 @@
-import React from 'react'
-import { makeStyles } from '@material-ui/core'
+import React, { CSSProperties } from 'react'
 import { ScaleLinear } from 'd3-scale'
 import TrimHandle from './TrimHandle'
 import Triangle, { TriangleDirection } from '../../../shared/Triangle'
 import { useTimelineTheme } from '../../../theme/useTimelineTheme'
-import { TrimmerTheme } from '../../../theme/model'
 import { TrimHover, TrimNone } from '../model'
 
-const useStyles = makeStyles(() => ({
-  trimmerArea: (trimmerTheme: TrimmerTheme) => ({
-    fill: trimmerTheme.trimRangeInsideColor,
-    opacity: trimmerTheme.trimRangeInsideOpacity,
-  }),
-  trimmerAreaHighlight: (trimmerTheme: TrimmerTheme) => ({
-    fill: trimmerTheme.trimRangeInsideHighlightColor,
-    opacity: trimmerTheme.trimRangeInsideHighlightOpacity,
-  }),
-  triangle: (trimmerTheme: TrimmerTheme) => ({
-    fill: trimmerTheme.trimTriangleColor,
-  }),
-}))
+const useAreaStyle = (): CSSProperties => {
+  const theme = useTimelineTheme().trimmer
+  return {
+    fill: theme.trimRangeInsideColor,
+    opacity: theme.trimRangeInsideOpacity,
+  }
+}
+
+const useAreaHighlightStyle = (): CSSProperties => {
+  const theme = useTimelineTheme().trimmer
+  return {
+    fill: theme.trimRangeInsideHighlightColor,
+    opacity: theme.trimRangeInsideHighlightOpacity,
+  }
+}
+
+const useTriangleStyle = (): CSSProperties => {
+  const theme = useTimelineTheme().trimmer
+  return {
+    fill: theme.trimTriangleColor,
+  }
+}
 
 interface Props {
   startX: number
@@ -42,8 +49,9 @@ export function Trimmer({
   setTrimMode,
   dateFormat,
 }: Props) {
-  const trimmerTheme = useTimelineTheme().trimmer
-  const classes = useStyles(trimmerTheme)
+  const areaStyle = useAreaStyle()
+  const areaHighlightStyle = useAreaHighlightStyle()
+  const triangleStyle = useTriangleStyle()
 
   const [y1, y2] = [0, height]
   const [scaledStartX, scaledEndX] = [timeScale(startX)!, timeScale(endX)!]
@@ -51,7 +59,7 @@ export function Trimmer({
   return (
     <g>
       <rect
-        className={highlightActiveArea ? classes.trimmerAreaHighlight : classes.trimmerArea}
+        style={highlightActiveArea ? areaHighlightStyle : areaStyle}
         x={Math.min(scaledStartX, scaledEndX)}
         y={y1}
         width={Math.abs(scaledEndX - scaledStartX)}
@@ -67,13 +75,7 @@ export function Trimmer({
           onMouseLeave={() => setTrimMode({ variant: 'none' })}
         />
       ) : (
-        <Triangle
-          x={25}
-          y={height / 2}
-          dimension={50}
-          direction={TriangleDirection.Left}
-          className={classes.triangle}
-        />
+        <Triangle style={triangleStyle} x={25} y={height / 2} dimension={50} direction={TriangleDirection.Left} />
       )}
       {width - scaledEndX > 0 ? (
         <TrimHandle
@@ -86,11 +88,11 @@ export function Trimmer({
         />
       ) : (
         <Triangle
+          style={triangleStyle}
           x={width - 25}
           y={height / 2}
           dimension={50}
           direction={TriangleDirection.Right}
-          className={classes.triangle}
         />
       )}
     </g>
