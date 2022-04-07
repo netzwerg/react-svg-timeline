@@ -212,11 +212,11 @@ const DefaultEventMark = <EID extends string, LID extends string, E extends Time
 }: DefaultEventMarkProps<EID, LID, E>) => {
   const theme = useTimelineTheme()
   const startX = timeScale(e.startTimeMillis)!
-  const strokeColor = e.isPinned ? theme.event.pinnedLineColor : undefined
+  const pinnedStrokeStyle = e.isPinned ? { stroke: theme.event.pinnedLineColor } : {}
   if (e.endTimeMillis === undefined) {
     return (
       <circle
-        style={{ ...style, stroke: strokeColor }}
+        style={{ ...style, ...pinnedStrokeStyle }}
         cx={startX}
         cy={y}
         r={eventMarkerHeight / 2}
@@ -228,7 +228,7 @@ const DefaultEventMark = <EID extends string, LID extends string, E extends Time
     const width = endX - startX
     return (
       <rect
-        style={{ ...style, stroke: strokeColor }}
+        style={{ ...style, ...pinnedStrokeStyle }}
         x={startX}
         y={y - eventMarkerHeight / 2}
         width={width}
