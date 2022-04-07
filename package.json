@@ -69,7 +69,7 @@
       "jest-canvas-mock"
     ],
     "setupFilesAfterEnv": [
-      "<rootDir>/test/setupTests.ts"
+      "<rootDir>/src/test/setupTests.ts"
     ]
   }
 }

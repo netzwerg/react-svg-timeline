@@ -17,7 +17,7 @@ const GREY_200 = '#eeeeee'
 const OPACITY_DEFAULT = 0.1
 
 // Abstraction which can cover MUI v4 and v5 themes (without importing any actual MUI lib dependencies)
-interface MaterialTheme {
+export interface MaterialTheme {
   palette: {
     background: {
       paper: string
