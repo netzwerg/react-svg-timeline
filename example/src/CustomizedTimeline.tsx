@@ -1,14 +1,12 @@
-import { createTimelineTheme, Timeline } from '../../dist'
+import { Timeline } from '../../dist'
 import * as React from 'react'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import cn from 'classnames'
 import { ExampleComponentFactory, ExampleEvent, ExampleProps } from './types'
-import { useTheme } from '@material-ui/core'
 
 const BACKGROUND_COLOR = 'white'
 const FOREGROUND_COLOR = 'rgb(233, 30, 99, 0.5)'
-const TRIM_COLOR = 'lightblue'
 
 const useStyles = makeStyles({
   background: {
@@ -65,18 +63,5 @@ export const CustomizedTimeline = (props: ExampleProps) => {
     }
   }
 
-  const theme = useTheme()
-  return (
-    <Timeline
-      {...props}
-      eventComponent={eventComponent}
-      theme={createTimelineTheme(theme, {
-        trimmer: {
-          trimHandleColor: TRIM_COLOR,
-          trimHandleLabelColor: TRIM_COLOR,
-          trimRangeOutsideColor: TRIM_COLOR,
-        },
-      })}
-    />
-  )
+  return <Timeline {...props} eventComponent={eventComponent} />
 }

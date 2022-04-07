@@ -4,13 +4,13 @@ import * as React from 'react'
 import cn from 'classnames'
 import { FunctionComponent, useState, useCallback } from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
-import { Timeline } from '../../dist'
+import { createTimelineTheme, Timeline } from '../../dist'
 import { Set as ImmutableSet } from 'immutable'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import Dataset1 from './smallDataset.json'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import Dataset2 from './largeDataset.json'
-import { Typography } from '@material-ui/core'
+import { Typography, useTheme } from '@material-ui/core'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { CustomizedTimeline } from './CustomizedTimeline'
 import { ExampleEvent, ExampleProps, TimelineEventId, TimelineLaneId } from './types'
@@ -198,6 +198,9 @@ const DemoTimeline = ({
     [setTrimRange]
   )
 
+  const materialTheme = useTheme()
+  const theme = createTimelineTheme(materialTheme.palette.type, materialTheme)
+
   return (
     <div>
       <Typography variant="h6">{title}</Typography>
@@ -225,6 +228,7 @@ const DemoTimeline = ({
             dateFormat,
             lanes,
             events,
+            theme,
             laneDisplayMode,
             suppressMarkAnimation,
             isTrimming,

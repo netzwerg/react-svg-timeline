@@ -33,7 +33,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   isTrimming?: boolean
   trimRange?: Domain
   layers?: ReadonlyArray<TimelineLayer>
-  theme?: TimelineTheme
+  theme: TimelineTheme
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void

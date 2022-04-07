@@ -1,13 +1,12 @@
-import { Theme as MaterialTheme } from '@material-ui/core'
 import {
+  BaseTheme,
+  EventTheme,
   GridTheme,
   MouseCursorTheme,
   TimelineTheme,
   TooltipTheme,
   TrimmerTheme,
-  BaseTheme,
   XAxisTheme,
-  EventTheme,
 } from './model'
 import deepMerge from 'ts-deepmerge'
 
@@ -17,26 +16,43 @@ const GREY_500 = '#9e9e9e'
 const GREY_200 = '#eeeeee'
 const OPACITY_DEFAULT = 0.1
 
-// Still relying on Material theme for some defaults
-// Eventually, this will be the last dependency, and we can decide to refactor it away...
+// Abstraction which can cover MUI v4 and v5 themes (without importing any actual MUI lib dependencies)
+interface MaterialTheme {
+  palette: {
+    background: {
+      paper: string
+    }
+    text: {
+      secondary: string
+    }
+  }
+  typography: {
+    fontFamily: React.CSSProperties['fontFamily']
+    caption: { fontFamily?: React.CSSProperties['fontFamily'] }
+  }
+}
 
-export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThemeOptions): TimelineTheme => {
+export const createTimelineTheme = (
+  type: 'light' | 'dark',
+  materialTheme: MaterialTheme,
+  options?: TimelineThemeOptions
+): TimelineTheme => {
   const defaults: TimelineTheme = {
     base: {
-      backgroundColor: theme.palette.background.paper,
-      fontFamily: theme.typography.fontFamily,
-      fontFamilyCaption: theme.typography.caption.fontFamily,
+      backgroundColor: materialTheme.palette.background.paper,
+      fontFamily: materialTheme.typography.fontFamily,
+      fontFamilyCaption: materialTheme.typography.caption.fontFamily,
     },
     event: {
-      pinnedLineColor: theme.palette.type === 'dark' ? 'white' : 'black',
+      pinnedLineColor: type === 'dark' ? 'white' : 'black',
     },
     xAxis: {
-      labelColor: theme.palette.text.secondary,
+      labelColor: materialTheme.palette.text.secondary,
     },
     grid: {
       lineColor: GREY_500,
       weekStripesColor: GREY_200,
-      weekStripesOpacity: theme.palette.type === 'light' ? 1 : 0.1,
+      weekStripesOpacity: type === 'light' ? 1 : 0.1,
     },
     lane: {
       laneLabelFontSize: 16,
@@ -44,9 +60,9 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
       middleLineWidth: 1,
     },
     tooltip: {
-      backgroundColor: theme.palette.text.secondary,
+      backgroundColor: materialTheme.palette.text.secondary,
       fontSize: 14,
-      fontFamily: theme.typography.caption.fontFamily,
+      fontFamily: materialTheme.typography.caption.fontFamily,
     },
     trimmer: {
       trimHandleColor: ORANGE_DEFAULT,
