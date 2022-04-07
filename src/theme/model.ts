@@ -1,7 +1,24 @@
+import * as React from 'react'
+
 export interface TimelineTheme {
+  readonly base: BaseTheme
+  readonly event: EventTheme
   readonly xAxis: XAxisTheme
+  readonly grid: GridTheme
+  readonly lane: LaneTheme
   readonly tooltip: TooltipTheme
   readonly trimmer: TrimmerTheme
+  readonly mouseCursor: MouseCursorTheme
+}
+
+export interface BaseTheme {
+  readonly backgroundColor: string
+  readonly fontFamily: React.CSSProperties['fontFamily']
+  readonly fontFamilyCaption: React.CSSProperties['fontFamily']
+}
+
+export interface EventTheme {
+  readonly pinnedLineColor: string
 }
 
 export interface XAxisTheme {
@@ -10,7 +27,21 @@ export interface XAxisTheme {
   readonly yearLabelFontSize?: number
 }
 
+export interface GridTheme {
+  readonly lineColor: string
+  readonly weekStripesColor: string
+  readonly weekStripesOpacity: number
+}
+
+export interface LaneTheme {
+  readonly laneLabelFontSize: number
+  readonly middleLineColor: string
+  readonly middleLineWidth: number
+}
+
 export interface TooltipTheme {
+  readonly fontSize: number
+  readonly fontFamily: React.CSSProperties['fontFamily']
   readonly backgroundColor: string
 }
 
@@ -25,4 +56,12 @@ export interface TrimmerTheme {
   readonly trimRangeInsideHighlightOpacity: number
   readonly trimRangeOutsideColor: string
   readonly trimRangeOutsideOpacity: number
+}
+
+export interface MouseCursorTheme {
+  readonly lineColor: string
+  readonly lineWidth: number
+  readonly zoomRangeColor: string
+  readonly zoomRangeOpacity: number
+  readonly labelColor: string
 }

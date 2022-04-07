@@ -5,20 +5,20 @@ import makeStyles from '@material-ui/core/styles/makeStyles'
 import cn from 'classnames'
 import { ExampleComponentFactory, ExampleEvent, ExampleProps } from './types'
 
-const backgroundColor = 'white'
-const foregroundColor = 'rgb(233, 30, 99, 0.5)'
+const BACKGROUND_COLOR = 'white'
+const FOREGROUND_COLOR = 'rgb(233, 30, 99, 0.5)'
 
 const useStyles = makeStyles({
   background: {
-    color: backgroundColor,
-    fill: backgroundColor,
-    stroke: backgroundColor,
+    color: BACKGROUND_COLOR,
+    fill: BACKGROUND_COLOR,
+    stroke: BACKGROUND_COLOR,
     strokeWidth: 2,
   },
   foreground: {
-    color: foregroundColor,
-    fill: foregroundColor,
-    stroke: foregroundColor,
+    color: FOREGROUND_COLOR,
+    fill: FOREGROUND_COLOR,
+    stroke: FOREGROUND_COLOR,
     strokeWidth: 2,
   },
   selected: {

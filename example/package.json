@@ -8,7 +8,8 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@material-ui/icons": "^4.2.1",
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.3",
     "classnames": "^2.2.6",
     "immutable": "4.0.0-rc.12",
     "react-app-polyfill": "^1.0.0",
@@ -26,6 +27,6 @@
     "@types/classnames": "^2.2.10",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "parcel": "^1.12.4",
-    "typescript": "^4.0.3"
+    "typescript": "^4.6.3"
   }
 }

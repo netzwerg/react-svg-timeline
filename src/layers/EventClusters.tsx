@@ -1,18 +1,18 @@
 import React from 'react'
 import { ScaleBand, ScaleLinear, scaleSqrt } from 'd3-scale'
-import { Theme } from '@material-ui/core'
 import { TimelineEventCluster } from '../model'
 import { defaultClusterColor, defaultSingleEventMarkHeight } from '../utils'
-import makeStyles from '@material-ui/core/styles/makeStyles'
 import { extent } from 'd3-array'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
 
-const useStyles = makeStyles((theme: Theme) => ({
-  clusterCircle: {
-    stroke: theme.palette.background.paper,
+const useCircleStyle = () => {
+  const theme = useTimelineTheme()
+  return {
+    stroke: theme.base.backgroundColor,
     strokeWidth: 2,
     fillOpacity: 0.5,
-  },
-}))
+  }
+}
 
 interface Props<LID extends string> {
   readonly height: number
@@ -29,7 +29,7 @@ export const EventClusters = <LID extends string>({
   expanded,
   height,
 }: Props<LID>) => {
-  const classes = useStyles()
+  const circleStyle = useCircleStyle()
 
   const [clusterSizeDomainMin, clusterSizeDomainMax] = extent(eventClusters.map((c) => c.size))
   const clusterRadiusMin = defaultSingleEventMarkHeight / 2
@@ -47,10 +47,10 @@ export const EventClusters = <LID extends string>({
       {eventClusters.map((eventCluster) => (
         <g key={`eventCluster-${eventCluster.laneId}-${eventCluster.timeMillis}`}>
           <circle
+            style={circleStyle}
             cx={timeScale(eventCluster.timeMillis)}
             cy={expanded ? yScale(eventCluster.laneId) : height / 2}
             r={clusterScale(eventCluster.size)!}
-            className={classes.clusterCircle}
             fill={eventCluster.color || defaultClusterColor}
           />
         </g>
