@@ -5,8 +5,8 @@ import { ScaleLinear } from 'd3-scale'
 import { Theme } from '@material-ui/core'
 import { EventComponentFactory, EventComponentRole, TimelineEvent } from '../model'
 import useTheme from '@material-ui/core/styles/useTheme'
-import { EventTooltip, TooltipClasses, useTooltipStyle } from '../tooltip'
-import { useTimelineTheme } from '../theme'
+import { EventTooltip } from '../tooltip/EventTooltip'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
 
 const useEventBackgroundStyle = () => {
   const theme = useTimelineTheme().base
@@ -68,12 +68,10 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   props: Props<EID, LID, E>
 ) => {
   const { events, height } = props
-  const timelineTheme = useTimelineTheme()
   const eventBackgroundStyle = useEventBackgroundStyle()
   const eventPeriodStyle = useEventPeriodStyle()
   const eventCircleStyle = useEventCircleStyle()
   const eventSelectedStyle = useEventSelectedStyle()
-  const tooltipClasses = useTooltipStyle(timelineTheme.tooltip)
   const { eventComponent, timeScale, y } = props
 
   // shorter periods on top of longer ones
@@ -109,7 +107,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   const backgroundMarks = useMemo(
     () =>
       events.map((e: E) => (
-        <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
+        <InteractiveEventMark key={e.eventId} event={e} {...props}>
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
       )),
@@ -122,7 +120,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
         .filter((_) => true)
         .sort(sortByEventDuration)
         .map((e: E) => (
-          <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
+          <InteractiveEventMark key={e.eventId} event={e} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
@@ -135,7 +133,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
         .filter((e) => e.isSelected || e.isPinned)
         .sort(sortByEventDuration)
         .map((e: E) => (
-          <InteractiveEventMark key={e.eventId} event={e} tooltipClasses={tooltipClasses} {...props}>
+          <InteractiveEventMark key={e.eventId} event={e} {...props}>
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
@@ -158,7 +156,6 @@ interface InteractiveGroupProps<EID extends string, LID extends string, E extend
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
-  tooltipClasses: TooltipClasses
   children: React.ReactNode
 }
 
@@ -169,7 +166,6 @@ const InteractiveEventMark = <EID extends string, LID extends string, E extends 
   onEventClick = noOp,
   onEventHover = noOp,
   onEventUnhover = noOp,
-  tooltipClasses,
   children,
 }: InteractiveGroupProps<EID, LID, E>) => {
   const eventId = event.eventId
@@ -194,14 +190,7 @@ const InteractiveEventMark = <EID extends string, LID extends string, E extends 
     >
       <g ref={triggerRef}>{children}</g>
       {event.tooltip ? (
-        <EventTooltip
-          type={tooltipType}
-          y={y}
-          parentWidth={parentWidth}
-          triggerRef={triggerRef}
-          text={event.tooltip}
-          classes={tooltipClasses}
-        />
+        <EventTooltip type={tooltipType} y={y} parentWidth={parentWidth} triggerRef={triggerRef} text={event.tooltip} />
       ) : (
         <g />
       )}

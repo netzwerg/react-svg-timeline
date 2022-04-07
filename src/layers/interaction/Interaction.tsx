@@ -2,12 +2,14 @@ import React from 'react'
 import { ScaleLinear } from 'd3-scale'
 
 import { Domain } from '../../model'
-import { ZoomLevels, getDomainSpan } from '../../shared/ZoomScale'
-import { InteractionHandling } from './InteractionHandling'
 import { MouseAwareSvg, SvgCoordinates } from './MouseAwareSvg'
 import { MouseCursor } from './MouseCursor'
-import { Trimmer, TrimRange, useTrimming } from './trimmer'
 import { useZoom } from '../../hooks'
+import { ZoomLevels, getDomainSpan } from '../../shared/ZoomScale'
+import { InteractionHandling } from './InteractionHandling'
+import { useTrimming } from './trimmer/useTrimming'
+import { TrimRange } from './trimmer/TrimRange'
+import { Trimmer } from './trimmer/Trimmer'
 
 export interface InteractionProps {
   width: number

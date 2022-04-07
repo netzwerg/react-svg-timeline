@@ -35,6 +35,8 @@ export interface LaneTheme {
 }
 
 export interface TooltipTheme {
+  readonly fontSize: number
+  readonly fontFamily: React.CSSProperties['fontFamily']
   readonly backgroundColor: string
 }
 

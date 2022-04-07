@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { ZoomScale } from '../../shared/ZoomScale'
 import { Cursor } from '../../model'
-import { InteractionMode } from '.'
 import { CursorLabel } from './CursorLabel'
-import { useTimelineTheme } from '../../theme'
+import { useTimelineTheme } from '../../theme/useTimelineTheme'
+import { InteractionMode } from './model'
 
 const useCursorStyle = () => {
   const theme = useTimelineTheme().mouseCursor

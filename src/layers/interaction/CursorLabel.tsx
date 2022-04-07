@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react'
-import { useTimelineTheme } from '../../theme'
+import { useTimelineTheme } from '../../theme/useTimelineTheme'
 
 const useTextStyle = (fill?: string): CSSProperties => {
   const theme = useTimelineTheme()

@@ -4,7 +4,7 @@ import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
 import { Domain } from '../model'
 import { range } from '../utils'
-import { useTimelineTheme } from '../theme'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
 import { XAxisTheme } from '../theme/model'
 import { CSSProperties } from 'react'
 

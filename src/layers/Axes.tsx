@@ -3,7 +3,7 @@ import { ScaleBand } from 'd3-scale'
 import { TimelineLane } from '../model'
 import { Axis } from './Axis'
 import { defaultLaneColor } from '../utils'
-import { useTimelineTheme } from '../theme'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
 
 export interface AxesProps<LID extends string> {
   lanes: ReadonlyArray<TimelineLane<LID>>

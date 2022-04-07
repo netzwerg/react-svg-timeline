@@ -3,7 +3,7 @@ import { ScaleBand, ScaleLinear, scaleSqrt } from 'd3-scale'
 import { TimelineEventCluster } from '../model'
 import { defaultClusterColor, defaultSingleEventMarkHeight } from '../utils'
 import { extent } from 'd3-array'
-import { useTimelineTheme } from '../theme'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
 
 const useCircleStyle = () => {
   const theme = useTimelineTheme()

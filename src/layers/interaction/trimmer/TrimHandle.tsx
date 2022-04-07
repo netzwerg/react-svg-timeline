@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react'
 import { CursorLabel } from '../CursorLabel'
-import { useTimelineTheme } from '../../../theme'
+import { useTimelineTheme } from '../../../theme/useTimelineTheme'
 
 const useTrimHandleStyle = (): CSSProperties => {
   const theme = useTimelineTheme().trimmer

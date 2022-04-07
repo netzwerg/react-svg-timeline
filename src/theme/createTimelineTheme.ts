@@ -33,6 +33,8 @@ export const createTimelineTheme = (theme: MaterialTheme, options?: TimelineThem
     },
     tooltip: {
       backgroundColor: theme.palette.text.secondary,
+      fontSize: 14,
+      fontFamily: theme.typography.caption.fontFamily,
     },
     trimmer: {
       trimHandleColor: ORANGE_DEFAULT,

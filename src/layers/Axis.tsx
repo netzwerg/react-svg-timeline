@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useTimelineTheme } from '../theme'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
 
 export const Axis = ({ y }: { y: number }) => {
   const theme = useTimelineTheme()

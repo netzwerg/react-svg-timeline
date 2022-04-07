@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react'
-import { useTimelineTheme } from '../../../theme'
+import { useTimelineTheme } from '../../../theme/useTimelineTheme'
 
 const useTrimRangeStyle = (): CSSProperties => {
   const theme = useTimelineTheme().trimmer
