@@ -15,7 +15,8 @@ Out of the box – **plain & simple**:
 
 ![](screenshot-timeline-component.png)
 
-Explore our [interactive demo](https://react-svg-timeline.netlify.com/) for more details on **customizations**.
+Explore our [interactive demo](https://netzwerg.github.io/react-svg-timeline-demo/) for more details on **customizations**.
+The demo code can be found in the [react-svg-timeline-demo](https://github.com/netzwerg/react-svg-timeline-demo) repository.
 
 Alternatively, you are free to use just the zooming & panning **interaction logic**, e.g. as a layer of the awesome [Nivo](https://nivo.rocks) line chart:
 
