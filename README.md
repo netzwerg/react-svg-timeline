@@ -30,10 +30,7 @@ or
 
 `npm install react-svg-timeline`
 
-Note that the following peer dependencies must already be installed:
-
-- `react` and `react-dom` in version >=16.3
-- `@material-ui/core` in version >=4.3
+Note that `react` and `react-dom` (version >=16.3) must already be installed.
 
 ## Usage
 
