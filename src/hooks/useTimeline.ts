@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 
 import { useZoomLevels } from './useZoomLevels'
 
-import { Domain, TimelineEvent, TimelineLane, ZoomLevels } from '..'
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale'
+import { Domain, TimelineEvent, TimelineLane } from '../model'
+import { ZoomLevels } from '../shared/ZoomScale'
 
 export const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>

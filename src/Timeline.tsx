@@ -1,11 +1,13 @@
 import React, { useCallback, Fragment } from 'react'
 
-import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
+import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane, TimelineLayer } from './model'
 
 import { TimelineTheme } from './theme/model'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
 
-import { useEvents, useTimeline, useTimelineAnimation } from './hooks'
+import { useEvents } from './hooks/useEvents'
+import { useTimeline } from './hooks/useTimeline'
+import { useTimelineAnimation } from './hooks/useTimelineAnimation'
 
 import { noOp } from './utils'
 
@@ -16,7 +18,7 @@ import { CollapsedMarks } from './layers/CollapsedMarks'
 import { EventClusters } from './layers/EventClusters'
 import { Axes } from './layers/Axes'
 import { Axis } from './layers/Axis'
-import { defaultOrderedZoomLevels, TimelineLayer, ZoomLevels } from '.'
+import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
 
 export interface TimelineProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   width: number

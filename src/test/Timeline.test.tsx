@@ -7,7 +7,7 @@ import { render, screen } from './test-utils'
 import data from './data.json'
 import { Timeline } from '../Timeline'
 import { THEME } from './testTheme'
-import { calcMaxDomain } from '../hooks'
+import { calcMaxDomain } from '../hooks/useTimeline'
 
 describe('Timeline', () => {
   const events = data.events
