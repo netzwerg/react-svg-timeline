@@ -65,6 +65,7 @@ export interface Props<EID extends string, LID extends string, E extends Timelin
 export const Marks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   props: Props<EID, LID, E>
 ) => {
+  const theme = useTimelineTheme()
   const { events, height } = props
   const eventBackgroundStyle = useEventBackgroundStyle()
   const eventPeriodStyle = useEventPeriodStyle()
@@ -109,7 +110,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
       )),
-    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height]
+    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme]
   )
 
   const foregroundMarks = useMemo(
@@ -122,7 +123,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
-    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height]
+    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme]
   )
 
   const selectionOrPinMarks = useMemo(
@@ -135,7 +136,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
-    [comparableEvents, comparableTimeScale, height]
+    [comparableEvents, comparableTimeScale, height, theme]
   )
 
   return (
