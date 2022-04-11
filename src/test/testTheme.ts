@@ -3,6 +3,9 @@ import { TimelineTheme } from '../theme/model'
 
 export const MUI_THEME: MaterialTheme = {
   palette: {
+    primary: {
+      main: '#00bcd4',
+    },
     background: {
       paper: 'pink',
     },
