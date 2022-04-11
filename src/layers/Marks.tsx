@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useMemo, useRef } from 'react'
-import { defaultEventColor, defaultSingleEventMarkHeight, noOp, selectionColor, selectionColorOpaque } from '../utils'
+import { noOp } from '../utils'
 import { ScaleLinear } from 'd3-scale'
 import { EventComponentFactory, EventComponentRole, TimelineEvent } from '../model'
 import { EventTooltip } from '../tooltip/EventTooltip'
@@ -33,10 +33,11 @@ const useEventPeriodStyle = () => {
 }
 
 const useEventSelectedStyle = () => {
+  const theme = useTimelineTheme().event
   return {
-    stroke: selectionColorOpaque,
+    stroke: theme.markSelectedLineColor,
     strokeWidth: 2,
-    fill: selectionColor,
+    fill: theme.markSelectedFillColor,
   }
 }
 
@@ -45,7 +46,6 @@ export interface Props<EID extends string, LID extends string, E extends Timelin
   events: ReadonlyArray<E>
   timeScale: ScaleLinear<number, number>
   y: number
-  eventMarkerHeight?: number
   eventComponent?: EventComponentFactory<EID, LID, E>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
@@ -72,6 +72,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   const eventCircleStyle = useEventCircleStyle()
   const eventSelectedStyle = useEventSelectedStyle()
   const { eventComponent, timeScale, y } = props
+  const defaultEventMarkProps = { ...props, eventMarkHeight: theme.event.markHeight }
 
   // shorter periods on top of longer ones
   const sortByEventDuration = (e: E) => -(e.endTimeMillis ? e.endTimeMillis - e.startTimeMillis : 0)
@@ -79,14 +80,14 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   const defaultEventComponent = (e: E, role: EventComponentRole) => {
     if (role === 'background') {
       // opaque background to prevent axis-/grid-lines from shining through
-      return <DefaultEventMark e={e} style={eventBackgroundStyle} {...props} />
+      return <DefaultEventMark e={e} style={eventBackgroundStyle} {...defaultEventMarkProps} />
     } else if (e.isSelected) {
-      return <DefaultEventMark e={e} style={eventSelectedStyle} {...props} />
+      return <DefaultEventMark e={e} style={eventSelectedStyle} {...defaultEventMarkProps} />
     } else {
       if (e.endTimeMillis) {
-        return <DefaultEventMark e={e} style={eventPeriodStyle} {...props} />
+        return <DefaultEventMark e={e} style={eventPeriodStyle} {...defaultEventMarkProps} />
       } else {
-        return <DefaultEventMark e={e} style={eventCircleStyle} {...props} />
+        return <DefaultEventMark e={e} style={eventCircleStyle} {...defaultEventMarkProps} />
       }
     }
   }
@@ -201,27 +202,27 @@ interface DefaultEventMarkProps<EID extends string, LID extends string, E extend
   extends Omit<Props<EID, LID, E>, 'events'> {
   e: E
   style: React.CSSProperties
-  eventMarkerHeight?: number
+  eventMarkHeight: number
 }
 
 const DefaultEventMark = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   e,
-  eventMarkerHeight = defaultSingleEventMarkHeight,
+  eventMarkHeight,
   style,
   y,
   timeScale,
 }: DefaultEventMarkProps<EID, LID, E>) => {
   const theme = useTimelineTheme()
   const startX = timeScale(e.startTimeMillis)!
-  const pinnedStrokeStyle = e.isPinned ? { stroke: theme.event.pinnedLineColor } : {}
+  const pinnedStrokeStyle = e.isPinned ? { stroke: theme.event.markPinnedLineColor } : {}
   if (e.endTimeMillis === undefined) {
     return (
       <circle
         style={{ ...style, ...pinnedStrokeStyle }}
         cx={startX}
         cy={y}
-        r={eventMarkerHeight / 2}
-        fill={e.color || defaultEventColor}
+        r={eventMarkHeight / 2}
+        fill={e.color ?? theme.event.markFillColor}
       />
     )
   } else {
@@ -231,10 +232,10 @@ const DefaultEventMark = <EID extends string, LID extends string, E extends Time
       <rect
         style={{ ...style, ...pinnedStrokeStyle }}
         x={startX}
-        y={y - eventMarkerHeight / 2}
+        y={y - eventMarkHeight / 2}
         width={width}
-        height={eventMarkerHeight}
-        fill={e.color || defaultEventColor}
+        height={eventMarkHeight}
+        fill={e.color ?? theme.event.markFillColor}
       />
     )
   }

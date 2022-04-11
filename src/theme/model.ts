@@ -18,7 +18,12 @@ export interface BaseTheme {
 }
 
 export interface EventTheme {
-  readonly pinnedLineColor: string
+  readonly markHeight: number
+  readonly markFillColor: string
+  readonly markSelectedLineColor: string
+  readonly markSelectedFillColor: string
+  readonly markPinnedLineColor: string
+  readonly clusterFillColor: string
 }
 
 export interface XAxisTheme {
@@ -34,7 +39,8 @@ export interface GridTheme {
 }
 
 export interface LaneTheme {
-  readonly laneLabelFontSize: number
+  readonly labelFontSize: number
+  readonly labelColor: string
   readonly middleLineColor: string
   readonly middleLineWidth: number
 }

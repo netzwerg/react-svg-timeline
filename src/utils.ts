@@ -2,19 +2,6 @@ export const noOp = () => {
   /* ignorance is bliss */
 }
 
-const INDIGO_500 = '#3f51b5'
-const YELLOW_A100 = '#ffff8d'
-const YELLOW_A100_TRANSPARENT = 'rgba(255, 255, 141, 0.5)'
-
-export const defaultEventColor = INDIGO_500
-export const defaultClusterColor = INDIGO_500
-export const defaultLaneColor = INDIGO_500
-
-export const selectionColor = YELLOW_A100_TRANSPARENT
-export const selectionColorOpaque = YELLOW_A100
-
-export const defaultSingleEventMarkHeight = 20
-
 /**
  * Returns an array of numbers from start (inclusive) to end (exclusive)
  */

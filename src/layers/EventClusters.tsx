@@ -1,7 +1,6 @@
 import React from 'react'
 import { ScaleBand, ScaleLinear, scaleSqrt } from 'd3-scale'
 import { TimelineEventCluster } from '../model'
-import { defaultClusterColor, defaultSingleEventMarkHeight } from '../utils'
 import { extent } from 'd3-array'
 import { useTimelineTheme } from '../theme/useTimelineTheme'
 
@@ -29,14 +28,15 @@ export const EventClusters = <LID extends string>({
   expanded,
   height,
 }: Props<LID>) => {
+  const theme = useTimelineTheme()
   const circleStyle = useCircleStyle()
 
   const [clusterSizeDomainMin, clusterSizeDomainMax] = extent(eventClusters.map((c) => c.size))
-  const clusterRadiusMin = defaultSingleEventMarkHeight / 2
+  const clusterRadiusMin = theme.event.markHeight / 2
 
   // expanded mode:  cluster radius solely determined by lane height
   // collapsed mode: clamp max radius after a certain lane height (or it will look too massive)
-  const clusterRadiusMax = expanded ? yScale.bandwidth() / 1.2 : Math.min(height / 2, 2 * defaultSingleEventMarkHeight)
+  const clusterRadiusMax = expanded ? yScale.bandwidth() / 1.2 : Math.min(height / 2, 2 * theme.event.markHeight)
 
   const clusterScale = scaleSqrt()
     .domain([clusterSizeDomainMin ?? 0, clusterSizeDomainMax ?? 0])
@@ -51,7 +51,7 @@ export const EventClusters = <LID extends string>({
             cx={timeScale(eventCluster.timeMillis)}
             cy={expanded ? yScale(eventCluster.laneId) : height / 2}
             r={clusterScale(eventCluster.size)!}
-            fill={eventCluster.color || defaultClusterColor}
+            fill={eventCluster.color || theme.event.clusterFillColor}
           />
         </g>
       ))}

@@ -19,6 +19,9 @@ const OPACITY_DEFAULT = 0.1
 // Abstraction which can cover MUI v4 and v5 themes (without importing any actual MUI lib dependencies)
 export interface MaterialTheme {
   palette: {
+    primary: {
+      main: string
+    }
     background: {
       paper: string
     }
@@ -44,7 +47,12 @@ export const createTimelineTheme = (
       fontFamilyCaption: materialTheme.typography.caption.fontFamily,
     },
     event: {
-      pinnedLineColor: type === 'dark' ? 'white' : 'black',
+      markHeight: 20,
+      markFillColor: materialTheme.palette.primary.main,
+      markSelectedLineColor: '#ffff8d',
+      markSelectedFillColor: 'rgba(255, 255, 141, 0.5)',
+      markPinnedLineColor: type === 'dark' ? 'white' : 'black',
+      clusterFillColor: materialTheme.palette.primary.main,
     },
     xAxis: {
       labelColor: materialTheme.palette.text.secondary,
@@ -55,7 +63,8 @@ export const createTimelineTheme = (
       weekStripesOpacity: type === 'light' ? 1 : 0.1,
     },
     lane: {
-      laneLabelFontSize: 16,
+      labelFontSize: 16,
+      labelColor: materialTheme.palette.primary.main,
       middleLineColor: GREY_500,
       middleLineWidth: 1,
     },

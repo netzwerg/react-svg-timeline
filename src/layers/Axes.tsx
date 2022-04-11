@@ -2,7 +2,6 @@ import React from 'react'
 import { ScaleBand } from 'd3-scale'
 import { TimelineLane } from '../model'
 import { Axis } from './Axis'
-import { defaultLaneColor } from '../utils'
 import { useTimelineTheme } from '../theme/useTimelineTheme'
 
 export interface AxesProps<LID extends string> {
@@ -25,7 +24,7 @@ export const Axes = <LID extends string>({ lanes, yScale }: AxesProps<LID>) => {
             <Axis y={y} />
             <text
               style={{
-                fontSize: theme.lane.laneLabelFontSize,
+                fontSize: theme.lane.labelFontSize,
                 fontFamily: theme.base.fontFamily,
                 fontWeight: 600,
                 opacity: 0.4,
@@ -33,7 +32,7 @@ export const Axes = <LID extends string>({ lanes, yScale }: AxesProps<LID>) => {
               fontSize={fontSize}
               x={labelXOffset}
               y={y + labelYOffset}
-              fill={lane.color || defaultLaneColor}
+              fill={lane.color || theme.lane.labelColor}
             >
               {lane.label}
             </text>
