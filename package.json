@@ -30,7 +30,6 @@
     "prepare": "npm run build"
   },
   "peerDependencies": {
-    "@material-ui/core": ">=4.3",
     "react": ">=16.3",
     "react-dom": ">=16.3"
   },
