@@ -70,6 +70,37 @@ export const App = () => {
 
 Please check the [react-svg-timeline-demo](https://github.com/netzwerg/react-svg-timeline-demo) repository for a full-fledged feature demonstration.
 
+## Theming
+
+To override the default theme, you can use the `theme` property.
+
+If your project is using [Material UI](https://mui.com/), the `deriveTimelineTheme` convenience function makes it particularly easy to use the MUI theme as a basis:
+
+```tsx
+import * as React from 'react'
+
+// MUI v4
+import { useTheme } from '@material-ui/core'
+
+// MUI v5
+import { useTheme } from '@mui/material'
+
+import { Timeline } from 'react-svg-timeline'
+
+const App = () => {
+  const materialTheme = useTheme()
+  const theme = deriveTimelineTheme(materialTheme.palette.mode, materialTheme)
+
+  return <Timeline theme={theme} /** all other props here **/ />
+}
+```
+
+If you would just like to override certain aspects of the default timeline theme, use the `createTimelineTheme` helper function:
+
+```tsx
+const theme = createTimelineTheme({ event: { markFillColor: 'pink' } })
+```
+
 ## Library Development
 
 ### Testing a release candidate
