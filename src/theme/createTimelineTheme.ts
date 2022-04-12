@@ -2,6 +2,7 @@ import {
   BaseTheme,
   EventTheme,
   GridTheme,
+  LaneTheme,
   MouseCursorTheme,
   TimelineTheme,
   TooltipTheme,
@@ -16,8 +17,29 @@ const GREY_500 = '#9e9e9e'
 const GREY_200 = '#eeeeee'
 const OPACITY_DEFAULT = 0.1
 
-// Abstraction which can cover MUI v4 and v5 themes (without importing any actual MUI lib dependencies)
-export interface MaterialTheme {
+const DEFAULT_TEMPLATE_THEME: TemplateTheme = {
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    background: {
+      paper: '#fff',
+    },
+    text: {
+      secondary: GREY_500,
+    },
+  },
+  typography: {
+    fontFamily: 'sans-serif',
+    caption: {},
+  },
+}
+
+/**
+ * Abstraction of a template theme which covers MUI v4 and v5 themes
+ * without actually importing any MUI library dependencies.
+ */
+export interface TemplateTheme {
   palette: {
     primary: {
       main: string
@@ -35,27 +57,43 @@ export interface MaterialTheme {
   }
 }
 
-export const createTimelineTheme = (
+/**
+ * Creates a default theme for the timeline (suitable for light backgrounds).
+ *
+ * @param options selective overrides of defaults.
+ */
+export const createTimelineTheme = (options?: TimelineThemeOptions) =>
+  deriveTimelineTheme('light', DEFAULT_TEMPLATE_THEME, options)
+
+/**
+ * A convenience function to derive a timeline theme from a template theme.
+ * Especially useful to create a timeline theme from a MUI v4 or v5 theme.
+ *
+ * @param type indicates whether theme will be used on a light or dark background.
+ * @param muiLikeTemplateTheme a template abstracting over MUI v4 and v5 theme interfaces.
+ * @param options selective overrides of defaults/template.
+ */
+export const deriveTimelineTheme = (
   type: 'light' | 'dark',
-  materialTheme: MaterialTheme,
+  muiLikeTemplateTheme: TemplateTheme,
   options?: TimelineThemeOptions
 ): TimelineTheme => {
   const defaults: TimelineTheme = {
     base: {
-      backgroundColor: materialTheme.palette.background.paper,
-      fontFamily: materialTheme.typography.fontFamily,
-      fontFamilyCaption: materialTheme.typography.caption.fontFamily,
+      backgroundColor: muiLikeTemplateTheme.palette.background.paper,
+      fontFamily: muiLikeTemplateTheme.typography.fontFamily,
+      fontFamilyCaption: muiLikeTemplateTheme.typography.caption.fontFamily,
     },
     event: {
       markHeight: 20,
-      markFillColor: materialTheme.palette.primary.main,
+      markFillColor: muiLikeTemplateTheme.palette.primary.main,
       markSelectedLineColor: '#ffff8d',
       markSelectedFillColor: 'rgba(255, 255, 141, 0.5)',
       markPinnedLineColor: type === 'dark' ? 'white' : 'black',
-      clusterFillColor: materialTheme.palette.primary.main,
+      clusterFillColor: muiLikeTemplateTheme.palette.primary.main,
     },
     xAxis: {
-      labelColor: materialTheme.palette.text.secondary,
+      labelColor: muiLikeTemplateTheme.palette.text.secondary,
     },
     grid: {
       lineColor: GREY_500,
@@ -64,14 +102,14 @@ export const createTimelineTheme = (
     },
     lane: {
       labelFontSize: 16,
-      labelColor: materialTheme.palette.primary.main,
+      labelColor: muiLikeTemplateTheme.palette.primary.main,
       middleLineColor: GREY_500,
       middleLineWidth: 1,
     },
     tooltip: {
-      backgroundColor: materialTheme.palette.text.secondary,
+      backgroundColor: muiLikeTemplateTheme.palette.text.secondary,
       fontSize: 14,
-      fontFamily: materialTheme.typography.caption.fontFamily,
+      fontFamily: muiLikeTemplateTheme.typography.caption.fontFamily,
     },
     trimmer: {
       trimHandleColor: ORANGE_DEFAULT,
@@ -101,6 +139,7 @@ export interface TimelineThemeOptions {
   event?: EventThemeOptions
   xAxis?: XAxisThemeOptions
   grid?: GridThemeOptions
+  lane?: LaneThemeOptions
   tooltip?: TooltipThemeOptions
   trimmer?: TrimmerThemeOptions
   mouseCursor?: MouseCursorThemeOptions
@@ -110,6 +149,7 @@ type BaseThemeOptions = Partial<BaseTheme>
 type EventThemeOptions = Partial<EventTheme>
 type XAxisThemeOptions = Partial<XAxisTheme>
 type GridThemeOptions = Partial<GridTheme>
+type LaneThemeOptions = Partial<LaneTheme>
 type TooltipThemeOptions = Partial<TooltipTheme>
 type TrimmerThemeOptions = Partial<TrimmerTheme>
 type MouseCursorThemeOptions = Partial<MouseCursorTheme>

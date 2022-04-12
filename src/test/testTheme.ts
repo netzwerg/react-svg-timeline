@@ -1,7 +1,7 @@
-import { createTimelineTheme, MaterialTheme } from '../theme/createTimelineTheme'
+import { deriveTimelineTheme, TemplateTheme } from '../theme/createTimelineTheme'
 import { TimelineTheme } from '../theme/model'
 
-export const MUI_THEME: MaterialTheme = {
+export const MUI_THEME: TemplateTheme = {
   palette: {
     primary: {
       main: '#00bcd4',
@@ -19,4 +19,4 @@ export const MUI_THEME: MaterialTheme = {
   },
 }
 
-export const THEME: TimelineTheme = createTimelineTheme('light', MUI_THEME)
+export const THEME: TimelineTheme = deriveTimelineTheme('light', MUI_THEME)

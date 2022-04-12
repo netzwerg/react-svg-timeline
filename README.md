@@ -51,14 +51,16 @@ export const App = () => {
   const events = [
     {
       eventId: 'event-1',
-      laneId: laneId,
-      startTimeMillis: 1399845600000,
-    },
-    {
-      eventId: 'event-2',
+      tooltip: 'Event 1',
       laneId,
       startTimeMillis: 1167606000000,
       endTimeMillis: 1230698892000,
+    },
+    {
+      eventId: 'event-2',
+      tooltip: 'Event 2',
+      laneId: laneId,
+      startTimeMillis: 1399845600000,
     },
   ]
   const dateFormat = (ms: number) => new Date(ms).toLocaleString()
@@ -66,7 +68,7 @@ export const App = () => {
 }
 ```
 
-Please check the [example](example) folder for a full-fledged feature demonstration.
+Please check the [react-svg-timeline-demo](https://github.com/netzwerg/react-svg-timeline-demo) repository for a full-fledged feature demonstration.
 
 ## Library Development
 

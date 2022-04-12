@@ -5,4 +5,9 @@ export * from './layers/interaction/model'
 export * from './layers/interaction/Interaction'
 export * from './shared/ZoomScale'
 export { TimelineTheme } from './theme/model'
-export { createTimelineTheme } from './theme/createTimelineTheme'
+export {
+  createTimelineTheme,
+  deriveTimelineTheme,
+  TemplateTheme,
+  TimelineThemeOptions,
+} from './theme/createTimelineTheme'

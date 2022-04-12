@@ -19,6 +19,7 @@ import { EventClusters } from './layers/EventClusters'
 import { Axes } from './layers/Axes'
 import { Axis } from './layers/Axis'
 import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
+import { createTimelineTheme } from './theme/createTimelineTheme'
 
 export interface TimelineProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   width: number
@@ -35,7 +36,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   isTrimming?: boolean
   trimRange?: Domain
   layers?: ReadonlyArray<TimelineLayer>
-  theme: TimelineTheme
+  theme?: TimelineTheme
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -60,7 +61,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   isTrimming = false,
   trimRange,
   layers = ['grid', 'axes', 'interaction', 'marks'],
-  theme,
+  theme = createTimelineTheme(),
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick,

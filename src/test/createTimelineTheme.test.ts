@@ -1,8 +1,8 @@
 import { MUI_THEME } from './testTheme'
-import { createTimelineTheme } from '../theme/createTimelineTheme'
+import { deriveTimelineTheme } from '../theme/createTimelineTheme'
 
 describe.skip('createTimelineTheme', () => {
-  const defaultTheme = createTimelineTheme('light', MUI_THEME)
+  const defaultTheme = deriveTimelineTheme('light', MUI_THEME)
   expect(defaultTheme).toEqual({
     xAxis: {
       labelColor: 'rgba(0, 0, 0, 0.54)',
@@ -24,10 +24,10 @@ describe.skip('createTimelineTheme', () => {
     },
   })
   it('handle empty options', () => {
-    expect(createTimelineTheme('light', MUI_THEME, {})).toEqual(defaultTheme)
+    expect(deriveTimelineTheme('light', MUI_THEME, {})).toEqual(defaultTheme)
   })
   it('merge options into defaults', () => {
-    const theme = createTimelineTheme('light', MUI_THEME, {
+    const theme = deriveTimelineTheme('light', MUI_THEME, {
       tooltip: {
         backgroundColor: 'pink',
       },
