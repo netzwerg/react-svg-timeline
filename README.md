@@ -89,8 +89,14 @@ import { Timeline } from 'react-svg-timeline'
 
 const App = () => {
   const materialTheme = useTheme()
-  const theme = deriveTimelineTheme(materialTheme.palette.mode, materialTheme)
 
+  // MUI v4
+  const type = materialTheme.palette.type
+
+  // MUI v5
+  const type = materialTheme.palette.mode
+
+  const theme = deriveTimelineTheme(materialTheme.palette.mode, materialTheme)
   return <Timeline theme={theme} /** all other props here **/ />
 }
 ```
