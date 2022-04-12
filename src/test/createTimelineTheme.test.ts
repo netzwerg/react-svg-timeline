@@ -1,43 +1,91 @@
-import { MUI_THEME } from './testTheme'
-import { deriveTimelineTheme } from '../theme/createTimelineTheme'
+import { createTimelineTheme, deriveTimelineTheme, TemplateTheme } from '../theme/createTimelineTheme'
 
-describe.skip('createTimelineTheme', () => {
-  const defaultTheme = deriveTimelineTheme('light', MUI_THEME)
-  expect(defaultTheme).toEqual({
-    xAxis: {
-      labelColor: 'rgba(0, 0, 0, 0.54)',
-    },
-    tooltip: {
-      backgroundColor: 'rgba(0, 0, 0, 0.54)',
-    },
-    trimmer: {
-      trimHandleColor: '#ffab40',
-      trimHandleWidth: 10,
-      trimHandleLabelColor: '#ffab40',
-      trimRangeInsideColor: 'transparent',
-      trimRangeInsideHighlightColor: '#ffab40',
-      trimRangeInsideHighlightOpacity: 0.1,
-      trimRangeInsideOpacity: 0,
-      trimRangeOutsideColor: '#aaaaaa',
-      trimRangeOutsideOpacity: 0.1,
-      trimTriangleColor: '#ffab40',
-    },
+describe('createTimelineTheme', () => {
+  it('createTimelineTheme', () => {
+    const theme = createTimelineTheme()
+    expect(theme).toBeDefined()
   })
-  it('handle empty options', () => {
-    expect(deriveTimelineTheme('light', MUI_THEME, {})).toEqual(defaultTheme)
+  it('createTimelineTheme with options', () => {
+    const theme = createTimelineTheme({ event: { markHeight: 42 } })
+    expect(theme.event.markHeight).toEqual(42)
   })
-  it('merge options into defaults', () => {
-    const theme = deriveTimelineTheme('light', MUI_THEME, {
+  it('deriveTimelineTheme', () => {
+    const template: TemplateTheme = {
+      palette: {
+        primary: {
+          main: 'red',
+        },
+        background: {
+          paper: 'green',
+        },
+        text: {
+          secondary: 'blue',
+        },
+      },
+      typography: {
+        fontFamily: 'my-fancy-font-family',
+        caption: { fontFamily: 'my-fancy-caption-font-family' },
+      },
+    }
+
+    const options = {
       tooltip: {
         backgroundColor: 'pink',
       },
-    })
+    }
+
+    const theme = deriveTimelineTheme('light', template, options)
+
     expect(theme).toEqual({
-      xAxis: defaultTheme.xAxis,
+      base: {
+        backgroundColor: 'green',
+        fontFamily: 'my-fancy-font-family',
+        fontFamilyCaption: 'my-fancy-caption-font-family',
+      },
+      event: {
+        markHeight: 20,
+        markFillColor: 'red',
+        markSelectedLineColor: '#ffff8d',
+        markSelectedFillColor: 'rgba(255, 255, 141, 0.5)',
+        markPinnedLineColor: 'black',
+        clusterFillColor: 'red',
+      },
+      xAxis: { labelColor: 'blue' },
+      grid: {
+        lineColor: '#9e9e9e',
+        weekStripesColor: '#eeeeee',
+        weekStripesOpacity: 1,
+      },
+      lane: {
+        labelFontSize: 16,
+        labelColor: 'red',
+        middleLineColor: '#9e9e9e',
+        middleLineWidth: 1,
+      },
       tooltip: {
         backgroundColor: 'pink',
+        fontSize: 14,
+        fontFamily: 'my-fancy-caption-font-family',
       },
-      trimmer: defaultTheme.trimmer,
+      trimmer: {
+        trimHandleColor: '#ffab40',
+        trimHandleLabelColor: '#ffab40',
+        trimHandleWidth: 10,
+        trimTriangleColor: '#ffab40',
+        trimRangeInsideColor: 'transparent',
+        trimRangeInsideOpacity: 0,
+        trimRangeInsideHighlightColor: '#ffab40',
+        trimRangeInsideHighlightOpacity: 0.1,
+        trimRangeOutsideColor: '#aaaaaa',
+        trimRangeOutsideOpacity: 0.1,
+      },
+      mouseCursor: {
+        lineColor: '#ffab40',
+        lineWidth: 2,
+        zoomRangeColor: '#ffab40',
+        zoomRangeOpacity: 0.1,
+        labelColor: '#ffab40',
+      },
     })
   })
 })

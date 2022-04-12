@@ -6,7 +6,6 @@ import { render, screen } from './test-utils'
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
 import { Timeline } from '../Timeline'
-import { THEME } from './testTheme'
 import { calcMaxDomain } from '../hooks/useTimeline'
 
 describe('Timeline', () => {
@@ -16,10 +15,7 @@ describe('Timeline', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div')
     const dateFormat = () => 'whatevz'
-    ReactDOM.render(
-      <Timeline theme={THEME} width={99} height={42} events={events} lanes={lanes} dateFormat={dateFormat} />,
-      div
-    )
+    ReactDOM.render(<Timeline width={99} height={42} events={events} lanes={lanes} dateFormat={dateFormat} />, div)
     ReactDOM.unmountComponentAtNode(div)
   })
 
@@ -28,7 +24,6 @@ describe('Timeline', () => {
 
     render(
       <Timeline
-        theme={THEME}
         width={99}
         height={42}
         events={events}
