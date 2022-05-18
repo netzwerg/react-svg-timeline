@@ -1,14 +1,13 @@
-import React from 'react'
-import { makeStyles } from '@material-ui/core'
-import { useTimelineTheme } from '../../../theme'
-import { TrimmerTheme } from '../../../theme/model'
+import React, { CSSProperties } from 'react'
+import { useTimelineTheme } from '../../../theme/useTimelineTheme'
 
-const useStyles = makeStyles(() => ({
-  trimRange: (trimmerTheme: TrimmerTheme) => ({
-    fill: trimmerTheme.trimRangeOutsideColor,
-    opacity: trimmerTheme.trimRangeOutsideOpacity,
-  }),
-}))
+const useTrimRangeStyle = (): CSSProperties => {
+  const theme = useTimelineTheme().trimmer
+  return {
+    fill: theme.trimRangeOutsideColor,
+    opacity: theme.trimRangeOutsideOpacity,
+  }
+}
 
 interface Props {
   startX: number
@@ -18,13 +17,12 @@ interface Props {
 }
 
 export function TrimRange({ startX, endX, height, width }: Props) {
-  const trimmerStyle = useTimelineTheme().trimmer
-  const classes = useStyles(trimmerStyle)
+  const trimRangeStyle = useTrimRangeStyle()
   const [y1, y2] = [0, height]
   return (
     <g>
-      {startX > 0 && <rect className={classes.trimRange} x={0} y={y1} width={startX} height={y2} />}
-      {width - endX > 0 && <rect className={classes.trimRange} x={endX} y={y1} width={width - endX} height={y2} />}
+      {startX > 0 && <rect style={trimRangeStyle} x={0} y={y1} width={startX} height={y2} />}
+      {width - endX > 0 && <rect style={trimRangeStyle} x={endX} y={y1} width={width - endX} height={y2} />}
     </g>
   )
 }

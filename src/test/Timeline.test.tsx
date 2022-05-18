@@ -1,13 +1,12 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import { Timeline } from '../src'
-import { calcMaxDomain } from '../src/hooks/useTimeline'
-
 import { render, screen } from './test-utils'
 
 // @ts-ignore – IntelliJ doesn't believe that parcel can import JSON (https://parceljs.org/json.html)
 import data from './data.json'
+import { Timeline } from '../Timeline'
+import { calcMaxDomain } from '../hooks/useTimeline'
 
 describe('Timeline', () => {
   const events = data.events

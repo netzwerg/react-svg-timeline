@@ -15,7 +15,8 @@ Out of the box – **plain & simple**:
 
 ![](screenshot-timeline-component.png)
 
-Explore our [interactive demo](https://react-svg-timeline.netlify.com/) for more details on **customizations**.
+Explore our [interactive demo](https://netzwerg.github.io/react-svg-timeline-demo/) for more details on **customizations**.
+The demo code can be found in the [react-svg-timeline-demo](https://github.com/netzwerg/react-svg-timeline-demo) repository.
 
 Alternatively, you are free to use just the zooming & panning **interaction logic**, e.g. as a layer of the awesome [Nivo](https://nivo.rocks) line chart:
 
@@ -29,10 +30,7 @@ or
 
 `npm install react-svg-timeline`
 
-Note that the following peer dependencies must already be installed:
-
-- `react` and `react-dom` in version >=16.3
-- `@material-ui/core` in version >=4.3
+Note that `react` and `react-dom` (version >=16.3) must already be installed.
 
 ## Usage
 
@@ -53,14 +51,16 @@ export const App = () => {
   const events = [
     {
       eventId: 'event-1',
-      laneId: laneId,
-      startTimeMillis: 1399845600000,
-    },
-    {
-      eventId: 'event-2',
+      tooltip: 'Event 1',
       laneId,
       startTimeMillis: 1167606000000,
       endTimeMillis: 1230698892000,
+    },
+    {
+      eventId: 'event-2',
+      tooltip: 'Event 2',
+      laneId: laneId,
+      startTimeMillis: 1399845600000,
     },
   ]
   const dateFormat = (ms: number) => new Date(ms).toLocaleString()
@@ -68,7 +68,44 @@ export const App = () => {
 }
 ```
 
-Please check the [example](example) folder for a full-fledged feature demonstration.
+Please check the [react-svg-timeline-demo](https://github.com/netzwerg/react-svg-timeline-demo) repository for a full-fledged feature demonstration.
+
+## Theming
+
+To override the default theme, you can use the `theme` property.
+
+If your project is using [Material UI](https://mui.com/), the `deriveTimelineTheme` convenience function makes it particularly easy to use the MUI theme as a basis:
+
+```tsx
+import * as React from 'react'
+
+// MUI v4
+import { useTheme } from '@material-ui/core'
+
+// MUI v5
+import { useTheme } from '@mui/material'
+
+import { Timeline } from 'react-svg-timeline'
+
+const App = () => {
+  const materialTheme = useTheme()
+
+  // MUI v4
+  const type = materialTheme.palette.type
+
+  // MUI v5
+  const type = materialTheme.palette.mode
+
+  const theme = deriveTimelineTheme(materialTheme.palette.mode, materialTheme)
+  return <Timeline theme={theme} /** all other props here **/ />
+}
+```
+
+If you would just like to override certain aspects of the default timeline theme, use the `createTimelineTheme` helper function:
+
+```tsx
+const theme = createTimelineTheme({ event: { markFillColor: 'pink' } })
+```
 
 ## Library Development
 

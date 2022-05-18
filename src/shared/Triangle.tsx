@@ -8,14 +8,14 @@ export enum TriangleDirection {
 }
 
 interface TriangeProps {
+  style: React.CSSProperties
   x: number
   y: number
   dimension: number
   direction: TriangleDirection
-  className: string
 }
 
-function Triangle({ x, y, dimension, direction, className }: TriangeProps) {
+function Triangle({ style, x, y, dimension, direction }: TriangeProps) {
   let trianglePath
 
   switch (direction) {
@@ -35,7 +35,7 @@ function Triangle({ x, y, dimension, direction, className }: TriangeProps) {
 
   return (
     <svg x={x - dimension / 2} y={y - dimension / 2} viewBox={`0 0 10 10`} width={dimension} height={dimension}>
-      <path className={className} d={trianglePath} />
+      <path style={style} d={trianglePath} />
     </svg>
   )
 }

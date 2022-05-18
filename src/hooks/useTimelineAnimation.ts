@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-
-import { Domain } from '..'
+import { Domain } from '../model'
 
 type Animation =
   | 'none'

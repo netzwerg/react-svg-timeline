@@ -2,7 +2,28 @@ import * as React from 'react'
 import TextSize from '../shared/TextSize'
 import { Tooltip } from 'react-svg-tooltip'
 import { scaleLinear } from 'd3-scale'
-import { TooltipClasses, TOOLTIP_FONT_SIZE } from './useTooltipStyle'
+import { CSSProperties } from 'react'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
+
+const useTooltipRootSvgStyle = (): CSSProperties => ({
+  textAlign: 'left',
+})
+
+const useBackgroundStyle = (): CSSProperties => {
+  const theme = useTimelineTheme().tooltip
+  return { fill: theme.backgroundColor, strokeWidth: 0 }
+}
+
+const useTooltipTextStyle = (): CSSProperties => {
+  const theme = useTimelineTheme().tooltip
+  return {
+    fill: 'white',
+    dominantBaseline: 'middle',
+    textAnchor: 'middle',
+    fontFamily: theme.fontFamily,
+    fontSize: theme.fontSize,
+  }
+}
 
 interface Props {
   readonly type: { singleEventX: number } | 'period'
@@ -10,11 +31,15 @@ interface Props {
   readonly parentWidth: number
   readonly text: string
   readonly triggerRef: React.RefObject<SVGElement>
-  readonly classes: TooltipClasses
 }
 
-export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }: Props) => {
-  const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text)
+export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) => {
+  const tooltipRootSvgStyle = useTooltipRootSvgStyle()
+  const tooltipBackgroundStyle = useBackgroundStyle()
+  const tooltipTextStyle = useTooltipTextStyle()
+  const tooltipFontSize = useTimelineTheme().tooltip.fontSize
+
+  const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text, tooltipFontSize)
 
   return (
     <Tooltip triggerRef={triggerRef}>
@@ -43,16 +68,16 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef, classes }
 
         return (
           <g>
-            <svg x={svgX} y={svgY} width={tooltipWidth} height={tooltipHeight} className={classes.svg}>
-              <rect width="100%" height="100%" rx={3} ry={3} className={classes.background} />
+            <svg style={tooltipRootSvgStyle} x={svgX} y={svgY} width={tooltipWidth} height={tooltipHeight}>
+              <rect style={tooltipBackgroundStyle} width="100%" height="100%" rx={3} ry={3} />
               <TooltipText
+                style={tooltipTextStyle}
                 textLines={textLines}
                 tooltipHeight={tooltipHeight}
                 tooltipWidth={tooltipWidth}
-                className={classes.text}
               />
             </svg>
-            <ArrowDown tipX={tooltipX} baseY={baseY} dimension={arrowDimension} className={classes.background} />)
+            <ArrowDown style={tooltipBackgroundStyle} tipX={tooltipX} baseY={baseY} dimension={arrowDimension} />)
           </g>
         )
       }}
@@ -64,10 +89,10 @@ interface ArrowDownProps {
   readonly tipX: number
   readonly baseY: number
   readonly dimension: number
-  readonly className: string
+  readonly style: CSSProperties
 }
 
-const ArrowDown = ({ tipX, baseY, dimension, className }: ArrowDownProps) => {
+const ArrowDown = ({ tipX, baseY, dimension, style }: ArrowDownProps) => {
   return (
     <svg
       x={tipX - dimension / 2}
@@ -76,7 +101,7 @@ const ArrowDown = ({ tipX, baseY, dimension, className }: ArrowDownProps) => {
       width={dimension}
       height={dimension}
     >
-      <path className={className} d={`M0 2.5 l 5 5 5-5z`} />
+      <path style={style} d={`M0 2.5 l 5 5 5-5z`} />
     </svg>
   )
 }
@@ -84,7 +109,7 @@ const ArrowDown = ({ tipX, baseY, dimension, className }: ArrowDownProps) => {
 /**
  * Calculates the `width` and `height` of the passed tooltip text.
  */
-const getTooltipDimensions = (inputText: string) => {
+const getTooltipDimensions = (inputText: string, fontSize: number) => {
   const text = inputText || ''
   const textLines = text.split('\n')
   const numLinesInText = textLines.length
@@ -98,12 +123,12 @@ const getTooltipDimensions = (inputText: string) => {
   if (isMultiLineText) {
     let maxWidth = 0
     textLines.forEach((textLine) => {
-      const textLineWidth = TextSize.getTextWidth(textLine, TOOLTIP_FONT_SIZE)
+      const textLineWidth = TextSize.getTextWidth(textLine, fontSize)
       maxWidth = Math.max(textLineWidth, maxWidth)
     })
     width = maxWidth + horizontalPadding * 2
   } else {
-    width = TextSize.getTextWidth(text, TOOLTIP_FONT_SIZE) + horizontalPadding * 2
+    width = TextSize.getTextWidth(text, fontSize) + horizontalPadding * 2
   }
 
   const singleLineHeight = 30
@@ -119,14 +144,14 @@ const getTooltipDimensions = (inputText: string) => {
 
 interface TooltipTextProps {
   readonly textLines: string[]
-  readonly className: string
+  readonly style: CSSProperties
   readonly tooltipWidth: number
   readonly tooltipHeight: number
 }
 
-const TooltipText = ({ textLines, className, tooltipWidth, tooltipHeight }: TooltipTextProps) => {
+const TooltipText = ({ textLines, style, tooltipWidth, tooltipHeight }: TooltipTextProps) => {
   return (
-    <text className={className} width={tooltipWidth} height={tooltipHeight}>
+    <text style={style} width={tooltipWidth} height={tooltipHeight}>
       {textLines.map((textLine, index) => {
         return (
           <tspan dy="1.2em" x="10" key={index} textAnchor="start">

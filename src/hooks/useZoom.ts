@@ -1,7 +1,9 @@
-import { ScaleLinear } from 'd3-scale'
 import { useCallback } from 'react'
-import { useZoomLevels } from '.'
-import { Domain, getDomainSpan, ZoomLevels, ZoomScale, zoomScaleWidth } from '..'
+
+import { ScaleLinear } from 'd3-scale'
+import { useZoomLevels } from './useZoomLevels'
+import { getDomainSpan, ZoomLevels, ZoomScale, zoomScaleWidth } from '../shared/ZoomScale'
+import { Domain } from '../model'
 
 interface UseZoomProps {
   domain: Domain
