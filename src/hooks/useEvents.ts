@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { groups } from 'd3-array'
 import { format } from 'date-fns'
 import { Domain, TimelineEvent, TimelineEventCluster } from '../model'
@@ -32,6 +32,7 @@ const pinnedOrSelectedGroup = 'isPinnedOrSelected'
 
 export const useEvents = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>,
+  comparableEvents: string,
   domain: Domain,
   zoomScale: ZoomScale,
   groupByLane: boolean,
@@ -48,17 +49,21 @@ export const useEvents = <EID extends string, LID extends string, E extends Time
 } => {
   const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
 
-  const onEventHoverDecorated = (eventId: EID) => {
-    setIsMouseOverEvent(true)
-    onEventHover(eventId)
-  }
+  const onEventHoverDecorated = useCallback(
+    (eventId: EID) => {
+      setIsMouseOverEvent(true)
+      onEventHover(eventId)
+    },
+    [setIsMouseOverEvent, onEventHover]
+  )
 
-  const onEventUnhoverDecorated = (eventId: EID) => {
-    setIsMouseOverEvent(false)
-    onEventUnhover(eventId)
-  }
-
-  const comparableEvents = JSON.stringify(events)
+  const onEventUnhoverDecorated = useCallback(
+    (eventId: EID) => {
+      setIsMouseOverEvent(false)
+      onEventUnhover(eventId)
+    },
+    [setIsMouseOverEvent, onEventUnhover]
+  )
 
   const [eventsInsideDomain, eventClustersInsideDomain, isNoEventSelected] = useMemo(() => {
     const eventsInsideDomain = events.filter((e) => {
@@ -68,7 +73,7 @@ export const useEvents = <EID extends string, LID extends string, E extends Time
       return isStartInView || isEndInView || isSpanningAcrossView
     })
 
-    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
+    const isNoEventSelected = eventsInsideDomain.some((e) => e.isSelected) === false
 
     // zoomScale 'minimum' is never reached
     if (!cluster || zoomScale === ZoomLevels.ONE_DAY) {

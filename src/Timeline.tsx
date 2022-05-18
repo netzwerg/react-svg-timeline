@@ -72,6 +72,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
 }: TimelineProps<EID, LID, E>) => {
   {
     const {
+      comparableEvents,
       domain,
       setDomain,
       maxDomain,
@@ -83,7 +84,11 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
       yScale,
     } = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
 
-    const { isAnimationInProgress, setAnimation } = useTimelineAnimation({ maxDomainStart, maxDomainEnd, setDomain })
+    const { isAnimationInProgress, setAnimation, animation } = useTimelineAnimation({
+      maxDomainStart,
+      maxDomainEnd,
+      setDomain,
+    })
 
     const {
       eventsInsideDomain,
@@ -94,7 +99,8 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
       onEventUnhoverDecorated,
     } = useEvents(
       events,
-      domain,
+      comparableEvents,
+      animation !== 'none' ? animation.fromDomain : domain,
       currentZoomScale,
       laneDisplayMode === 'expanded',
       enableEventClustering,
@@ -112,7 +118,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           setDomain(newDomain)
         }
       },
-      [domain]
+      [domain, setAnimation, setDomain]
     )
 
     const layerById = {
@@ -166,6 +172,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           {laneDisplayMode === 'expanded' ? (
             <ExpandedMarks
               events={eventsInsideDomain}
+              comparableEvents={comparableEvents}
               lanes={lanes}
               timeScale={timeScale}
               yScale={yScale}
@@ -178,6 +185,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           ) : (
             <CollapsedMarks
               events={eventsInsideDomain}
+              comparableEvents={comparableEvents}
               timeScale={timeScale}
               height={height}
               eventComponent={eventComponent}
