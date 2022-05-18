@@ -6,6 +6,7 @@ import { EventComponentFactory, TimelineEvent } from '../model'
 interface Props<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   height: number
   events: ReadonlyArray<E>
+  comparableEvents: string
   timeScale: ScaleLinear<number, number>
   eventMarkerHeight?: number
   eventComponent?: EventComponentFactory<EID, LID, E>
@@ -17,6 +18,7 @@ interface Props<EID extends string, LID extends string, E extends TimelineEvent<
 export const CollapsedMarks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>({
   height,
   events,
+  comparableEvents,
   timeScale,
   eventComponent,
   onEventHover,
@@ -30,6 +32,7 @@ export const CollapsedMarks = <EID extends string, LID extends string, E extends
       <Marks
         height={height}
         events={events}
+        comparableEvents={comparableEvents}
         timeScale={timeScale}
         y={y}
         eventComponent={eventComponent}

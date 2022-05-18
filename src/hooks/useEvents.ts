@@ -32,6 +32,7 @@ const pinnedOrSelectedGroup = 'isPinnedOrSelected'
 
 export const useEvents = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>,
+  comparableEvents: string,
   domain: Domain,
   zoomScale: ZoomScale,
   groupByLane: boolean,
@@ -64,8 +65,6 @@ export const useEvents = <EID extends string, LID extends string, E extends Time
     [setIsMouseOverEvent, onEventUnhover]
   )
 
-  const comparableEvents = JSON.stringify(events)
-
   const [eventsInsideDomain, eventClustersInsideDomain, isNoEventSelected] = useMemo(() => {
     const eventsInsideDomain = events.filter((e) => {
       const isStartInView = e.startTimeMillis >= domain[0] && e.startTimeMillis <= domain[1]
@@ -74,7 +73,7 @@ export const useEvents = <EID extends string, LID extends string, E extends Time
       return isStartInView || isEndInView || isSpanningAcrossView
     })
 
-    const isNoEventSelected = eventsInsideDomain.filter((e) => e.isSelected).length === 0
+    const isNoEventSelected = eventsInsideDomain.some((e) => e.isSelected) === false
 
     // zoomScale 'minimum' is never reached
     if (!cluster || zoomScale === ZoomLevels.ONE_DAY) {

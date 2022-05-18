@@ -33,6 +33,7 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
   zoomLevels,
   onZoomRangeChange,
 }: UseTimelineProps<EID, LID, E>): {
+  comparableEvents: string
   domain: Domain
   setDomain: React.Dispatch<React.SetStateAction<Domain>>
   maxDomain: Domain
@@ -83,6 +84,7 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
   )
 
   return {
+    comparableEvents,
     domain,
     setDomain,
     maxDomain,

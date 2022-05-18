@@ -44,6 +44,7 @@ const useEventSelectedStyle = () => {
 export interface Props<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   height: number
   events: ReadonlyArray<E>
+  comparableEvents: string
   timeScale: ScaleLinear<number, number>
   y: number
   eventComponent?: EventComponentFactory<EID, LID, E>
@@ -66,7 +67,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   props: Props<EID, LID, E>
 ) => {
   const theme = useTimelineTheme()
-  const { events, height } = props
+  const { events, comparableEvents, height } = props
   const eventBackgroundStyle = useEventBackgroundStyle()
   const eventPeriodStyle = useEventPeriodStyle()
   const eventCircleStyle = useEventCircleStyle()
@@ -95,7 +96,6 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
   const eventComponentFactory = eventComponent || defaultEventComponent
 
   // string-based deep-comparisons to determine whether marks should be re-rendered
-  const comparableEvents = JSON.stringify(events)
   const comparableTimeScale = JSON.stringify({ domain: timeScale.domain(), range: timeScale.range() })
 
   // ignoring `isSelected` for background/foreground marks (selectionMarks are rendered specifically)

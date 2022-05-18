@@ -24,6 +24,7 @@ export const useTimelineAnimation = ({
 }: UseTimelineAnimationProps): {
   isAnimationInProgress: boolean
   setAnimation: React.Dispatch<React.SetStateAction<Animation>>
+  animation: Animation
 } => {
   const [animation, setAnimation] = useState<Animation>('none')
 
@@ -57,5 +58,5 @@ export const useTimelineAnimation = ({
 
   const isAnimationInProgress = animation !== 'none'
 
-  return { isAnimationInProgress, setAnimation }
+  return { isAnimationInProgress, setAnimation, animation }
 }
