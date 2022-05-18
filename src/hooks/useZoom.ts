@@ -1,4 +1,5 @@
 import { ScaleLinear } from 'd3-scale'
+import { useCallback } from 'react'
 import { useZoomLevels } from '.'
 import { Domain, getDomainSpan, ZoomLevels, ZoomScale, zoomScaleWidth } from '..'
 
@@ -44,41 +45,50 @@ export const useZoom = ({
   const isZoomInPossible = nextSmallerZoomScale !== 'minimum'
   const isZoomOutPossible = currentDomainWidth < maxDomainWidth
 
-  const setDomainAnimated = (newDomain: Domain) => onDomainChange(newDomain, true)
+  const setDomainAnimated = useCallback((newDomain: Domain) => onDomainChange(newDomain, true), [onDomainChange])
 
-  const updateDomain = (zoomScale: ZoomScale) => (timeAtCursor?: number) => {
-    if (isDomainChangePossible) {
-      const newZoomWidth = zoomScaleWidth(zoomScale)
-      setDomainAnimated(
-        getDomainSpan(maxDomainStart, maxDomainEnd, timeAtCursor ?? (domain[0] + domain[1]) / 2, newZoomWidth)
-      )
-    }
-  }
+  const updateDomain = useCallback(
+    (zoomScale: ZoomScale) => (timeAtCursor?: number) => {
+      if (isDomainChangePossible) {
+        const newZoomWidth = zoomScaleWidth(zoomScale)
+        setDomainAnimated(
+          getDomainSpan(maxDomainStart, maxDomainEnd, timeAtCursor ?? (domain[0] + domain[1]) / 2, newZoomWidth)
+        )
+      }
+    },
+    [isDomainChangePossible, maxDomainStart, maxDomainEnd, setDomainAnimated]
+  )
 
-  const onZoomIn = updateDomain(nextSmallerZoomScale)
-  const onZoomOut = updateDomain(nextBiggerZoomScale)
+  const onZoomIn = useCallback(() => updateDomain(nextSmallerZoomScale), [nextSmallerZoomScale, updateDomain])
+  const onZoomOut = useCallback(() => updateDomain(nextBiggerZoomScale), [nextBiggerZoomScale, updateDomain])
 
-  const onZoomInCustom = (mouseStartX: number, mouseEndX: number) => {
-    if (isDomainChangePossible) {
-      const newMin = timeScale.invert(mouseStartX)
-      const newMax = timeScale.invert(mouseEndX)
-      setDomainAnimated([newMin, newMax])
-    }
-  }
+  const onZoomInCustom = useCallback(
+    (mouseStartX: number, mouseEndX: number) => {
+      if (isDomainChangePossible) {
+        const newMin = timeScale.invert(mouseStartX)
+        const newMax = timeScale.invert(mouseEndX)
+        setDomainAnimated([newMin, newMax])
+      }
+    },
+    [isDomainChangePossible, setDomainAnimated, timeScale]
+  )
 
-  const onZoomInCustomInProgress = (mouseStartX: number, mouseEndX: number) => {
-    if (isDomainChangePossible && onCursorMove) {
-      const newMin = timeScale.invert(mouseStartX)
-      const newMax = timeScale.invert(mouseEndX)
-      onCursorMove(newMax, newMin, newMax)
-    }
-  }
+  const onZoomInCustomInProgress = useCallback(
+    (mouseStartX: number, mouseEndX: number) => {
+      if (isDomainChangePossible && onCursorMove) {
+        const newMin = timeScale.invert(mouseStartX)
+        const newMax = timeScale.invert(mouseEndX)
+        onCursorMove(newMax, newMin, newMax)
+      }
+    },
+    [isDomainChangePossible, onCursorMove, timeScale]
+  )
 
-  const onZoomReset = () => {
+  const onZoomReset = useCallback(() => {
     if (isDomainChangePossible) {
       setDomainAnimated([maxDomainStart, maxDomainEnd])
     }
-  }
+  }, [isDomainChangePossible, setDomainAnimated, maxDomainStart, maxDomainEnd])
 
   return {
     currentZoomScale,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useZoomLevels } from './useZoomLevels'
 
@@ -42,7 +42,9 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
   timeScale: ScaleLinear<number, number>
   yScale: ScaleBand<string>
 } => {
-  const maxDomain = customRange ?? calcMaxDomain(events)
+  const comparableEvents = JSON.stringify(events)
+
+  const maxDomain = useMemo(() => customRange ?? calcMaxDomain(events), [comparableEvents, customRange])
   const maxDomainStart = maxDomain[0]
   const maxDomainEnd = maxDomain[1]
 
@@ -61,15 +63,23 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
   }, [domain, onZoomRangeChange])
 
   const timeScalePadding = 50
-  const timeScale = scaleLinear()
-    .domain(domain)
-    .range([timeScalePadding, width - timeScalePadding])
+  const timeScale = useMemo(
+    () =>
+      scaleLinear()
+        .domain(domain)
+        .range([timeScalePadding, width - timeScalePadding]),
+    [domain, width]
+  )
 
-  const yScale = scaleBand()
-    .domain(lanes.map((l) => l.laneId))
-    .range([0, height])
-    .paddingInner(0.3)
-    .paddingOuter(0.8)
+  const yScale = useMemo(
+    () =>
+      scaleBand()
+        .domain(lanes.map((l) => l.laneId))
+        .range([0, height])
+        .paddingInner(0.3)
+        .paddingOuter(0.8),
+    [lanes, height]
+  )
 
   return {
     domain,

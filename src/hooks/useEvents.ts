@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { groups } from 'd3-array'
 import { format } from 'date-fns'
 import { Domain, TimelineEvent, TimelineEventCluster } from '../model'
@@ -48,15 +48,21 @@ export const useEvents = <EID extends string, LID extends string, E extends Time
 } => {
   const [isMouseOverEvent, setIsMouseOverEvent] = useState(false)
 
-  const onEventHoverDecorated = (eventId: EID) => {
-    setIsMouseOverEvent(true)
-    onEventHover(eventId)
-  }
+  const onEventHoverDecorated = useCallback(
+    (eventId: EID) => {
+      setIsMouseOverEvent(true)
+      onEventHover(eventId)
+    },
+    [setIsMouseOverEvent, onEventHover]
+  )
 
-  const onEventUnhoverDecorated = (eventId: EID) => {
-    setIsMouseOverEvent(false)
-    onEventUnhover(eventId)
-  }
+  const onEventUnhoverDecorated = useCallback(
+    (eventId: EID) => {
+      setIsMouseOverEvent(false)
+      onEventUnhover(eventId)
+    },
+    [setIsMouseOverEvent, onEventUnhover]
+  )
 
   const comparableEvents = JSON.stringify(events)
 
