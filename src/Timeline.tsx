@@ -118,7 +118,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           setDomain(newDomain)
         }
       },
-      [domain]
+      [domain, setAnimation, setDomain]
     )
 
     const layerById = {
