@@ -72,7 +72,6 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
 }: TimelineProps<EID, LID, E>) => {
   {
     const {
-      comparableEvents,
       domain,
       setDomain,
       maxDomain,
@@ -99,7 +98,6 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
       onEventUnhoverDecorated,
     } = useEvents(
       events,
-      comparableEvents,
       animation !== 'none' ? animation.fromDomain : domain,
       currentZoomScale,
       laneDisplayMode === 'expanded',
@@ -172,7 +170,6 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           {laneDisplayMode === 'expanded' ? (
             <ExpandedMarks
               events={eventsInsideDomain}
-              comparableEvents={comparableEvents}
               lanes={lanes}
               timeScale={timeScale}
               yScale={yScale}
@@ -185,7 +182,6 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
           ) : (
             <CollapsedMarks
               events={eventsInsideDomain}
-              comparableEvents={comparableEvents}
               timeScale={timeScale}
               height={height}
               eventComponent={eventComponent}
@@ -223,6 +219,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
                   eventClusters: eventClustersInsideDomain,
                   lanes,
                   laneDisplayMode,
+                  isAnimationInProgress,
                 })}
               </Fragment>
             )

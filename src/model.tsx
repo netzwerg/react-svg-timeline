@@ -58,6 +58,7 @@ export interface CustomLayerProps<EID extends string, LID extends string, E exte
   maxDomainEnd: number
   currentZoomScale: ZoomLevels
   nextSmallerZoomScale: ZoomLevels
+  isAnimationInProgress: boolean
 }
 
 export type CustomLayer = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(

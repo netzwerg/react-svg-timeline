@@ -32,7 +32,6 @@ const pinnedOrSelectedGroup = 'isPinnedOrSelected'
 
 export const useEvents = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>,
-  comparableEvents: string,
   domain: Domain,
   zoomScale: ZoomScale,
   groupByLane: boolean,
@@ -116,7 +115,7 @@ export const useEvents = <EID extends string, LID extends string, E extends Time
         [[], [], isNoEventSelected] as [ReadonlyArray<E>, ReadonlyArray<TimelineEventCluster<LID>>, boolean]
       )
     }
-  }, [comparableEvents, domain, zoomScale, groupByLane, cluster])
+  }, [events, domain, zoomScale, groupByLane, cluster])
 
   return {
     eventsInsideDomain,
