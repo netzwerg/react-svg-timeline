@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { useZoomLevels } from './useZoomLevels'
-
+import { min, max } from 'd3-array'
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale'
 import { Domain, TimelineEvent, TimelineLane } from '../model'
 import { ZoomLevels } from '../shared/ZoomScale'
@@ -9,8 +9,8 @@ import { ZoomLevels } from '../shared/ZoomScale'
 export const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>
 ): Domain => {
-  const timeMin = Math.min(...events.map((e) => e.startTimeMillis))
-  const timeMax = Math.max(...events.map((e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis)))
+  const timeMin = min(events, (e) => e.startTimeMillis)
+  const timeMax = max(events, (e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis))
   return [timeMin || NaN, timeMax || NaN]
 }
 
