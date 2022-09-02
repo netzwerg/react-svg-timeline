@@ -6078,10 +6078,10 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
-ts-deepmerge@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/ts-deepmerge/-/ts-deepmerge-1.0.7.tgz#8931501f750b3fb4d1e564d6753063fa3ed05298"
-  integrity sha512-zJInx1VKRn9S20n80P8/G19Xrov4xtcNFEUH0GwPfIUr24U/bNiw+I1X2RmQsnL2n0KT/7HQ6L5fbDuE7by/zw==
+ts-deepmerge@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/ts-deepmerge/-/ts-deepmerge-2.0.2.tgz#ba640d1c3f387d90fdced823cfccee2c9ade01dd"
+  integrity sha512-Bmx+Y4OGmk6h5Y8DhkGa19xIcG2SWQocJDxivTTij/t9hx/9chG3AMxU0XC/FpqmonhNcX67BpmfDWB8DOXZRg==
 
 ts-jest@^25.3.1:
   version "25.5.1"
