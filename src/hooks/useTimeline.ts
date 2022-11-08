@@ -11,7 +11,7 @@ export const calcMaxDomain = <EID extends string, LID extends string, E extends 
 ): Domain => {
   const timeMin = min(events, (e) => e.startTimeMillis)
   const timeMax = max(events, (e) => (e.endTimeMillis === undefined ? e.startTimeMillis : e.endTimeMillis))
-  return [timeMin || NaN, timeMax || NaN]
+  return [timeMin ?? NaN, timeMax ?? NaN]
 }
 
 interface UseTimelineProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
