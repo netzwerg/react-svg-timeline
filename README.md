@@ -125,6 +125,14 @@ In your project consuming the library:
 yalc add react-svg-timeline
 ```
 
+Note: If you previously had react-svg-timeline added via yalc, you need to remove it first:
+
+```
+yalc remove react-svg-timeline
+yarn install
+yalc add react-svg-timeline
+```
+
 ### Publishing a release
 
 ```
