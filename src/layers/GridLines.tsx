@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { ScaleLinear } from 'd3-scale'
+import { ScaleLinear, scaleTime } from 'd3-scale'
+import { timeMonth } from 'd3-time'
 import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared/ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
 import { Domain } from '../model'
@@ -123,34 +124,27 @@ const MonthView = ({ height, domain, timeScale, showWeekStripes = false }: Month
   // not calendar-based (fixed 30 days), but good enough for horizontal placement of labels
   const monthWidth = monthDuration
 
-  const startDate = new Date(domain[0])
-  const startYear = startDate.getFullYear()
-  const startMonth = startDate.getMonth()
+  const scale = scaleTime().domain([new Date(domain[0]), new Date(domain[1])])
 
-  const endDate = new Date(domain[1])
-  const endYear = endDate.getFullYear()
-  const endMonth = endDate.getMonth()
+  const monthTicks = scale.ticks(timeMonth.every(1)!)
 
-  // handle year boundary: iterate further than month 11 (and correct with % 12 again later)
-  const rangeEndMonth = startYear === endYear ? endMonth : endMonth + 12
-  const monthNumbers = range(startMonth, rangeEndMonth + 1)
+  // TODO: Change year and week view also to use d3 libraries
 
-  const lines = monthNumbers.map((rawMonth, index) => {
-    const year = rawMonth < 12 ? startYear : endYear
-    const month = rawMonth % 12
-    const monthDate = new Date(year, month, 1)
-    const monthTimestamp = monthDate.valueOf()
-    const monthName = monthNames[month]
+  const lines = monthTicks.map((monthTick, index) => {
+    const monthTimestamp = monthTick.valueOf()
+    const month = monthTick.getMonth()
+    const year = monthTick.getFullYear()
+
     const x = timeScale(monthTimestamp)!
     const xMidMonth = timeScale(monthTimestamp + monthWidth / 2)
     const xLast = timeScale(addMonths(monthTimestamp, 1))!
-    const isLast = index === monthNumbers.length - 1
+    const isLast = index === monthTicks.length - 1
     return (
-      <g key={rawMonth}>
+      <g key={monthTimestamp}>
         {showWeekStripes && <WeekStripes monthStart={monthTimestamp} timeScale={timeScale} />}
         <MonthLine x={x} month={month} />
         <text style={textStyle} x={xMidMonth} y={height - 1.5 * monthViewLabelFontSize}>
-          {monthName}
+          {monthNames[month]}
         </text>
         <text style={textStyle} x={xMidMonth} y={height - 0.5 * monthViewLabelFontSize}>
           {year}
