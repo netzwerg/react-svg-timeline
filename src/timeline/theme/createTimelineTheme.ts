@@ -131,7 +131,7 @@ export const deriveTimelineTheme = (
       labelColor: ORANGE_DEFAULT,
     },
   }
-  return options ? deepMerge(defaults, options) : defaults
+  return options ? (deepMerge(defaults, options) as TimelineTheme) : defaults
 }
 
 export interface TimelineThemeOptions {

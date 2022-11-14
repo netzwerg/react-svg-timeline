@@ -2,9 +2,6 @@
   "name": "react-svg-timeline",
   "version": "0.23.6",
   "description": "React Timeline Component",
-  "author": "Rahel Lüthy <rahel.luethy@gmail.com>",
-  "license": "MIT",
-  "repository": "netzwerg/react-svg-timeline",
   "keywords": [
     "react",
     "timeline",
@@ -16,6 +13,9 @@
     "plot",
     "svg"
   ],
+  "repository": "netzwerg/react-svg-timeline",
+  "license": "MIT",
+  "author": "Rahel Lüthy <rahel.luethy@gmail.com>",
   "type": "module",
   "exports": {
     ".": {
@@ -30,7 +30,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && vite build",
+    "build": "vite build",
     "build-storybook": "build-storybook",
     "coverage": "vitest run --coverage",
     "postinstall": "husky install",

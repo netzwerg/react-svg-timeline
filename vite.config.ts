@@ -28,7 +28,7 @@ export default defineConfig({
       fileName: 'react-svg-timeline',
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
     },
   },
   test: {
