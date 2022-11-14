@@ -13,7 +13,6 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "declaration": true,
     "outDir": "dist",
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true
