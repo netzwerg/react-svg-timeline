@@ -182,4 +182,4 @@ Thank you:
 
 Licensed under [MIT License](LICENSE).
 
-&copy; Rahel Lüthy 2022
+&copy; Rahel Lüthy & Jan Azzati 2022
