@@ -109,6 +109,38 @@ const theme = createTimelineTheme({ event: { markFillColor: 'pink' } })
 
 ## Library Development
 
+### Local Development
+
+To run the timeline locally with HMR, execute the following command:
+
+```
+yarn start
+```
+
+### Storybook
+
+To run the storybook locally, execute the following command:
+
+```
+yarn storybook
+```
+
+### Testing
+
+To run the tests, execute the following command:
+
+```
+yarn test
+```
+
+### Building
+
+To build the library, execute the following command:
+
+```
+yarn build
+```
+
 ### Testing a release candidate
 
 While making changes to this library in the context of a consuming project, [yalc](https://github.com/wclr/yalc) can be very handy:
@@ -144,11 +176,10 @@ git push --tags
 
 Thank you:
 
-- [TSDX](https://github.com/palmerhq/tsdx) for making TS library development easier
 - [GitHub Corners](https://github.com/tholman/github-corners) for the callout on the example site
 
 ## License
 
 Licensed under [MIT License](LICENSE).
 
-&copy; Rahel Lüthy 2021
+&copy; Rahel Lüthy 2022
