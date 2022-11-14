@@ -16,22 +16,73 @@
     "plot",
     "svg"
   ],
-  "main": "dist/index.js",
-  "module": "dist/react-svg-timeline.esm.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/react-svg-timeline.js",
+      "require": "./dist/react-svg-timeline.umd.cjs"
+    }
+  },
+  "main": "./dist/react-svg-timeline.umd.cjs",
+  "module": "./dist/react-svg-timeline.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --env=jsdom",
-    "lint": "tsdx lint",
-    "prepare": "npm run build"
+    "build": "tsc && vite build",
+    "build-storybook": "build-storybook",
+    "coverage": "vitest run --coverage",
+    "postinstall": "husky install",
+    "lint": "eslint --max-warnings 0 './src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
+    "prepreview": "yarn build",
+    "preview": "vite preview",
+    "start": "vite",
+    "storybook": "start-storybook -p 6006",
+    "test": "vitest",
+    "test:ci": "CI=true vitest run"
   },
-  "peerDependencies": {
-    "react": ">=16.3",
-    "react-dom": ">=16.3"
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "overrides": [
+      {
+        "files": [
+          "**/*.ts?(x)"
+        ],
+        "rules": {
+          "@typescript-eslint/semi": [
+            "error",
+            "never"
+          ]
+        }
+      },
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
   },
   "dependencies": {
     "d3-array": "^2.11.0",
@@ -39,41 +90,48 @@
     "d3-time": "^3.0.0",
     "date-fns": "^2.2.1",
     "react-svg-tooltip": "^0.0.11",
-    "ts-deepmerge": "^2.0.2"
+    "ts-deepmerge": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-essentials": "^6.5.9",
+    "@storybook/addon-links": "^6.5.9",
+    "@storybook/builder-vite": "^0.2.2",
+    "@storybook/node-logger": "^6.5.9",
+    "@storybook/react": "^6.5.9",
     "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^12.1.2",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/user-event": "^14.3.0",
     "@types/d3-array": "^2.9.0",
     "@types/d3-scale": "^2.1.1",
     "@types/d3-time": "^3.0.0",
-    "@types/jest": "^27.4.1",
-    "@types/react": "^16.9.51",
-    "@types/react-dom": "^16.9.8",
-    "husky": "^4.3.0",
-    "jest-canvas-mock": "^2.3.1",
-    "prettier": "^2.1.2",
-    "pretty-quick": "^3.0.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "tsdx": "^0.14.0",
-    "tslib": "^2.0.2",
-    "typescript": "4.6.3"
+    "@types/jest": "^28.1.6",
+    "@types/node": "18.6.1",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-redux": "7.1.24",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "@vitejs/plugin-react": "^2.0.0",
+    "babel-loader": "^8.2.5",
+    "eslint": "^8.20.0",
+    "eslint-config-react-app": "^7.0.1",
+    "husky": "^8.0.1",
+    "jsdom": "^20.0.0",
+    "lint-staged": "13.0.3",
+    "node-fetch": "^3.2.9",
+    "prettier": "2.7.1",
+    "prettier-plugin-packagejson": "2.2.18",
+    "storybook-dark-mode": "^1.1.0",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.3",
+    "vite-plugin-checker": "^0.4.9",
+    "vitest": "^0.19.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
   },
-  "jest": {
-    "setupFiles": [
-      "jest-canvas-mock"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/test/setupTests.ts"
-    ],
-    "moduleNameMapper": {
-      "^d3-(.*)$": "d3-$1/dist/d3-$1"
-    }
-  }
+  "packageManager": "yarn@3.2.2"
 }
