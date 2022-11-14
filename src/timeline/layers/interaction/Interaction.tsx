@@ -73,6 +73,8 @@ export const Interaction = ({
     onCursorMove,
   })
 
+  const [onTrimStart, onTrimEnd] = useTrimming(maxDomain, timeScale, onTrimRangeChange, trimRange)
+
   return (
     <MouseAwareSvg width={width} height={height}>
       {(mousePosition: SvgCoordinates) => {
@@ -95,8 +97,6 @@ export const Interaction = ({
             }
           }
         }
-
-        const [onTrimStart, onTrimEnd] = useTrimming(maxDomain, timeScale, onTrimRangeChange, trimRange)
 
         return (
           <InteractionHandling

@@ -70,162 +70,160 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   onTrimRangeChange,
   onInteractionEnd,
 }: TimelineProps<EID, LID, E>) => {
-  {
-    const {
-      domain,
-      setDomain,
-      maxDomain,
-      maxDomainStart,
-      maxDomainEnd,
-      currentZoomScale,
-      nextSmallerZoomScale,
-      timeScale,
-      yScale,
-    } = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
+  const {
+    domain,
+    setDomain,
+    maxDomain,
+    maxDomainStart,
+    maxDomainEnd,
+    currentZoomScale,
+    nextSmallerZoomScale,
+    timeScale,
+    yScale,
+  } = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
 
-    const { isAnimationInProgress, setAnimation, animation } = useTimelineAnimation({
-      maxDomainStart,
-      maxDomainEnd,
-      setDomain,
-    })
+  const { isAnimationInProgress, setAnimation, animation } = useTimelineAnimation({
+    maxDomainStart,
+    maxDomainEnd,
+    setDomain,
+  })
 
-    const {
-      eventsInsideDomain,
-      eventClustersInsideDomain,
-      isNoEventSelected,
-      isMouseOverEvent,
-      onEventHoverDecorated,
-      onEventUnhoverDecorated,
-    } = useEvents(
-      events,
-      animation !== 'none' ? animation.fromDomain : domain,
-      currentZoomScale,
-      laneDisplayMode === 'expanded',
-      enableEventClustering,
-      onEventHover,
-      onEventUnhover
-    )
+  const {
+    eventsInsideDomain,
+    eventClustersInsideDomain,
+    isNoEventSelected,
+    isMouseOverEvent,
+    onEventHoverDecorated,
+    onEventUnhoverDecorated,
+  } = useEvents(
+    events,
+    animation !== 'none' ? animation.fromDomain : domain,
+    currentZoomScale,
+    laneDisplayMode === 'expanded',
+    enableEventClustering,
+    onEventHover,
+    onEventUnhover
+  )
 
-    const showMarks = suppressMarkAnimation ? !isAnimationInProgress : true
+  const showMarks = suppressMarkAnimation ? !isAnimationInProgress : true
 
-    const handleDomainChange = useCallback(
-      (newDomain: Domain, animated: boolean) => {
-        if (animated) {
-          setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
-        } else {
-          setDomain(newDomain)
-        }
-      },
-      [domain, setAnimation, setDomain]
-    )
+  const handleDomainChange = useCallback(
+    (newDomain: Domain, animated: boolean) => {
+      if (animated) {
+        setAnimation({ startMs: Date.now(), fromDomain: domain, toDomain: newDomain })
+      } else {
+        setDomain(newDomain)
+      }
+    },
+    [domain, setAnimation, setDomain]
+  )
 
-    const layerById = {
-      grid: (
-        <GridLines
-          key="grid"
-          height={height}
-          domain={domain}
-          smallerZoomScale={nextSmallerZoomScale}
-          timeScale={timeScale}
-        />
+  const layerById = {
+    grid: (
+      <GridLines
+        key="grid"
+        height={height}
+        domain={domain}
+        smallerZoomScale={nextSmallerZoomScale}
+        timeScale={timeScale}
+      />
+    ),
+    axes:
+      laneDisplayMode === 'expanded' ? (
+        <Axes key="axes" lanes={lanes} yScale={yScale} />
+      ) : (
+        <Axis key="axis" y={height / 2} />
       ),
-      axes:
-        laneDisplayMode === 'expanded' ? (
-          <Axes key="axes" lanes={lanes} yScale={yScale} />
-        ) : (
-          <Axis key="axis" y={height / 2} />
-        ),
-      interaction: (
-        <Interaction
-          key="interaction"
-          width={width}
+    interaction: (
+      <Interaction
+        key="interaction"
+        width={width}
+        height={height}
+        domain={domain}
+        maxDomain={maxDomain}
+        maxDomainStart={maxDomainStart}
+        maxDomainEnd={maxDomainEnd}
+        isDomainChangePossible={!isAnimationInProgress && !isMouseOverEvent}
+        timeScale={timeScale}
+        zoomLevels={zoomLevels}
+        isTrimming={isTrimming}
+        trimRange={trimRange}
+        isAnimationInProgress={isAnimationInProgress}
+        isNoEventSelected={isNoEventSelected}
+        onDomainChange={handleDomainChange}
+        dateFormat={dateFormat}
+        onCursorMove={onCursorMove}
+        onInteractionEnd={onInteractionEnd}
+        onTrimRangeChange={onTrimRangeChange}
+      />
+    ),
+    marks: showMarks && (
+      <g key="marks">
+        <EventClusters
           height={height}
-          domain={domain}
-          maxDomain={maxDomain}
-          maxDomainStart={maxDomainStart}
-          maxDomainEnd={maxDomainEnd}
-          isDomainChangePossible={!isAnimationInProgress && !isMouseOverEvent}
+          eventClusters={eventClustersInsideDomain}
           timeScale={timeScale}
-          zoomLevels={zoomLevels}
-          isTrimming={isTrimming}
-          trimRange={trimRange}
-          isAnimationInProgress={isAnimationInProgress}
-          isNoEventSelected={isNoEventSelected}
-          onDomainChange={handleDomainChange}
-          dateFormat={dateFormat}
-          onCursorMove={onCursorMove}
-          onInteractionEnd={onInteractionEnd}
-          onTrimRangeChange={onTrimRangeChange}
+          yScale={yScale}
+          expanded={laneDisplayMode === 'expanded'}
         />
-      ),
-      marks: showMarks && (
-        <g key="marks">
-          <EventClusters
-            height={height}
-            eventClusters={eventClustersInsideDomain}
+        {laneDisplayMode === 'expanded' ? (
+          <ExpandedMarks
+            events={eventsInsideDomain}
+            lanes={lanes}
             timeScale={timeScale}
             yScale={yScale}
-            expanded={laneDisplayMode === 'expanded'}
+            height={height}
+            eventComponent={eventComponent}
+            onEventHover={onEventHoverDecorated}
+            onEventUnhover={onEventUnhoverDecorated}
+            onEventClick={onEventClick}
           />
-          {laneDisplayMode === 'expanded' ? (
-            <ExpandedMarks
-              events={eventsInsideDomain}
-              lanes={lanes}
-              timeScale={timeScale}
-              yScale={yScale}
-              height={height}
-              eventComponent={eventComponent}
-              onEventHover={onEventHoverDecorated}
-              onEventUnhover={onEventUnhoverDecorated}
-              onEventClick={onEventClick}
-            />
-          ) : (
-            <CollapsedMarks
-              events={eventsInsideDomain}
-              timeScale={timeScale}
-              height={height}
-              eventComponent={eventComponent}
-              onEventHover={onEventHoverDecorated}
-              onEventUnhover={onEventUnhoverDecorated}
-              onEventClick={onEventClick}
-            />
-          )}
-        </g>
-      ),
-    }
-
-    return (
-      <TimelineThemeProvider theme={theme}>
-        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height}>
-          {layers.map((layer, i) => {
-            if (typeof layer !== 'function') {
-              return layerById[layer]
-            }
-
-            return (
-              <Fragment key={i}>
-                {layer({
-                  width,
-                  height,
-                  domain,
-                  maxDomain,
-                  maxDomainStart,
-                  maxDomainEnd,
-                  currentZoomScale,
-                  nextSmallerZoomScale,
-                  xScale: timeScale,
-                  yScale,
-                  events: eventsInsideDomain,
-                  eventClusters: eventClustersInsideDomain,
-                  lanes,
-                  laneDisplayMode,
-                  isAnimationInProgress,
-                })}
-              </Fragment>
-            )
-          })}
-        </svg>
-      </TimelineThemeProvider>
-    )
+        ) : (
+          <CollapsedMarks
+            events={eventsInsideDomain}
+            timeScale={timeScale}
+            height={height}
+            eventComponent={eventComponent}
+            onEventHover={onEventHoverDecorated}
+            onEventUnhover={onEventUnhoverDecorated}
+            onEventClick={onEventClick}
+          />
+        )}
+      </g>
+    ),
   }
+
+  return (
+    <TimelineThemeProvider theme={theme}>
+      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height}>
+        {layers.map((layer, i) => {
+          if (typeof layer !== 'function') {
+            return layerById[layer]
+          }
+
+          return (
+            <Fragment key={i}>
+              {layer({
+                width,
+                height,
+                domain,
+                maxDomain,
+                maxDomainStart,
+                maxDomainEnd,
+                currentZoomScale,
+                nextSmallerZoomScale,
+                xScale: timeScale,
+                yScale,
+                events: eventsInsideDomain,
+                eventClusters: eventClustersInsideDomain,
+                lanes,
+                laneDisplayMode,
+                isAnimationInProgress,
+              })}
+            </Fragment>
+          )
+        })}
+      </svg>
+    </TimelineThemeProvider>
+  )
 }
