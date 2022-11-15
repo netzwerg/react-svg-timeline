@@ -58,11 +58,17 @@ export const useZoom = ({
         )
       }
     },
-    [isDomainChangePossible, maxDomainStart, maxDomainEnd, setDomainAnimated]
+    [isDomainChangePossible, maxDomainStart, maxDomainEnd, setDomainAnimated, domain]
   )
 
-  const onZoomIn = useCallback(updateDomain(nextSmallerZoomScale), [nextSmallerZoomScale, updateDomain])
-  const onZoomOut = useCallback(updateDomain(nextBiggerZoomScale), [nextBiggerZoomScale, updateDomain])
+  const onZoomIn = useCallback(
+    (timeAtCursor?: number) => updateDomain(nextSmallerZoomScale)(timeAtCursor),
+    [nextSmallerZoomScale, updateDomain]
+  )
+  const onZoomOut = useCallback(
+    (timeAtCursor?: number) => updateDomain(nextBiggerZoomScale)(timeAtCursor),
+    [nextBiggerZoomScale, updateDomain]
+  )
 
   const onZoomInCustom = useCallback(
     (mouseStartX: number, mouseEndX: number) => {

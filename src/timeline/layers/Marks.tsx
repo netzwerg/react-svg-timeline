@@ -99,7 +99,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
 
   // ignoring `isSelected` for background/foreground marks (selectionMarks are rendered specifically)
   const comparableEventsIgnoringSelectionAndPin = JSON.stringify(events, (key, value) => {
-    if (key == 'isSelected' || key === 'isPinned') return undefined
+    if (key === 'isSelected' || key === 'isPinned') return undefined
     return value
   })
 
@@ -110,6 +110,8 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
           {eventComponentFactory(e, 'background', timeScale, y)}
         </InteractiveEventMark>
       )),
+    // TODO: Fix and check if this is still needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme]
   )
 
@@ -123,6 +125,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme]
   )
 
@@ -136,6 +139,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
             {eventComponentFactory(e, 'foreground', timeScale, y)}
           </InteractiveEventMark>
         )),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [events, comparableTimeScale, height, theme]
   )
 

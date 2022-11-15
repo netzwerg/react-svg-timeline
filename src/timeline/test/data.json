@@ -1,0 +1,145 @@
+{
+  "lanes": [
+    {
+      "laneId": "lane-00",
+      "label": "Lane One"
+    },
+    {
+      "laneId": "lane-01",
+      "label": "Lane Two"
+    },
+    {
+      "laneId": "lane-02",
+      "label": "Lane Three"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "event-00",
+      "startTimeMillis": 1399845600000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-01",
+      "startTimeMillis": 1399932000000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-02",
+      "startTimeMillis": 1391727600000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-03",
+      "startTimeMillis": 1392332400000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-04",
+      "startTimeMillis": 1391727600000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-05",
+      "startTimeMillis": 1392073200000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-06",
+      "startTimeMillis": 1392159600000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-07",
+      "startTimeMillis": 1167606000000,
+      "endTimeMillis": 1230698892000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-08",
+      "startTimeMillis": 1167606000000,
+      "endTimeMillis": 1199141940000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-09",
+      "startTimeMillis": 1167606000000,
+      "endTimeMillis": 1199141940000,
+      "laneId": "lane-02"
+    },
+    {
+      "eventId": "event-10",
+      "startTimeMillis": 1391986800000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-11",
+      "startTimeMillis": 1392850800000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-12",
+      "startTimeMillis": 1392332400000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-13",
+      "startTimeMillis": 1392332400000,
+      "laneId": "lane-02"
+    },
+    {
+      "eventId": "event-14",
+      "startTimeMillis": 1395097200000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-15",
+      "startTimeMillis": 1392073200000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-16",
+      "startTimeMillis": 1392073200000,
+      "laneId": "lane-02"
+    },
+    {
+      "eventId": "event-17",
+      "startTimeMillis": 1373493600000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-18",
+      "startTimeMillis": 1373493600000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-19",
+      "startTimeMillis": 599612400000,
+      "endTimeMillis": 631148340000,
+      "laneId": "lane-00"
+    },
+    {
+      "eventId": "event-20",
+      "startTimeMillis": 915145200000,
+      "endTimeMillis": 946681140000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-21",
+      "startTimeMillis": 820450800000,
+      "endTimeMillis": 883609200000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-22",
+      "startTimeMillis": 852073200000,
+      "laneId": "lane-01"
+    },
+    {
+      "eventId": "event-23",
+      "startTimeMillis": 865116000000,
+      "endTimeMillis": 875656800000,
+      "laneId": "lane-01"
+    }
+  ]
+}

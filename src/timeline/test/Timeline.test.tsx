@@ -1,5 +1,5 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import React from 'react'
+import { createRoot } from 'react-dom/client'
 
 import { render, screen } from './test-utils'
 
@@ -7,6 +7,7 @@ import { render, screen } from './test-utils'
 import data from './data.json'
 import { Timeline } from '../Timeline'
 import { calcMaxDomain } from '../hooks/useTimeline'
+import { act } from 'react-dom/test-utils'
 
 describe('Timeline', () => {
   const events = data.events
@@ -15,8 +16,12 @@ describe('Timeline', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div')
     const dateFormat = () => 'whatevz'
-    ReactDOM.render(<Timeline width={99} height={42} events={events} lanes={lanes} dateFormat={dateFormat} />, div)
-    ReactDOM.unmountComponentAtNode(div)
+
+    act(() => {
+      const root = createRoot(div)
+      root.render(<Timeline width={99} height={42} events={events} lanes={lanes} dateFormat={dateFormat} />)
+      root.unmount()
+    })
   })
 
   it('renders a custom layer', () => {
