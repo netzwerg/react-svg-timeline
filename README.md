@@ -168,7 +168,7 @@ yalc add react-svg-timeline
 ### Publishing a release
 
 ```
-yarn publish
+yarn npm publish
 git push --tags
 ```
 
