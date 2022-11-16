@@ -20,6 +20,7 @@ import { Axes } from './layers/Axes'
 import { Axis } from './layers/Axis'
 import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
 import { createTimelineTheme } from './theme/createTimelineTheme'
+import { UserInteraction } from './layers/interaction/model'
 
 export interface TimelineProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   width: number
@@ -37,6 +38,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   trimRange?: Domain
   layers?: ReadonlyArray<TimelineLayer>
   theme?: TimelineTheme
+  enabledInteractions?: ReadonlyArray<UserInteraction>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -62,6 +64,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   trimRange,
   layers = ['grid', 'axes', 'interaction', 'marks'],
   theme = createTimelineTheme(),
+  enabledInteractions,
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick,
@@ -150,6 +153,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
         trimRange={trimRange}
         isAnimationInProgress={isAnimationInProgress}
         isNoEventSelected={isNoEventSelected}
+        enabledInteractions={enabledInteractions}
         onDomainChange={handleDomainChange}
         dateFormat={dateFormat}
         onCursorMove={onCursorMove}

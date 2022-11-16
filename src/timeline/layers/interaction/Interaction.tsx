@@ -10,7 +10,7 @@ import { InteractionHandling } from './InteractionHandling'
 import { useTrimming } from './trimmer/useTrimming'
 import { TrimRange } from './trimmer/TrimRange'
 import { Trimmer } from './trimmer/Trimmer'
-import { InteractionModeType } from './model'
+import { InteractionModeType, UserInteraction } from './model'
 
 export interface InteractionProps {
   width: number
@@ -26,6 +26,7 @@ export interface InteractionProps {
   trimRange?: Domain
   isAnimationInProgress: boolean
   isNoEventSelected: boolean
+  enabledInteractions?: ReadonlyArray<UserInteraction>
   onDomainChange: (domain: Domain, animated: boolean) => void
   dateFormat: (ms: number) => string
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
@@ -47,6 +48,7 @@ export const Interaction = ({
   trimRange,
   isAnimationInProgress,
   isNoEventSelected,
+  enabledInteractions,
   onDomainChange,
   dateFormat,
   onCursorMove,
@@ -104,6 +106,7 @@ export const Interaction = ({
             width={width}
             height={height}
             mousePosition={mousePosition}
+            enabledInteractions={enabledInteractions}
             isAnimationInProgress={isAnimationInProgress}
             isZoomInPossible={isZoomInPossible}
             isZoomOutPossible={isZoomOutPossible}

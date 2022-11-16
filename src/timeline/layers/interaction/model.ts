@@ -79,3 +79,20 @@ export type InteractionMode =
   | InteractionModeRubberBand
   | InteractionModeTrim
   | InteractionModeGrabbing
+
+// Grab is currently not a user interaction as it is only used
+// as an intermediary interaction mode to support pan
+export type UserInteraction =
+  | InteractionModeType.Hover
+  | InteractionModeType.Zoom
+  | InteractionModeType.Pan
+  | InteractionModeType.RubberBand
+  | InteractionModeType.Trim
+
+export const AllUserInteractions: UserInteraction[] = [
+  InteractionModeType.Hover,
+  InteractionModeType.Zoom,
+  InteractionModeType.Pan,
+  InteractionModeType.RubberBand,
+  InteractionModeType.Trim,
+]

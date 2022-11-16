@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useEffect, useState } from 'react'
 import { Cursor, Domain } from '../../model'
 import { noOp } from '../../utils'
 import { SvgCoordinates } from './MouseAwareSvg'
 import {
+  AllUserInteractions,
   Anchored,
   InteractionMode,
   interactionModeAnimationInProgress,
@@ -13,12 +14,14 @@ import {
   InteractionModeType,
   TrimHover,
   TrimNone,
+  UserInteraction,
 } from './model'
 
 export interface InteractionHandlingProps {
   width: number
   height: number
   mousePosition: SvgCoordinates
+  enabledInteractions?: ReadonlyArray<UserInteraction>
   isAnimationInProgress: boolean
   isZoomInPossible: boolean
   isZoomOutPossible: boolean
@@ -45,6 +48,13 @@ export const InteractionHandling = ({
   width,
   height,
   mousePosition,
+  enabledInteractions = [
+    InteractionModeType.Hover,
+    InteractionModeType.Zoom,
+    InteractionModeType.Pan,
+    InteractionModeType.RubberBand,
+    InteractionModeType.Trim,
+  ],
   isAnimationInProgress,
   isZoomInPossible,
   isZoomOutPossible,
@@ -67,16 +77,39 @@ export const InteractionHandling = ({
   const [isShiftKeyDown, setShiftKeyDown] = useState(false)
   const [interactionMode, setInteractionMode] = useState<InteractionMode>(interactionModeNone)
 
+  // Only update interactionMode if user interaction is enabled
+  const setInteractionModeIfEnabled = useCallback<React.Dispatch<React.SetStateAction<InteractionMode>>>(
+    (setInteractionModeAction) => {
+      setInteractionMode((currentInteractionMode) => {
+        let nextInteractionMode =
+          typeof setInteractionModeAction !== 'function'
+            ? setInteractionModeAction
+            : setInteractionModeAction(currentInteractionMode)
+
+        if (AllUserInteractions.includes(nextInteractionMode.type as UserInteraction)) {
+          if (enabledInteractions.includes(nextInteractionMode.type as UserInteraction)) {
+            return nextInteractionMode
+          } else {
+            return currentInteractionMode
+          }
+        } else {
+          // …it's not a user interaction, so it's always allowed
+          return nextInteractionMode
+        }
+      })
+    },
+    [enabledInteractions, setInteractionMode]
+  )
+
   useEffect(() => {
     if (isAnimationInProgress) {
-      setInteractionMode(interactionModeAnimationInProgress)
+      setInteractionModeIfEnabled(interactionModeAnimationInProgress)
 
       return () => {
-        setInteractionMode(interactionModeHover)
+        setInteractionModeIfEnabled(interactionModeHover)
       }
     }
-    return
-  }, [isAnimationInProgress])
+  }, [setInteractionModeIfEnabled, isAnimationInProgress])
 
   // detect alt-key presses (SVGs are not input components, listeners must be added to the DOM window instead)
   useEffect(() => {
@@ -100,14 +133,14 @@ export const InteractionHandling = ({
 
   useEffect(() => {
     if (isTrimming && !isAnimationInProgress) {
-      setInteractionMode({ type: InteractionModeType.Trim, variant: 'none' })
+      setInteractionModeIfEnabled({ type: InteractionModeType.Trim, variant: 'none' })
 
       return () => {
-        setInteractionMode(interactionModeHover)
+        setInteractionModeIfEnabled(interactionModeHover)
       }
     }
     return
-  }, [isTrimming, isAnimationInProgress, setInteractionMode])
+  }, [isTrimming, isAnimationInProgress, setInteractionModeIfEnabled])
 
   useEffect(() => {
     if (interactionMode.type === InteractionModeType.AnimationInProgress) {
@@ -152,24 +185,24 @@ export const InteractionHandling = ({
     if (interactionMode.type === InteractionModeType.Trim) {
       if (isShiftKeyDown) {
         onTrimStart(mousePosition.x)
-        setInteractionMode({ type: InteractionModeType.Trim, variant: 'trim pan end' })
+        setInteractionModeIfEnabled({ type: InteractionModeType.Trim, variant: 'trim pan end' })
       } else if (interactionMode.variant === 'trim hover start') {
-        setInteractionMode({ type: InteractionModeType.Trim, variant: 'trim start' })
+        setInteractionModeIfEnabled({ type: InteractionModeType.Trim, variant: 'trim start' })
       } else if (interactionMode.variant === 'trim hover end') {
-        setInteractionMode({ type: InteractionModeType.Trim, variant: 'trim end' })
+        setInteractionModeIfEnabled({ type: InteractionModeType.Trim, variant: 'trim end' })
       }
     } else if (isShiftKeyDown) {
-      setInteractionMode({ type: InteractionModeType.RubberBand, ...anchored })
+      setInteractionModeIfEnabled({ type: InteractionModeType.RubberBand, ...anchored })
       onZoomInCustomInProgress(...getRubberRange(anchored.anchorX, anchored.anchorX))
     } else {
-      setInteractionMode({ type: InteractionModeType.Grab, ...anchored })
+      setInteractionModeIfEnabled({ type: InteractionModeType.Grab, ...anchored })
     }
   }
 
   const onMouseMove = (e: React.MouseEvent) => {
     // anything below threshold is considered a click rather than a drag
     if (interactionMode.type === InteractionModeType.Grab && Math.abs(interactionMode.anchorX - mousePosition.x) > 2) {
-      setInteractionMode((previousInteractionMode) => ({
+      setInteractionModeIfEnabled((previousInteractionMode) => ({
         ...(previousInteractionMode as InteractionModeGrabbing),
         type: InteractionModeType.Pan,
       }))
@@ -183,7 +216,7 @@ export const InteractionHandling = ({
         variant: 'in progress',
         currentX: mousePosition.x,
       }
-      setInteractionMode(inProgress)
+      setInteractionModeIfEnabled(inProgress)
       onZoomInCustomInProgress(...getRubberRange(inProgress.anchorX, inProgress.currentX))
     }
     if (interactionMode.type === InteractionModeType.Trim) {
@@ -200,13 +233,13 @@ export const InteractionHandling = ({
 
   const onMouseEnter = () => {
     if (interactionMode.type === InteractionModeType.None) {
-      setInteractionMode(interactionModeHover)
+      setInteractionModeIfEnabled(interactionModeHover)
     }
   }
 
   const onMouseLeave = () => {
     if (interactionMode.type === InteractionModeType.Hover || interactionMode.type === InteractionModeType.Pan) {
-      setInteractionMode(interactionModeNone)
+      setInteractionModeIfEnabled(interactionModeNone)
     }
   }
 
@@ -216,19 +249,19 @@ export const InteractionHandling = ({
 
     if (interactionMode.type === InteractionModeType.RubberBand) {
       onZoomInCustom(...getRubberRange(interactionMode.anchorX, mousePosition.x))
-    } else if (isZoom) {
+    } else if (isZoom && enabledInteractions.includes(InteractionModeType.Zoom)) {
       e.altKey ? onZoomOut() : isZoomInPossible ? onZoomIn() : noOp()
     }
 
     if (interactionMode.type === InteractionModeType.Trim) {
-      setInteractionMode({ type: InteractionModeType.Trim, variant: 'none' })
+      setInteractionModeIfEnabled({ type: InteractionModeType.Trim, variant: 'none' })
     } else {
-      setInteractionMode(interactionModeHover)
+      setInteractionModeIfEnabled(interactionModeHover)
     }
   }
 
   const setTrimHoverMode = (trimHoverMode: TrimHover | TrimNone) =>
-    setInteractionMode((interactionMode) =>
+    setInteractionModeIfEnabled((interactionMode) =>
       interactionMode.type === InteractionModeType.Trim &&
       interactionMode.variant !== 'trim start' &&
       interactionMode.variant !== 'trim end' &&

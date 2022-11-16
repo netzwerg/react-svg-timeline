@@ -46,7 +46,9 @@ export const MouseCursor = ({
     return <g />
   } else {
     const cursorComponent = () => {
+      console.log(interactionMode)
       switch (interactionMode.type) {
+        case InteractionModeType.None:
         case InteractionModeType.AnimationInProgress: {
           return <g />
         }
