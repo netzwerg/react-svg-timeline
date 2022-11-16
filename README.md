@@ -167,7 +167,11 @@ yalc add react-svg-timeline
 
 ### Publishing a release
 
+Before publishing a release, make sure to update the version number in `package.json`.
+
 ```
+git tag vX.Y.Z
+(yarn npm login)
 yarn npm publish
 git push --tags
 ```
