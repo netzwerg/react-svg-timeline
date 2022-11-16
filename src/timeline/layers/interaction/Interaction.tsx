@@ -10,6 +10,7 @@ import { InteractionHandling } from './InteractionHandling'
 import { useTrimming } from './trimmer/useTrimming'
 import { TrimRange } from './trimmer/TrimRange'
 import { Trimmer } from './trimmer/Trimmer'
+import { InteractionModeType } from './model'
 
 export interface InteractionProps {
   width: number
@@ -125,7 +126,7 @@ export const Interaction = ({
             {(cursor, interactionMode, setTrimHoverMode) => {
               return (
                 <g>
-                  {isNoEventSelected && interactionMode.type !== 'trim' ? (
+                  {isNoEventSelected && interactionMode.type !== InteractionModeType.Trim ? (
                     <MouseCursor
                       mousePosition={mousePosition.x}
                       cursorLabel={dateFormat(timeAtCursor)}
@@ -147,7 +148,7 @@ export const Interaction = ({
                       width={width}
                     />
                   )}
-                  {interactionMode.type === 'trim' && timeScale && (
+                  {interactionMode.type === InteractionModeType.Trim && timeScale && (
                     <Trimmer
                       startX={trimRange ? trimRange[0] : maxDomain[0]}
                       endX={trimRange ? trimRange[1] : maxDomain[1]}

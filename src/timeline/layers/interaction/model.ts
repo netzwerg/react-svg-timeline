@@ -1,14 +1,25 @@
-interface InteractionModeNone {
-  type: 'none'
+export enum InteractionModeType {
+  None,
+  AnimationInProgress,
+  Hover,
+  Zoom,
+  Grab,
+  Pan,
+  RubberBand,
+  Trim,
 }
 
-export const interactionModeNone: InteractionModeNone = { type: 'none' }
+interface InteractionModeNone {
+  type: InteractionModeType.None
+}
+
+export const interactionModeNone: InteractionModeNone = { type: InteractionModeType.None }
 
 interface InteractionModeHover {
-  type: 'hover'
+  type: InteractionModeType.Hover
 }
 
-export const interactionModeHover: InteractionModeHover = { type: 'hover' }
+export const interactionModeHover: InteractionModeHover = { type: InteractionModeType.Hover }
 
 export interface Anchored {
   variant: 'anchored'
@@ -22,22 +33,24 @@ interface InProgress {
 }
 
 export interface InteractionModeGrabbing extends Anchored {
-  type: 'grabbing'
+  type: InteractionModeType.Grab
 }
 
 interface InteractionModePanning extends Anchored {
-  type: 'panning'
+  type: InteractionModeType.Pan
 }
 
 type InteractionModeRubberBand =
-  | (Anchored & Readonly<{ type: 'rubber band' }>)
-  | (InProgress & Readonly<{ type: 'rubber band' }>)
+  | (Anchored & Readonly<{ type: InteractionModeType.RubberBand }>)
+  | (InProgress & Readonly<{ type: InteractionModeType.RubberBand }>)
 
 interface InteractionModeAnimationInProgress {
-  type: 'animation in progress'
+  type: InteractionModeType.AnimationInProgress
 }
 
-export const interactionModeAnimationInProgress: InteractionModeAnimationInProgress = { type: 'animation in progress' }
+export const interactionModeAnimationInProgress: InteractionModeAnimationInProgress = {
+  type: InteractionModeType.AnimationInProgress,
+}
 
 export interface TrimNone {
   variant: 'none'
@@ -51,12 +64,12 @@ interface TrimInProgress {
   variant: 'trim start' | 'trim end' | 'trim pan end'
 }
 
-type InteractionModeTrimHover = TrimHover & Readonly<{ type: 'trim' }>
+type InteractionModeTrimHover = TrimHover & Readonly<{ type: InteractionModeType.Trim }>
 
 type InteractionModeTrim =
-  | (TrimNone & Readonly<{ type: 'trim' }>)
+  | (TrimNone & Readonly<{ type: InteractionModeType.Trim }>)
   | InteractionModeTrimHover
-  | (TrimInProgress & Readonly<{ type: 'trim' }>)
+  | (TrimInProgress & Readonly<{ type: InteractionModeType.Trim }>)
 
 export type InteractionMode =
   | InteractionModeNone

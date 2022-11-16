@@ -3,7 +3,7 @@ import { ZoomScale } from '../../shared/ZoomScale'
 import { Cursor } from '../../model'
 import { CursorLabel } from './CursorLabel'
 import { useTimelineTheme } from '../../theme/useTimelineTheme'
-import { InteractionMode } from './model'
+import { InteractionMode, InteractionModeType } from './model'
 
 const useCursorStyle = () => {
   const theme = useTimelineTheme().mouseCursor
@@ -47,12 +47,12 @@ export const MouseCursor = ({
   } else {
     const cursorComponent = () => {
       switch (interactionMode.type) {
-        case 'animation in progress': {
+        case InteractionModeType.AnimationInProgress: {
           return <g />
         }
-        case 'panning':
+        case InteractionModeType.Pan:
           return <PanningCursor mousePosition={mousePosition} />
-        case 'rubber band': {
+        case InteractionModeType.RubberBand: {
           const [start, end] =
             interactionMode.variant === 'anchored'
               ? [interactionMode.anchorX, undefined]

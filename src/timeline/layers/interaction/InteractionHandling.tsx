@@ -10,6 +10,7 @@ import {
   InteractionModeGrabbing,
   interactionModeHover,
   interactionModeNone,
+  InteractionModeType,
   TrimHover,
   TrimNone,
 } from './model'
@@ -99,7 +100,7 @@ export const InteractionHandling = ({
 
   useEffect(() => {
     if (isTrimming && !isAnimationInProgress) {
-      setInteractionMode({ type: 'trim', variant: 'none' })
+      setInteractionMode({ type: InteractionModeType.Trim, variant: 'none' })
 
       return () => {
         setInteractionMode(interactionModeHover)
@@ -109,13 +110,13 @@ export const InteractionHandling = ({
   }, [isTrimming, isAnimationInProgress, setInteractionMode])
 
   useEffect(() => {
-    if (interactionMode.type === 'animation in progress') {
+    if (interactionMode.type === InteractionModeType.AnimationInProgress) {
       setCursor('default')
-    } else if (isShiftKeyDown || interactionMode.type === 'rubber band') {
+    } else if (isShiftKeyDown || interactionMode.type === InteractionModeType.RubberBand) {
       setCursor('ew-resize')
-    } else if (interactionMode.type === 'panning') {
+    } else if (interactionMode.type === InteractionModeType.Pan) {
       setCursor('grab')
-    } else if (interactionMode.type === 'trim') {
+    } else if (interactionMode.type === InteractionModeType.Trim) {
       if (interactionMode.variant !== 'none') {
         setCursor('ew-resize')
       } else {
@@ -135,7 +136,7 @@ export const InteractionHandling = ({
   }, [onInteractionModeChange, interactionMode])
 
   useEffect(() => {
-    if (interactionMode.type === 'none' && onInteractionEnd) {
+    if (interactionMode.type === InteractionModeType.None && onInteractionEnd) {
       onInteractionEnd()
     }
   }, [onInteractionEnd, interactionMode])
@@ -148,35 +149,35 @@ export const InteractionHandling = ({
   const onMouseDown = () => {
     const anchored: Anchored = { variant: 'anchored', anchorX: mousePosition.x }
 
-    if (interactionMode.type === 'trim') {
+    if (interactionMode.type === InteractionModeType.Trim) {
       if (isShiftKeyDown) {
         onTrimStart(mousePosition.x)
-        setInteractionMode({ type: 'trim', variant: 'trim pan end' })
+        setInteractionMode({ type: InteractionModeType.Trim, variant: 'trim pan end' })
       } else if (interactionMode.variant === 'trim hover start') {
-        setInteractionMode({ type: 'trim', variant: 'trim start' })
+        setInteractionMode({ type: InteractionModeType.Trim, variant: 'trim start' })
       } else if (interactionMode.variant === 'trim hover end') {
-        setInteractionMode({ type: 'trim', variant: 'trim end' })
+        setInteractionMode({ type: InteractionModeType.Trim, variant: 'trim end' })
       }
     } else if (isShiftKeyDown) {
-      setInteractionMode({ type: 'rubber band', ...anchored })
+      setInteractionMode({ type: InteractionModeType.RubberBand, ...anchored })
       onZoomInCustomInProgress(...getRubberRange(anchored.anchorX, anchored.anchorX))
     } else {
-      setInteractionMode({ type: 'grabbing', ...anchored })
+      setInteractionMode({ type: InteractionModeType.Grab, ...anchored })
     }
   }
 
   const onMouseMove = (e: React.MouseEvent) => {
     // anything below threshold is considered a click rather than a drag
-    if (interactionMode.type === 'grabbing' && Math.abs(interactionMode.anchorX - mousePosition.x) > 2) {
+    if (interactionMode.type === InteractionModeType.Grab && Math.abs(interactionMode.anchorX - mousePosition.x) > 2) {
       setInteractionMode((previousInteractionMode) => ({
         ...(previousInteractionMode as InteractionModeGrabbing),
-        type: 'panning',
+        type: InteractionModeType.Pan,
       }))
     }
-    if (interactionMode.type === 'panning') {
+    if (interactionMode.type === InteractionModeType.Pan) {
       onPan(-e.movementX)
     }
-    if (interactionMode.type === 'rubber band') {
+    if (interactionMode.type === InteractionModeType.RubberBand) {
       const inProgress: InteractionMode = {
         ...interactionMode,
         variant: 'in progress',
@@ -185,42 +186,42 @@ export const InteractionHandling = ({
       setInteractionMode(inProgress)
       onZoomInCustomInProgress(...getRubberRange(inProgress.anchorX, inProgress.currentX))
     }
-    if (interactionMode.type === 'trim') {
+    if (interactionMode.type === InteractionModeType.Trim) {
       if (interactionMode.variant === 'trim start') {
         onTrimStart(mousePosition.x)
       } else if (interactionMode.variant === 'trim end' || interactionMode.variant === 'trim pan end') {
         onTrimEnd(mousePosition.x)
       }
     }
-    if (interactionMode.type === 'hover') {
+    if (interactionMode.type === InteractionModeType.Hover) {
       onHover(mousePosition.x)
     }
   }
 
   const onMouseEnter = () => {
-    if (interactionMode.type === 'none') {
+    if (interactionMode.type === InteractionModeType.None) {
       setInteractionMode(interactionModeHover)
     }
   }
 
   const onMouseLeave = () => {
-    if (interactionMode.type === 'hover' || interactionMode.type === 'panning') {
+    if (interactionMode.type === InteractionModeType.Hover || interactionMode.type === InteractionModeType.Pan) {
       setInteractionMode(interactionModeNone)
     }
   }
 
   const onMouseUp = (e: React.MouseEvent) => {
     // anything below threshold is considered a click rather than a drag
-    const isZoom = e.button === 0 && interactionMode.type === 'grabbing'
+    const isZoom = e.button === 0 && interactionMode.type === InteractionModeType.Grab
 
-    if (interactionMode.type === 'rubber band') {
+    if (interactionMode.type === InteractionModeType.RubberBand) {
       onZoomInCustom(...getRubberRange(interactionMode.anchorX, mousePosition.x))
     } else if (isZoom) {
       e.altKey ? onZoomOut() : isZoomInPossible ? onZoomIn() : noOp()
     }
 
-    if (interactionMode.type === 'trim') {
-      setInteractionMode({ type: 'trim', variant: 'none' })
+    if (interactionMode.type === InteractionModeType.Trim) {
+      setInteractionMode({ type: InteractionModeType.Trim, variant: 'none' })
     } else {
       setInteractionMode(interactionModeHover)
     }
@@ -228,11 +229,11 @@ export const InteractionHandling = ({
 
   const setTrimHoverMode = (trimHoverMode: TrimHover | TrimNone) =>
     setInteractionMode((interactionMode) =>
-      interactionMode.type === 'trim' &&
+      interactionMode.type === InteractionModeType.Trim &&
       interactionMode.variant !== 'trim start' &&
       interactionMode.variant !== 'trim end' &&
       interactionMode.variant !== 'trim pan end'
-        ? { type: 'trim', ...trimHoverMode }
+        ? { type: InteractionModeType.Trim, ...trimHoverMode }
         : interactionMode
     )
 
