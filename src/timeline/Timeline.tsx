@@ -1,6 +1,8 @@
 import React, { useCallback, Fragment } from 'react'
 
-import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane, TimelineLayer } from './model'
+import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
+import { UserInteraction } from './layers/interaction/model'
+import { TimelineLayer } from './layers/model'
 
 import { TimelineTheme } from './theme/model'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
@@ -20,7 +22,6 @@ import { Axes } from './layers/Axes'
 import { Axis } from './layers/Axis'
 import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
 import { createTimelineTheme } from './theme/createTimelineTheme'
-import { UserInteraction } from './layers/interaction/model'
 
 export interface TimelineProps<EID extends string, LID extends string, E extends TimelineEvent<EID, LID>> {
   width: number
