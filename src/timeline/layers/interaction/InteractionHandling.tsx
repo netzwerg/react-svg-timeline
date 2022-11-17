@@ -40,6 +40,7 @@ export interface InteractionHandlingProps {
   children: (
     cursor: Cursor,
     interactionMode: InteractionMode,
+    enabledInteractions: ReadonlyArray<UserInteraction>,
     setTrimHoverMode: (trimHoverMode: TrimHover | TrimNone) => void
   ) => React.ReactNode
 }
@@ -92,6 +93,13 @@ export const InteractionHandling = ({
           } else {
             return currentInteractionMode
           }
+        } else if (
+          nextInteractionMode.type === InteractionModeType.Grab &&
+          !enabledInteractions.includes(InteractionModeType.Zoom) &&
+          !enabledInteractions.includes(InteractionModeType.Pan)
+        ) {
+          // …grabbing is not allowed if zooming and panning are disabled
+          return currentInteractionMode
         } else {
           // …it's not a user interaction, so it's always allowed
           return nextInteractionMode
@@ -142,10 +150,14 @@ export const InteractionHandling = ({
     return
   }, [isTrimming, isAnimationInProgress, setInteractionModeIfEnabled])
 
+  // TODO: The Cursor is derived state and should be treated as such…
   useEffect(() => {
     if (interactionMode.type === InteractionModeType.AnimationInProgress) {
       setCursor('default')
-    } else if (isShiftKeyDown || interactionMode.type === InteractionModeType.RubberBand) {
+    } else if (
+      (isShiftKeyDown && enabledInteractions.includes(InteractionModeType.RubberBand)) ||
+      interactionMode.type === InteractionModeType.RubberBand
+    ) {
       setCursor('ew-resize')
     } else if (interactionMode.type === InteractionModeType.Pan) {
       setCursor('grab')
@@ -155,12 +167,14 @@ export const InteractionHandling = ({
       } else {
         setCursor('default')
       }
-    } else {
+    } else if (enabledInteractions.includes(InteractionModeType.Zoom)) {
       const getZoomOutCursor = () => (isZoomOutPossible ? 'zoom-out' : 'default')
       const getZoomInCursor = () => (isZoomInPossible ? 'zoom-in' : 'default')
       setCursor(isAltKeyDown ? getZoomOutCursor() : getZoomInCursor())
+    } else {
+      setCursor('default')
     }
-  }, [isAltKeyDown, isShiftKeyDown, isZoomInPossible, isZoomOutPossible, interactionMode])
+  }, [isAltKeyDown, isShiftKeyDown, isZoomInPossible, isZoomOutPossible, interactionMode, enabledInteractions])
 
   useEffect(() => {
     if (onInteractionModeChange) {
@@ -191,7 +205,7 @@ export const InteractionHandling = ({
       } else if (interactionMode.variant === 'trim hover end') {
         setInteractionModeIfEnabled({ type: InteractionModeType.Trim, variant: 'trim end' })
       }
-    } else if (isShiftKeyDown) {
+    } else if (isShiftKeyDown && enabledInteractions.includes(InteractionModeType.RubberBand)) {
       setInteractionModeIfEnabled({ type: InteractionModeType.RubberBand, ...anchored })
       onZoomInCustomInProgress(...getRubberRange(anchored.anchorX, anchored.anchorX))
     } else {
@@ -287,7 +301,7 @@ export const InteractionHandling = ({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        {children(cursor, interactionMode, setTrimHoverMode)}
+        {children(cursor, interactionMode, enabledInteractions, setTrimHoverMode)}
       </g>
     </>
   )

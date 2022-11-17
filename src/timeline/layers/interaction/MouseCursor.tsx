@@ -3,7 +3,7 @@ import { ZoomScale } from '../../shared/ZoomScale'
 import { Cursor } from '../../model'
 import { CursorLabel } from './CursorLabel'
 import { useTimelineTheme } from '../../theme/useTimelineTheme'
-import { InteractionMode, InteractionModeType } from './model'
+import { InteractionMode, InteractionModeType, UserInteraction } from './model'
 
 const useCursorStyle = () => {
   const theme = useTimelineTheme().mouseCursor
@@ -30,6 +30,7 @@ interface Props {
   zoomRangeEnd: number
   zoomScale: ZoomScale
   isZoomInPossible: boolean
+  enabledInteractions: ReadonlyArray<UserInteraction>
 }
 
 export const MouseCursor = ({
@@ -41,12 +42,12 @@ export const MouseCursor = ({
   zoomRangeEnd,
   zoomScale,
   isZoomInPossible,
+  enabledInteractions,
 }: Props) => {
   if (isNaN(mousePosition)) {
     return <g />
   } else {
     const cursorComponent = () => {
-      console.log(interactionMode)
       switch (interactionMode.type) {
         case InteractionModeType.None:
         case InteractionModeType.AnimationInProgress: {
@@ -68,7 +69,7 @@ export const MouseCursor = ({
               cursor={cursor}
               cursorLabel={cursorLabel}
               zoomScale={zoomScale}
-              isZoomInPossible={isZoomInPossible}
+              isZoomInPossible={isZoomInPossible && enabledInteractions.includes(InteractionModeType.Zoom)}
               zoomRangeStart={zoomRangeStart}
               zoomRangeEnd={zoomRangeEnd}
             />

@@ -126,7 +126,7 @@ export const Interaction = ({
             onTrimEnd={onTrimEnd}
             onInteractionEnd={onInteractionEnd}
           >
-            {(cursor, interactionMode, setTrimHoverMode) => {
+            {(cursor, interactionMode, activeInteractions, setTrimHoverMode) => {
               return (
                 <g>
                   {isNoEventSelected && interactionMode.type !== InteractionModeType.Trim ? (
@@ -139,6 +139,7 @@ export const Interaction = ({
                       zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
                       zoomScale={nextSmallerZoomScale}
                       isZoomInPossible={isZoomInPossible}
+                      enabledInteractions={activeInteractions}
                     />
                   ) : (
                     <g />
