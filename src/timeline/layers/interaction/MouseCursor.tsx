@@ -3,7 +3,7 @@ import { ZoomScale } from '../../shared/ZoomScale'
 import { Cursor } from '../../model'
 import { CursorLabel } from './CursorLabel'
 import { useTimelineTheme } from '../../theme/useTimelineTheme'
-import { InteractionMode } from './model'
+import { InteractionMode, InteractionModeType, UserInteraction } from './model'
 
 const useCursorStyle = () => {
   const theme = useTimelineTheme().mouseCursor
@@ -30,6 +30,7 @@ interface Props {
   zoomRangeEnd: number
   zoomScale: ZoomScale
   isZoomInPossible: boolean
+  enabledInteractions: ReadonlyArray<UserInteraction>
 }
 
 export const MouseCursor = ({
@@ -41,18 +42,20 @@ export const MouseCursor = ({
   zoomRangeEnd,
   zoomScale,
   isZoomInPossible,
+  enabledInteractions,
 }: Props) => {
   if (isNaN(mousePosition)) {
     return <g />
   } else {
     const cursorComponent = () => {
       switch (interactionMode.type) {
-        case 'animation in progress': {
+        case InteractionModeType.None:
+        case InteractionModeType.AnimationInProgress: {
           return <g />
         }
-        case 'panning':
+        case InteractionModeType.Pan:
           return <PanningCursor mousePosition={mousePosition} />
-        case 'rubber band': {
+        case InteractionModeType.RubberBand: {
           const [start, end] =
             interactionMode.variant === 'anchored'
               ? [interactionMode.anchorX, undefined]
@@ -66,7 +69,7 @@ export const MouseCursor = ({
               cursor={cursor}
               cursorLabel={cursorLabel}
               zoomScale={zoomScale}
-              isZoomInPossible={isZoomInPossible}
+              isZoomInPossible={isZoomInPossible && enabledInteractions.includes(InteractionModeType.Zoom)}
               zoomRangeStart={zoomRangeStart}
               zoomRangeEnd={zoomRangeEnd}
             />

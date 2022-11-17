@@ -1,6 +1,8 @@
 import React, { useCallback, Fragment } from 'react'
 
-import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane, TimelineLayer } from './model'
+import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
+import { UserInteraction } from './layers/interaction/model'
+import { TimelineLayer } from './layers/model'
 
 import { TimelineTheme } from './theme/model'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
@@ -37,6 +39,7 @@ export interface TimelineProps<EID extends string, LID extends string, E extends
   trimRange?: Domain
   layers?: ReadonlyArray<TimelineLayer>
   theme?: TimelineTheme
+  enabledInteractions?: ReadonlyArray<UserInteraction>
   onEventHover?: (eventId: EID) => void
   onEventUnhover?: (eventId: EID) => void
   onEventClick?: (eventId: EID) => void
@@ -62,6 +65,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
   trimRange,
   layers = ['grid', 'axes', 'interaction', 'marks'],
   theme = createTimelineTheme(),
+  enabledInteractions,
   onEventHover = noOp,
   onEventUnhover = noOp,
   onEventClick,
@@ -150,6 +154,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
         trimRange={trimRange}
         isAnimationInProgress={isAnimationInProgress}
         isNoEventSelected={isNoEventSelected}
+        enabledInteractions={enabledInteractions}
         onDomainChange={handleDomainChange}
         dateFormat={dateFormat}
         onCursorMove={onCursorMove}

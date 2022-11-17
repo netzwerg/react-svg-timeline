@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Timeline } from '../../timeline'
+import { InteractionModeType, Timeline } from '../../timeline'
 
 import dataSet from '../data/smallDataset.json'
 
@@ -14,6 +14,13 @@ export const App = () => {
         dateFormat={(date) => `${date}`}
         width={1000}
         height={300}
+        enabledInteractions={[
+          InteractionModeType.Hover,
+          InteractionModeType.Zoom,
+          InteractionModeType.Pan,
+          InteractionModeType.RubberBand,
+          InteractionModeType.Trim,
+        ]}
       />
     </div>
   )

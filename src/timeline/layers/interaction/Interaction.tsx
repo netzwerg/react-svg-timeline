@@ -10,6 +10,7 @@ import { InteractionHandling } from './InteractionHandling'
 import { useTrimming } from './trimmer/useTrimming'
 import { TrimRange } from './trimmer/TrimRange'
 import { Trimmer } from './trimmer/Trimmer'
+import { InteractionModeType, UserInteraction } from './model'
 
 export interface InteractionProps {
   width: number
@@ -25,6 +26,7 @@ export interface InteractionProps {
   trimRange?: Domain
   isAnimationInProgress: boolean
   isNoEventSelected: boolean
+  enabledInteractions?: ReadonlyArray<UserInteraction>
   onDomainChange: (domain: Domain, animated: boolean) => void
   dateFormat: (ms: number) => string
   onCursorMove?: (millisAtCursor?: number, startMillis?: number, endMillis?: number) => void
@@ -46,6 +48,7 @@ export const Interaction = ({
   trimRange,
   isAnimationInProgress,
   isNoEventSelected,
+  enabledInteractions,
   onDomainChange,
   dateFormat,
   onCursorMove,
@@ -103,6 +106,7 @@ export const Interaction = ({
             width={width}
             height={height}
             mousePosition={mousePosition}
+            enabledInteractions={enabledInteractions}
             isAnimationInProgress={isAnimationInProgress}
             isZoomInPossible={isZoomInPossible}
             isZoomOutPossible={isZoomOutPossible}
@@ -122,10 +126,10 @@ export const Interaction = ({
             onTrimEnd={onTrimEnd}
             onInteractionEnd={onInteractionEnd}
           >
-            {(cursor, interactionMode, setTrimHoverMode) => {
+            {(cursor, interactionMode, activeInteractions, setTrimHoverMode) => {
               return (
                 <g>
-                  {isNoEventSelected && interactionMode.type !== 'trim' ? (
+                  {isNoEventSelected && interactionMode.type !== InteractionModeType.Trim ? (
                     <MouseCursor
                       mousePosition={mousePosition.x}
                       cursorLabel={dateFormat(timeAtCursor)}
@@ -135,6 +139,7 @@ export const Interaction = ({
                       zoomRangeEnd={timeScale(timeAtCursor + zoomWidth / 2)!}
                       zoomScale={nextSmallerZoomScale}
                       isZoomInPossible={isZoomInPossible}
+                      enabledInteractions={activeInteractions}
                     />
                   ) : (
                     <g />
@@ -147,7 +152,7 @@ export const Interaction = ({
                       width={width}
                     />
                   )}
-                  {interactionMode.type === 'trim' && timeScale && (
+                  {interactionMode.type === InteractionModeType.Trim && timeScale && (
                     <Trimmer
                       startX={trimRange ? trimRange[0] : maxDomain[0]}
                       endX={trimRange ? trimRange[1] : maxDomain[1]}
