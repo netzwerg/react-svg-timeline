@@ -1,4 +1,5 @@
 export * from './model'
+export * from './layers/model'
 export * from './Timeline'
 export * from './layers/Marks'
 export * from './layers/interaction/model'
