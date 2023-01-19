@@ -8,20 +8,23 @@ export const App = () => {
   return (
     <div>
       <h1>react-svg-timeline</h1>
-      <Timeline
-        events={dataSet.events}
-        lanes={dataSet.lanes}
-        dateFormat={(date) => `${date}`}
-        width={1000}
-        height={300}
-        enabledInteractions={[
-          InteractionModeType.Hover,
-          InteractionModeType.Zoom,
-          InteractionModeType.Pan,
-          InteractionModeType.RubberBand,
-          InteractionModeType.Trim,
-        ]}
-      />
+      <div style={{ marginLeft: 30, marginTop: 30 }}>
+        <Timeline
+          events={dataSet.events}
+          lanes={dataSet.lanes}
+          dateFormat={(date) => `${date}`}
+          width={1000}
+          height={300}
+          enabledInteractions={[
+            InteractionModeType.Hover,
+            InteractionModeType.Zoom,
+            InteractionModeType.Pan,
+            InteractionModeType.RubberBand,
+            InteractionModeType.Trim,
+            InteractionModeType.Entity,
+          ]}
+        />
+      </div>
     </div>
   )
 }

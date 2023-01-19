@@ -7,6 +7,7 @@ export enum InteractionModeType {
   Pan,
   RubberBand,
   Trim,
+  Entity,
 }
 
 interface InteractionModeNone {
@@ -71,6 +72,13 @@ type InteractionModeTrim =
   | InteractionModeTrimHover
   | (TrimInProgress & Readonly<{ type: InteractionModeType.Trim }>)
 
+// Interacting with an entity is a special case of interacting with the timeline
+interface InteractionModeEntity {
+  type: InteractionModeType.Entity
+}
+
+export const interactionModeEntity: InteractionModeEntity = { type: InteractionModeType.Entity }
+
 export type InteractionMode =
   | InteractionModeNone
   | InteractionModeHover
@@ -79,6 +87,7 @@ export type InteractionMode =
   | InteractionModeRubberBand
   | InteractionModeTrim
   | InteractionModeGrabbing
+  | InteractionModeEntity
 
 // Grab is currently not a user interaction as it is only used
 // as an intermediary interaction mode to support pan
@@ -88,6 +97,7 @@ export type UserInteraction =
   | InteractionModeType.Pan
   | InteractionModeType.RubberBand
   | InteractionModeType.Trim
+  | InteractionModeType.Entity
 
 export const AllUserInteractions: UserInteraction[] = [
   InteractionModeType.Hover,
@@ -95,4 +105,5 @@ export const AllUserInteractions: UserInteraction[] = [
   InteractionModeType.Pan,
   InteractionModeType.RubberBand,
   InteractionModeType.Trim,
+  InteractionModeType.Entity,
 ]

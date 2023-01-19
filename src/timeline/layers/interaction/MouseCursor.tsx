@@ -70,6 +70,7 @@ export const MouseCursor = ({
               cursorLabel={cursorLabel}
               zoomScale={zoomScale}
               isZoomInPossible={isZoomInPossible && enabledInteractions.includes(InteractionModeType.Zoom)}
+              isActive={interactionMode.type !== InteractionModeType.Entity}
               zoomRangeStart={zoomRangeStart}
               zoomRangeEnd={zoomRangeEnd}
             />
@@ -98,6 +99,7 @@ interface ZoomCursorProps {
   cursorLabel: string
   zoomScale: ZoomScale
   isZoomInPossible: boolean
+  isActive: boolean
   zoomRangeStart: number
   zoomRangeEnd: number
 }
@@ -108,13 +110,14 @@ const ZoomCursor = ({
   cursorLabel,
   zoomScale,
   isZoomInPossible,
+  isActive,
   zoomRangeStart,
   zoomRangeEnd,
 }: ZoomCursorProps) => {
   const cursorStyle = useCursorStyle()
   const zoomRangeStyle = useZoomRangeStyle()
   return (
-    <g>
+    <g opacity={isActive ? 1 : 0.5}>
       <rect
         visibility={isZoomInPossible ? 'visible' : 'hidden'}
         style={zoomRangeStyle}

@@ -35,7 +35,7 @@ export const MouseAwareSvg = ({ width, height, children }: Props) => {
   }
 
   const updateMousePosition = (e: React.MouseEvent) => setMousePosition(mapMouseEvent(e))
-  const resetMousePosition = () => setMousePosition(mousePositionNone)
+  // const resetMousePosition = () => setMousePosition(mousePositionNone)
 
   return (
     <svg
@@ -46,7 +46,7 @@ export const MouseAwareSvg = ({ width, height, children }: Props) => {
       style={{ overflow: 'visible' }}
       onMouseEnter={updateMousePosition}
       onMouseMove={updateMousePosition}
-      onMouseLeave={resetMousePosition}
+      // onMouseLeave={resetMousePosition}
     >
       <rect width={width} height={height} pointerEvents="all" fill="transparent"></rect>
       {children(mousePosition)}

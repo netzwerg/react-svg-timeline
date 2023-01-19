@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { useEffect, useState } from 'react'
 import { Cursor, Domain } from '../../model'
 import { noOp } from '../../utils'
@@ -8,6 +8,7 @@ import {
   Anchored,
   InteractionMode,
   interactionModeAnimationInProgress,
+  interactionModeEntity,
   InteractionModeGrabbing,
   interactionModeHover,
   interactionModeNone,
@@ -49,13 +50,7 @@ export const InteractionHandling = ({
   width,
   height,
   mousePosition,
-  enabledInteractions = [
-    InteractionModeType.Hover,
-    InteractionModeType.Zoom,
-    InteractionModeType.Pan,
-    InteractionModeType.RubberBand,
-    InteractionModeType.Trim,
-  ],
+  enabledInteractions = AllUserInteractions,
   isAnimationInProgress,
   isZoomInPossible,
   isZoomOutPossible,
@@ -77,6 +72,8 @@ export const InteractionHandling = ({
   const [isAltKeyDown, setAltKeyDown] = useState(false)
   const [isShiftKeyDown, setShiftKeyDown] = useState(false)
   const [interactionMode, setInteractionMode] = useState<InteractionMode>(interactionModeNone)
+
+  const interactionZoneRef = useRef<SVGRectElement>(null)
 
   // Only update interactionMode if user interaction is enabled
   const setInteractionModeIfEnabled = useCallback<React.Dispatch<React.SetStateAction<InteractionMode>>>(
@@ -246,14 +243,23 @@ export const InteractionHandling = ({
   }
 
   const onMouseEnter = () => {
-    if (interactionMode.type === InteractionModeType.None) {
+    if (interactionMode.type === InteractionModeType.None || interactionMode.type === InteractionModeType.Entity) {
       setInteractionModeIfEnabled(interactionModeHover)
     }
   }
 
-  const onMouseLeave = () => {
+  const onMouseLeave = (e: React.MouseEvent) => {
     if (interactionMode.type === InteractionModeType.Hover || interactionMode.type === InteractionModeType.Pan) {
-      setInteractionModeIfEnabled(interactionModeNone)
+      const { x, y } = interactionZoneRef.current?.getBoundingClientRect() ?? { x: 0, y: 0 }
+
+      if (e.clientX <= x || e.clientX >= x + width || e.clientY <= y || e.clientY >= y + height) {
+        // Leaving the interaction zone
+        setInteractionModeIfEnabled(interactionModeNone)
+      } else {
+        // Not leaving the interaction zone, but interacting with something else
+        // probably an event
+        setInteractionModeIfEnabled(interactionModeEntity)
+      }
     }
   }
 
@@ -288,7 +294,7 @@ export const InteractionHandling = ({
     <>
       <defs>
         <clipPath id="clipPath">
-          <rect x="0" y="0" width={width} height={height} />
+          <rect ref={interactionZoneRef} x="0" y="0" width={width} height={height} />
         </clipPath>
       </defs>
       <g
