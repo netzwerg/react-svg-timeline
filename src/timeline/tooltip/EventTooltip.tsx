@@ -25,6 +25,13 @@ const useTooltipTextStyle = (): CSSProperties => {
   }
 }
 
+const useUpArrowStyle = (): CSSProperties => {
+  return {
+    transform: "rotate(180deg)",
+    transformOrigin: "50% 50%"
+  }
+}
+
 interface Props {
   readonly type: { singleEventX: number } | 'period'
   readonly y: number
@@ -38,6 +45,7 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) 
   const tooltipBackgroundStyle = useBackgroundStyle()
   const tooltipTextStyle = useTooltipTextStyle()
   const tooltipFontSize = useTimelineTheme().tooltip.fontSize
+  const upArrowStyle = useUpArrowStyle();
 
   const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text, tooltipFontSize)
 
@@ -56,15 +64,27 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) 
 
         // determines how the rectangular tooltip area is offset to the left/right of the arrow
         // the closer to the left edge, the more the rect is shifted to the right (same for right edge)
-        const safetyMargin = 15
+        const safetyMarginX = 15
         const tooltipOffset = scaleLinear()
           .domain([0, parentWidth])
-          .range([safetyMargin, tooltipWidth - safetyMargin])
+          .range([safetyMarginX, tooltipWidth - safetyMarginX])
 
         const arrowDimension = 20
 
+        //calculate if tooltip above would he visible
+        const safetyMarginY = 10;
+        const flipDown = tooltipHeight + (arrowDimension / 2) + safetyMarginY > y;
+
         const svgX = tooltipX - tooltipOffset(xOffset)!
-        const svgY = tooltipY - arrowDimension / 2
+        const svgY = flipDown ? tooltipY + tooltipHeight + baseHeight : tooltipY - arrowDimension / 2 // flip tooltip below the Event if it would not be fully visible
+
+        // flip the arrow bellow the Event if tooltip would not be fully visible above
+        let arrowStyle = tooltipBackgroundStyle;
+        let arrowY = baseY;
+        if (flipDown) {
+          arrowStyle = { ...tooltipBackgroundStyle, ...upArrowStyle };
+          arrowY = baseY + baseHeight;
+        }
 
         return (
           <g>
@@ -77,7 +97,7 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) 
                 tooltipWidth={tooltipWidth}
               />
             </svg>
-            <ArrowDown style={tooltipBackgroundStyle} tipX={tooltipX} baseY={baseY} dimension={arrowDimension} />)
+            <Arrow style={arrowStyle} tipX={tooltipX} baseY={arrowY} dimension={arrowDimension} />
           </g>
         )
       }}
@@ -85,14 +105,14 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) 
   )
 }
 
-interface ArrowDownProps {
+interface ArrowProps {
   readonly tipX: number
   readonly baseY: number
   readonly dimension: number
   readonly style: CSSProperties
 }
 
-const ArrowDown = ({ tipX, baseY, dimension, style }: ArrowDownProps) => {
+const Arrow = ({ tipX, baseY, dimension, style }: ArrowProps) => {
   return (
     <svg
       x={tipX - dimension / 2}

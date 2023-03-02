@@ -17,17 +17,20 @@
     {
       "eventId": "event-00",
       "startTimeMillis": 1399845600000,
-      "laneId": "lane-00"
+      "laneId": "lane-00",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-01",
       "startTimeMillis": 1399932000000,
-      "laneId": "lane-00"
+      "laneId": "lane-00",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-02",
       "startTimeMillis": 1391727600000,
-      "laneId": "lane-00"
+      "laneId": "lane-00",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-03",
@@ -53,19 +56,22 @@
       "eventId": "event-07",
       "startTimeMillis": 1167606000000,
       "endTimeMillis": 1230698892000,
-      "laneId": "lane-00"
+      "laneId": "lane-00",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-08",
       "startTimeMillis": 1167606000000,
       "endTimeMillis": 1199141940000,
-      "laneId": "lane-01"
+      "laneId": "lane-01",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-09",
       "startTimeMillis": 1167606000000,
       "endTimeMillis": 1199141940000,
-      "laneId": "lane-02"
+      "laneId": "lane-02",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-10",
@@ -85,7 +91,8 @@
     {
       "eventId": "event-13",
       "startTimeMillis": 1392332400000,
-      "laneId": "lane-02"
+      "laneId": "lane-02",
+      "tooltip": "this is a \nmultiline\ntest tooltip"
     },
     {
       "eventId": "event-14",
