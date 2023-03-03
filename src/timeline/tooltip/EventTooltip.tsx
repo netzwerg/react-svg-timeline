@@ -25,11 +25,9 @@ const useTooltipTextStyle = (): CSSProperties => {
   }
 }
 
-const useUpArrowStyle = (): CSSProperties => {
-  return {
-    transform: "rotate(180deg)",
-    transformOrigin: "50% 50%"
-  }
+const UP_ARROW_STYLE: CSSProperties = {
+  transform: 'rotate(180deg)',
+  transformOrigin: '50% 50%',
 }
 
 interface Props {
@@ -45,7 +43,6 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) 
   const tooltipBackgroundStyle = useBackgroundStyle()
   const tooltipTextStyle = useTooltipTextStyle()
   const tooltipFontSize = useTimelineTheme().tooltip.fontSize
-  const upArrowStyle = useUpArrowStyle();
 
   const { textLines, tooltipWidth, tooltipHeight, baseHeight } = getTooltipDimensions(text, tooltipFontSize)
 
@@ -71,20 +68,16 @@ export const EventTooltip = ({ type, y, parentWidth, text, triggerRef }: Props) 
 
         const arrowDimension = 20
 
-        //calculate if tooltip above would he visible
-        const safetyMarginY = 10;
-        const flipDown = tooltipHeight + (arrowDimension / 2) + safetyMarginY > y;
+        // calculate if tooltip above would be visible
+        const safetyMarginY = 10
+        const flipDown = tooltipHeight + arrowDimension / 2 + safetyMarginY > y
 
         const svgX = tooltipX - tooltipOffset(xOffset)!
         const svgY = flipDown ? tooltipY + tooltipHeight + baseHeight : tooltipY - arrowDimension / 2 // flip tooltip below the Event if it would not be fully visible
 
-        // flip the arrow bellow the Event if tooltip would not be fully visible above
-        let arrowStyle = tooltipBackgroundStyle;
-        let arrowY = baseY;
-        if (flipDown) {
-          arrowStyle = { ...tooltipBackgroundStyle, ...upArrowStyle };
-          arrowY = baseY + baseHeight;
-        }
+        // flip arrow below the event if tooltip would not be fully visible above
+        const arrowY = baseY + (flipDown ? baseHeight : 0)
+        const arrowStyle = flipDown ? { ...tooltipBackgroundStyle, ...UP_ARROW_STYLE } : tooltipBackgroundStyle
 
         return (
           <g>
