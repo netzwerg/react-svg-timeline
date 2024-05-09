@@ -11,6 +11,7 @@ A React event timeline component based on SVG.
 ## Demo
 
 Out of the box – **plain & simple**:
+![Screenshot 2024-05-09 at 12 18 29 PM](https://github.com/olivewong/react-svg-timeline/assets/11857485/736f3199-bb14-4894-83af-570509496a4d)
 
 ![](screenshot-timeline-component.png)
 
