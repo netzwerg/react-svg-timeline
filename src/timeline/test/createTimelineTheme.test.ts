@@ -15,6 +15,14 @@ describe('createTimelineTheme', () => {
         primary: {
           main: 'red',
         },
+        warning: {
+          main: '#ffa726',
+          dark: '#f57c00',
+        },
+        secondary: {
+          main: '#ce93d8',
+          dark: '#ab47bc',
+        },
         background: {
           paper: 'green',
         },

@@ -15,19 +15,20 @@ const useEventBackgroundStyle = () => {
 }
 
 const useEventCircleStyle = () => {
-  const theme = useTimelineTheme().base
+  const theme = useTimelineTheme()
   return {
-    stroke: theme.backgroundColor,
-    strokeWidth: 2,
+    stroke: theme.base.backgroundColor,
+    strokeWidth: theme.event.markLineWidth,
     fillOpacity: 0.5,
   }
 }
 
 const useEventPeriodStyle = () => {
-  const theme = useTimelineTheme().base
+  const theme = useTimelineTheme()
   return {
-    stroke: theme.backgroundColor,
-    strokeWidth: 2,
+    stroke: theme.event.markLineColor,
+    strokeWidth: theme.event.markLineWidth,
+    strokeOpacity: 0.3,
     fillOpacity: 0.5,
   }
 }
@@ -63,7 +64,7 @@ export interface Props<EID extends string, LID extends string, E extends Timelin
  * (2) that the selection is always visible.
  */
 export const Marks = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
-  props: Props<EID, LID, E>
+  props: Props<EID, LID, E>,
 ) => {
   const theme = useTimelineTheme()
   const { events, height } = props
@@ -112,7 +113,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
       )),
     // TODO: Fix and check if this is still needed
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme]
+    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme],
   )
 
   const foregroundMarks = useMemo(
@@ -126,7 +127,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
           </InteractiveEventMark>
         )),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme]
+    [comparableEventsIgnoringSelectionAndPin, comparableTimeScale, height, theme],
   )
 
   const selectionOrPinMarks = useMemo(
@@ -140,7 +141,7 @@ export const Marks = <EID extends string, LID extends string, E extends Timeline
           </InteractiveEventMark>
         )),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [events, comparableTimeScale, height, theme]
+    [events, comparableTimeScale, height, theme],
   )
 
   return (

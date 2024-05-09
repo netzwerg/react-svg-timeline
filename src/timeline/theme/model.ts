@@ -23,6 +23,8 @@ export interface EventTheme {
   readonly markSelectedLineColor: string
   readonly markSelectedFillColor: string
   readonly markPinnedLineColor: string
+  readonly markLineColor: string
+  readonly markLineWidth: number
   readonly clusterFillColor: string
 }
 
