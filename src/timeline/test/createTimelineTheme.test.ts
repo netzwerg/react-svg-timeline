@@ -15,6 +15,14 @@ describe('createTimelineTheme', () => {
         primary: {
           main: 'red',
         },
+        warning: {
+          main: '#ffa726',
+          dark: '#f57c00',
+        },
+        secondary: {
+          main: '#ce93d8',
+          dark: '#ab47bc',
+        },
         background: {
           paper: 'green',
         },
@@ -44,6 +52,8 @@ describe('createTimelineTheme', () => {
       },
       event: {
         markHeight: 20,
+        markLineColor: 'red',
+        markLineWidth: 2,
         markFillColor: 'red',
         markSelectedLineColor: '#ffff8d',
         markSelectedFillColor: 'rgba(255, 255, 141, 0.5)',
@@ -68,23 +78,23 @@ describe('createTimelineTheme', () => {
         fontFamily: 'my-fancy-caption-font-family',
       },
       trimmer: {
-        trimHandleColor: '#ffab40',
-        trimHandleLabelColor: '#ffab40',
+        trimHandleColor: '#ce93d8',
+        trimHandleLabelColor: '#ce93d8',
         trimHandleWidth: 10,
-        trimTriangleColor: '#ffab40',
+        trimTriangleColor: '#ce93d8',
         trimRangeInsideColor: 'transparent',
         trimRangeInsideOpacity: 0,
-        trimRangeInsideHighlightColor: '#ffab40',
+        trimRangeInsideHighlightColor: '#ce93d8',
         trimRangeInsideHighlightOpacity: 0.1,
         trimRangeOutsideColor: '#aaaaaa',
         trimRangeOutsideOpacity: 0.1,
       },
       mouseCursor: {
-        lineColor: '#ffab40',
+        lineColor: '#ce93d8',
         lineWidth: 2,
-        zoomRangeColor: '#ffab40',
+        zoomRangeColor: '#ce93d8',
         zoomRangeOpacity: 0.1,
-        labelColor: '#ffab40',
+        labelColor: '#ce93d8',
       },
     })
   })

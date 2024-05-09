@@ -22,6 +22,14 @@ const DEFAULT_TEMPLATE_THEME: TemplateTheme = {
     primary: {
       main: '#1976d2',
     },
+    warning: {
+      main: '#ffa726',
+      dark: '#f57c00',
+    },
+    secondary: {
+      main: '#ce93d8',
+      dark: '#ab47bc',
+    },
     background: {
       paper: '#fff',
     },
@@ -43,6 +51,14 @@ export interface TemplateTheme {
   palette: {
     primary: {
       main: string
+    }
+    warning: {
+      main: string
+      dark: string
+    }
+    secondary: {
+      main: string
+      dark: string
     }
     background: {
       paper: string
@@ -76,8 +92,9 @@ export const createTimelineTheme = (options?: TimelineThemeOptions) =>
 export const deriveTimelineTheme = (
   type: 'light' | 'dark',
   muiLikeTemplateTheme: TemplateTheme,
-  options?: TimelineThemeOptions
+  options?: TimelineThemeOptions,
 ): TimelineTheme => {
+  const selectionColor = muiLikeTemplateTheme.palette.secondary.main ?? ORANGE_DEFAULT
   const defaults: TimelineTheme = {
     base: {
       backgroundColor: muiLikeTemplateTheme.palette.background.paper,
@@ -87,6 +104,8 @@ export const deriveTimelineTheme = (
     event: {
       markHeight: 20,
       markFillColor: muiLikeTemplateTheme.palette.primary.main,
+      markLineColor: muiLikeTemplateTheme.palette.primary.main,
+      markLineWidth: 2,
       markSelectedLineColor: '#ffff8d',
       markSelectedFillColor: 'rgba(255, 255, 141, 0.5)',
       markPinnedLineColor: type === 'dark' ? 'white' : 'black',
@@ -112,23 +131,23 @@ export const deriveTimelineTheme = (
       fontFamily: muiLikeTemplateTheme.typography.caption.fontFamily,
     },
     trimmer: {
-      trimHandleColor: ORANGE_DEFAULT,
-      trimHandleLabelColor: ORANGE_DEFAULT,
+      trimHandleColor: selectionColor,
+      trimHandleLabelColor: selectionColor,
       trimHandleWidth: 10,
-      trimTriangleColor: ORANGE_DEFAULT,
+      trimTriangleColor: selectionColor,
       trimRangeInsideColor: 'transparent',
       trimRangeInsideOpacity: 0,
-      trimRangeInsideHighlightColor: ORANGE_DEFAULT,
+      trimRangeInsideHighlightColor: selectionColor,
       trimRangeInsideHighlightOpacity: OPACITY_DEFAULT,
       trimRangeOutsideColor: GREY_DEFAULT,
       trimRangeOutsideOpacity: OPACITY_DEFAULT,
     },
     mouseCursor: {
-      lineColor: ORANGE_DEFAULT,
+      lineColor: selectionColor,
       lineWidth: 2,
-      zoomRangeColor: ORANGE_DEFAULT,
+      zoomRangeColor: selectionColor,
       zoomRangeOpacity: OPACITY_DEFAULT,
-      labelColor: ORANGE_DEFAULT,
+      labelColor: selectionColor,
     },
   }
   return options ? (deepMerge(defaults, options) as TimelineTheme) : defaults
