@@ -1,5 +1,5 @@
 {
-  "name": "react-svg-timeline",
+  "name": "@olivewong/react-svg-timeline",
   "version": "1.24.2",
   "description": "React Timeline Component",
   "keywords": [
@@ -13,7 +13,7 @@
     "plot",
     "svg"
   ],
-  "repository": "netzwerg/react-svg-timeline",
+  "repository": "olivewong/react-svg-timeline",
   "license": "MIT",
   "author": "Rahel Lüthy <rahel.luethy@gmail.com>",
   "type": "module",
