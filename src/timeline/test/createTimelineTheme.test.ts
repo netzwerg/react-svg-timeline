@@ -54,6 +54,7 @@ describe('createTimelineTheme', () => {
         markHeight: 20,
         markLineColor: 'red',
         markLineWidth: 2,
+        markOpacity: 0.3,
         markFillColor: 'red',
         markSelectedLineColor: '#ffff8d',
         markSelectedFillColor: 'rgba(255, 255, 141, 0.5)',
@@ -69,6 +70,7 @@ describe('createTimelineTheme', () => {
       lane: {
         labelFontSize: 16,
         labelColor: 'red',
+        labelOpacity: 0.7,
         middleLineColor: '#9e9e9e',
         middleLineWidth: 1,
       },

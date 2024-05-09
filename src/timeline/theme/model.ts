@@ -25,6 +25,7 @@ export interface EventTheme {
   readonly markPinnedLineColor: string
   readonly markLineColor: string
   readonly markLineWidth: number
+  readonly markOpacity: number
   readonly clusterFillColor: string
 }
 
@@ -43,6 +44,7 @@ export interface GridTheme {
 export interface LaneTheme {
   readonly labelFontSize: number
   readonly labelColor: string
+  readonly labelOpacity: number
   readonly middleLineColor: string
   readonly middleLineWidth: number
 }

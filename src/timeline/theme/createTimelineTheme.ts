@@ -92,7 +92,7 @@ export const createTimelineTheme = (options?: TimelineThemeOptions) =>
 export const deriveTimelineTheme = (
   type: 'light' | 'dark',
   muiLikeTemplateTheme: TemplateTheme,
-  options?: TimelineThemeOptions,
+  options?: TimelineThemeOptions
 ): TimelineTheme => {
   const selectionColor = muiLikeTemplateTheme.palette.secondary.main ?? ORANGE_DEFAULT
   const defaults: TimelineTheme = {
@@ -104,6 +104,7 @@ export const deriveTimelineTheme = (
     event: {
       markHeight: 20,
       markFillColor: muiLikeTemplateTheme.palette.primary.main,
+      markOpacity: 0.3,
       markLineColor: muiLikeTemplateTheme.palette.primary.main,
       markLineWidth: 2,
       markSelectedLineColor: '#ffff8d',
@@ -121,6 +122,7 @@ export const deriveTimelineTheme = (
     },
     lane: {
       labelFontSize: 16,
+      labelOpacity: 0.7,
       labelColor: muiLikeTemplateTheme.palette.primary.main,
       middleLineColor: GREY_500,
       middleLineWidth: 1,
