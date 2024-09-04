@@ -143,27 +143,14 @@ yarn build
 
 ### Testing a release candidate
 
-While making changes to this library in the context of a consuming project, [yalc](https://github.com/wclr/yalc) can be very handy:
-
-In `react-svg-timeline`:
+The easiest way to test a release candidate locally is to create a symlink to the local library from your consuming project:
 
 ```
-yalc publish
+cd /path/to/consuming/project/node_modules
+ln -s /path/to/local/react-svg-timeline react-svg-timeline
 ```
 
-In your project consuming the library:
-
-```
-yalc add react-svg-timeline
-```
-
-Note: If you previously had react-svg-timeline added via yalc, you need to remove it first:
-
-```
-yalc remove react-svg-timeline
-yarn install
-yalc add react-svg-timeline
-```
+You can later remove the symlink via `rm -d react-svg-timeline`.
 
 ### Publishing a release
 
