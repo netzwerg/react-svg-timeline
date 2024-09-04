@@ -1,6 +1,6 @@
 {
   "name": "react-svg-timeline",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "description": "React Timeline Component",
   "keywords": [
     "react",
@@ -20,12 +20,13 @@
   "exports": {
     ".": {
       "import": "./dist/react-svg-timeline.js",
-      "require": "./dist/react-svg-timeline.umd.cjs"
+      "require": "./dist/react-svg-timeline.umd.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
   "main": "./dist/react-svg-timeline.umd.cjs",
   "module": "./dist/react-svg-timeline.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
