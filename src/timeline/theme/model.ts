@@ -27,6 +27,8 @@ export interface EventTheme {
 }
 
 export interface XAxisTheme {
+  readonly paddingLeft: number
+  readonly paddingRight: number
   readonly labelColor: string
   readonly monthLabelFontSize?: number
   readonly yearLabelFontSize?: number

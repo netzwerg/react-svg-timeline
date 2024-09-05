@@ -1,13 +1,12 @@
-import * as React from 'react'
 import { ScaleLinear, scaleTime } from 'd3-scale'
 import { timeMonth } from 'd3-time'
-import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared/ZoomScale'
 import { addMonths, addWeeks, endOfMonth, endOfWeek, isBefore, isEqual, startOfWeek } from 'date-fns'
-import { Domain } from '../model'
-import { range } from '../utils'
-import { useTimelineTheme } from '../theme/useTimelineTheme'
-import { XAxisTheme } from '../theme/model'
 import { CSSProperties } from 'react'
+import { Domain } from '../model'
+import { monthDuration, weekDuration, yearDuration, ZoomLevels } from '../shared/ZoomScale'
+import { XAxisTheme } from '../theme/model'
+import { useTimelineTheme } from '../theme/useTimelineTheme'
+import { range } from '../utils'
 
 interface Props {
   height: number
@@ -67,31 +66,34 @@ const YearView = ({ height, domain, timeScale, showDecadesOnly = false }: YearVi
   const startYear = new Date(domain[0]).getFullYear()
   const endYear = new Date(domain[1]).getFullYear()
 
-  // -1/+1 to get starting/ending lines, additional +1 because range end is exclusive
-  const lines = range(startYear - 1, endYear + 2).map((year) => {
-    const yearTimestamp = new Date(year, 0, 1).valueOf()
-    const x = timeScale(yearTimestamp)!
-    const xMidYear = timeScale(yearTimestamp + yearWidth / 2)!
-    const width = 2 * (xMidYear - x)
-    const fontSize = xAxisTheme.yearLabelFontSize ? xAxisTheme.yearLabelFontSize : Math.max(width * 0.1, 14)
-    const isDecade = year % 10 === 0
-    return (
-      <g key={year}>
-        <line style={gridLineStyle} x1={x} y1={0} x2={x} y2={height} />
-        <text
-          style={textStyle}
-          x={xMidYear}
-          y="90%"
-          fontSize={fontSize}
-          writingMode={showDecadesOnly ? 'vertical-lr' : 'horizontal-tb'}
-        >
-          {showDecadesOnly ? (isDecade ? year : '') : year}
-        </text>
-      </g>
-    )
-  })
-
-  return <g>{lines}</g>
+  if (startYear < endYear) {
+    // -1/+1 to get starting/ending lines, additional +1 because range end is exclusive
+    const lines = range(startYear - 1, endYear + 2).map((year) => {
+      const yearTimestamp = new Date(year, 0, 1).valueOf()
+      const x = timeScale(yearTimestamp)!
+      const xMidYear = timeScale(yearTimestamp + yearWidth / 2)!
+      const width = 2 * (xMidYear - x)
+      const fontSize = xAxisTheme.yearLabelFontSize ? xAxisTheme.yearLabelFontSize : Math.max(width * 0.1, 14)
+      const isDecade = year % 10 === 0
+      return (
+        <g key={year}>
+          <line style={gridLineStyle} x1={x} y1={0} x2={x} y2={height} />
+          <text
+            style={textStyle}
+            x={xMidYear}
+            y="90%"
+            fontSize={fontSize}
+            writingMode={showDecadesOnly ? 'vertical-lr' : 'horizontal-tb'}
+          >
+            {showDecadesOnly ? (isDecade ? year : '') : year}
+          </text>
+        </g>
+      )
+    })
+    return <g>{lines}</g>
+  } else {
+    return <g />
+  }
 }
 
 /* ·················································································································· */

@@ -1,3 +1,4 @@
+import deepMerge from 'ts-deepmerge'
 import {
   BaseTheme,
   EventTheme,
@@ -9,7 +10,6 @@ import {
   TrimmerTheme,
   XAxisTheme,
 } from './model'
-import deepMerge from 'ts-deepmerge'
 
 const ORANGE_DEFAULT = '#ffab40'
 const GREY_DEFAULT = '#aaaaaa'
@@ -93,6 +93,8 @@ export const deriveTimelineTheme = (
       clusterFillColor: muiLikeTemplateTheme.palette.primary.main,
     },
     xAxis: {
+      paddingLeft: 50,
+      paddingRight: 50,
       labelColor: muiLikeTemplateTheme.palette.text.secondary,
     },
     grid: {

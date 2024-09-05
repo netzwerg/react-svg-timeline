@@ -1,8 +1,8 @@
-import React, { useCallback, Fragment } from 'react'
+import { Fragment, useCallback } from 'react'
 
-import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 import { UserInteraction } from './layers/interaction/model'
 import { TimelineLayer } from './layers/model'
+import { Domain, EventComponentFactory, LaneDisplayMode, TimelineEvent, TimelineLane } from './model'
 
 import { TimelineTheme } from './theme/model'
 import { TimelineThemeProvider } from './theme/TimelineThemeProvider'
@@ -13,13 +13,13 @@ import { useTimelineAnimation } from './hooks/useTimelineAnimation'
 
 import { noOp } from './utils'
 
-import { GridLines } from './layers/GridLines'
-import { ExpandedMarks } from './layers/ExpandedMarks'
-import { Interaction } from './layers/interaction/Interaction'
-import { CollapsedMarks } from './layers/CollapsedMarks'
-import { EventClusters } from './layers/EventClusters'
 import { Axes } from './layers/Axes'
 import { Axis } from './layers/Axis'
+import { CollapsedMarks } from './layers/CollapsedMarks'
+import { EventClusters } from './layers/EventClusters'
+import { ExpandedMarks } from './layers/ExpandedMarks'
+import { GridLines } from './layers/GridLines'
+import { Interaction } from './layers/interaction/Interaction'
 import { defaultOrderedZoomLevels, ZoomLevels } from './shared/ZoomScale'
 import { createTimelineTheme } from './theme/createTimelineTheme'
 
@@ -84,7 +84,7 @@ export const Timeline = <EID extends string, LID extends string, E extends Timel
     nextSmallerZoomScale,
     timeScale,
     yScale,
-  } = useTimeline({ width, height, events, lanes, zoomLevels, customRange, onZoomRangeChange })
+  } = useTimeline({ width, height, events, lanes, zoomLevels, customRange, theme, onZoomRangeChange })
 
   const { isAnimationInProgress, setAnimation, animation } = useTimelineAnimation({
     maxDomainStart,

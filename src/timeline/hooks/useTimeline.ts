@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { useZoomLevels } from './useZoomLevels'
-import { min, max } from 'd3-array'
+import { max, min } from 'd3-array'
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale'
 import { Domain, TimelineEvent, TimelineLane } from '../model'
 import { ZoomLevels } from '../shared/ZoomScale'
+import { TimelineTheme } from '../theme/model'
+import { useZoomLevels } from './useZoomLevels'
 
 export const calcMaxDomain = <EID extends string, LID extends string, E extends TimelineEvent<EID, LID>>(
   events: ReadonlyArray<E>
@@ -21,6 +22,7 @@ interface UseTimelineProps<EID extends string, LID extends string, E extends Tim
   lanes: ReadonlyArray<TimelineLane<LID>>
   customRange?: Domain
   zoomLevels: ReadonlyArray<ZoomLevels>
+  theme: TimelineTheme
   onZoomRangeChange?: (startMillis: number, endMillis: number) => void
 }
 
@@ -31,6 +33,7 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
   lanes,
   customRange,
   zoomLevels,
+  theme,
   onZoomRangeChange,
 }: UseTimelineProps<EID, LID, E>): {
   domain: Domain
@@ -61,13 +64,14 @@ export const useTimeline = <EID extends string, LID extends string, E extends Ti
     }
   }, [domain, onZoomRangeChange])
 
-  const timeScalePadding = 50
+  const timeScalePaddingLeft = theme.xAxis.paddingLeft
+  const timeScalePaddingRight = theme.xAxis.paddingRight
   const timeScale = useMemo(
     () =>
       scaleLinear()
         .domain(domain)
-        .range([timeScalePadding, width - timeScalePadding]),
-    [domain, width]
+        .range([timeScalePaddingLeft, width - timeScalePaddingRight]),
+    [domain, width, timeScalePaddingLeft, timeScalePaddingRight]
   )
 
   const yScale = useMemo(
