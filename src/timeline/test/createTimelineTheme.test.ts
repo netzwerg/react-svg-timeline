@@ -50,7 +50,7 @@ describe('createTimelineTheme', () => {
         markPinnedLineColor: 'black',
         clusterFillColor: 'red',
       },
-      xAxis: { labelColor: 'blue' },
+      xAxis: { paddingLeft: 50, paddingRight: 50, labelColor: 'blue' },
       grid: {
         lineColor: '#9e9e9e',
         weekStripesColor: '#eeeeee',
